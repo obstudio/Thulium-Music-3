@@ -8,8 +8,28 @@ const tm = require('./init')
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
-let loadingWindow
-let loaded = false
+
+async function initialization() {
+  var tray = new Tray('./assets/logo.ico')
+  tray.setToolTip('Thulium Music')
+  tray.setContextMenu(Menu.buildFromTemplate([
+    {
+      label: 'Thulium'
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: '退出',
+      role: 'quit'
+    }
+  ]))
+
+  // For testing
+  return new Promise(resolve => {
+    setTimeout(() => resolve(20), 2000)
+  })
+}
 
 function createMainWindow () {
   // Create the browser window.
@@ -22,10 +42,8 @@ function createMainWindow () {
     slashes: true
   }))
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
-  // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
@@ -37,22 +55,24 @@ function createMainWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', () => {
-  const tray = new Tray('./assets/logo.ico')
-  tray.setToolTip('Thulium Music')
-  tray.setContextMenu(Menu.buildFromTemplate([
-    {
-      label: '退出',
-      role: 'quit'
-    },
-    {
-      label: '运行',
-      click: (menuItem, browserWindow, event) => {
-        createMainWindow()
-      }
-    }
-  ]))
+app.on('ready', async function() {
+  const loadingWindow = new BrowserWindow({
+    transparent: true,
+    frame: false,
+    resizable: false,
+    movable: false
+  })
+
+  loadingWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'load.html'),
+    protocol: 'file:',
+    slashes: true
+  }))
+
+  await initialization()
+
   createMainWindow()
+  loadingWindow.destroy()
 })
 
 // Quit when all windows are closed.

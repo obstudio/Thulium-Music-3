@@ -1,0 +1,12 @@
+[submodule "lib/parser"]
+	path = lib/parser
+	url = https://github.com/obstudio/ThuliumMusic-Parser
+[submodule "lib/token"]
+	path = lib/token
+	url = https://github.com/obstudio/ThuliumMusic-Tokenizer
+[submodule "lib/linter"]
+	path = lib/linter
+	url = https://github.com/obstudio/ThuliumMusic-Linter
+[submodule "lib/docs"]
+	path = lib/docs
+	url = https://github.com/obstudio/ThuliumMusic-Documents
