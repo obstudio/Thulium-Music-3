@@ -1,0 +1,10 @@
+.navbar {
+    background-color: #000007;
+    color: #ffffff;
+    text-align: left;
+    padding: 8px 16px;
+}
+
+.navbar button {
+    text-align: right;
+}

@@ -3,15 +3,17 @@ const {app, Menu, Tray, BrowserWindow} = require('electron')
 const path = require('path')
 const url = require('url')
 
+const tm = require('./init')
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 let loadingWindow
 let loaded = false
 
-function createWindow () {
+function createMainWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({width: 800, height: 600, frame: false})
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
@@ -36,7 +38,7 @@ function createWindow () {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  tray = new Tray('./assets/logo.ico')
+  const tray = new Tray('./assets/logo.ico')
   tray.setToolTip('Thulium Music')
   tray.setContextMenu(Menu.buildFromTemplate([
     {
@@ -46,11 +48,11 @@ app.on('ready', () => {
     {
       label: '运行',
       click: (menuItem, browserWindow, event) => {
-        createWindow()
+        createMainWindow()
       }
     }
   ]))
-  createWindow()
+  createMainWindow()
 })
 
 // Quit when all windows are closed.
@@ -66,7 +68,7 @@ app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
-    createWindow()
+    createMainWindow()
   }
 })
 

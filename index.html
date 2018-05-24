@@ -2,18 +2,19 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>Thulium Music</title>
+    <link href="index.css" rel="stylesheet">
   </head>
-  <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
-
-    <script>
-      // You can also require other files to run in this process
-      require('./renderer.js')
-    </script>
+  <body style="margin: 0px; padding: 0px;">
+    <nav class="navbar">铥铥播放器 Thulium Music</nav>
+    <div style="margin: 0px; padding: 20px">
+      <p>Hello World!</p>
+      <p>语言：
+      <script>
+        const TmLocal = require('./init')
+        document.write(TmLocal.langList[TmLocal.settings.Language])
+      </script>
+      </p>
+    </div>
   </body>
 </html>
