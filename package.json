@@ -1,0 +1,17 @@
+{
+  "name": "thulium-music-3",
+  "version": "1.0.0",
+  "description": "Thulium Music 3",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "Obstudio",
+  "devDependencies": {
+    "electron": "^2.0.0",
+    "eslint": "^4.19.1"
+  },
+  "dependencies": {},
+  "license": "ISC"
+}
