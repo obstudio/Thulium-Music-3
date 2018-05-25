@@ -1,4 +1,4 @@
-const {app, Menu, Tray, BrowserWindow} = require('electron')
+const {app, Menu, Tray, BrowserWindow, webFrame} = require('electron')
 
 const path = require('path')
 const url = require('url')
@@ -7,13 +7,8 @@ const url = require('url')
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 let trayIcon
-let TmLocal
-let Thulium
 
 async function initialization() {
-  TmLocal = require('./init')
-  // Thulium = require('./lib/Thulium')
-
   trayIcon = new Tray('./assets/logo.ico')
   trayIcon.setToolTip('Thulium Music')
   trayIcon.setContextMenu(Menu.buildFromTemplate([
@@ -24,18 +19,32 @@ async function initialization() {
       type: 'separator'
     },
     {
+      label: '开发者工具',
+      click: () => {
+        if (mainWindow.webContents.isDevToolsOpened()) {
+          mainWindow.webContents.closeDevTools()
+        } else {
+          mainWindow.webContents.openDevTools()
+        }
+      }
+    },
+    {
       label: '退出',
       role: 'quit'
     }
   ]))
+  
+  trayIcon.on('click', () => {
+    mainWindow.show()
+  })
 
+  // For test
   return new Promise(resolve => {
     setTimeout(() => resolve(20), 2000)
   })
 }
 
 function createMainWindow () {
-  // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -53,8 +62,6 @@ function createMainWindow () {
     protocol: 'file:',
     slashes: true
   }))
-
-  mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows

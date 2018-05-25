@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <title>Thulium Music</title>
     <link href="index.css" rel="stylesheet">
+    <script>
+      const Thulium = require('./init')
+    </script>
   </head>
   <body>
     <nav class="navbar">铥铥播放器 Thulium Music</nav>
-    <div class="container">
+    <div class="window">
       <p>Hello World!</p>
-      <p>语言：<script>const TmLocal = require('./init')
-        document.write(TmLocal.langList[TmLocal.settings.Language])
+      <p>语言：<script>
+        document.write(Thulium.LangList[Thulium.Settings.Language])
       </script></p>
       <a>文档</a>
       <a>编辑器</a>

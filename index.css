@@ -2,27 +2,37 @@ body {
     background: none;
     margin: 0px;
     padding: 0px;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow: hidden;
 }
 
-.navbar {
+div.window {
+    background-color: #fff;
+    top: 24px;
+    height: 100%;
+    margin: 0px;
+    padding: 20px;
+}
+
+nav.navbar {
     background-color: #001122;
     color: #fff;
     text-align: left;
-    padding: 12px 20px;
     font-size: 24px;
+    padding: 12px 20px;
+    height: 24px;
     -webkit-app-region: drag;
     -webkit-user-select: none;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
 }
 
-.navbar button {
+nav.navbar button {
     text-align: right;
     -webkit-app-region: no-drag;
 }
 
-.container {
-    margin: 0px;
-    padding: 20px;
-    background-color: #fff;
-}
