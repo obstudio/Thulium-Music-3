@@ -1,10 +1,28 @@
+body {
+    background: none;
+    margin: 0px;
+    padding: 0px;
+}
+
 .navbar {
-    background-color: #000007;
-    color: #ffffff;
+    background-color: #001122;
+    color: #fff;
     text-align: left;
-    padding: 8px 16px;
+    padding: 12px 20px;
+    font-size: 24px;
+    -webkit-app-region: drag;
+    -webkit-user-select: none;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
 }
 
 .navbar button {
     text-align: right;
+    -webkit-app-region: no-drag;
+}
+
+.container {
+    margin: 0px;
+    padding: 20px;
+    background-color: #fff;
 }

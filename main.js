@@ -3,16 +3,20 @@ const {app, Menu, Tray, BrowserWindow} = require('electron')
 const path = require('path')
 const url = require('url')
 
-const tm = require('./init')
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+let trayIcon
+let TmLocal
+let Thulium
 
 async function initialization() {
-  var tray = new Tray('./assets/logo.ico')
-  tray.setToolTip('Thulium Music')
-  tray.setContextMenu(Menu.buildFromTemplate([
+  TmLocal = require('./init')
+  // Thulium = require('./lib/Thulium')
+
+  trayIcon = new Tray('./assets/logo.ico')
+  trayIcon.setToolTip('Thulium Music')
+  trayIcon.setContextMenu(Menu.buildFromTemplate([
     {
       label: 'Thulium'
     },
@@ -25,7 +29,6 @@ async function initialization() {
     }
   ]))
 
-  // For testing
   return new Promise(resolve => {
     setTimeout(() => resolve(20), 2000)
   })
@@ -33,7 +36,16 @@ async function initialization() {
 
 function createMainWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600, frame: false})
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    center: true,
+    minWidth: 800,
+    minHeight: 600,
+    show: false,
+    frame: false,
+    transparent: true
+  })
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
@@ -72,7 +84,11 @@ app.on('ready', async function() {
   await initialization()
 
   createMainWindow()
-  loadingWindow.destroy()
+
+  mainWindow.once('ready-to-show', () => {
+    loadingWindow.destroy()
+    mainWindow.show()
+  })
 })
 
 // Quit when all windows are closed.
