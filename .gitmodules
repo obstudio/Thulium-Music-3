@@ -1,24 +1,3 @@
-[submodule "lib/parser"]
-	path = lib/parser
-	url = https://github.com/obstudio/ThuliumMusic-Parser
-[submodule "lib/token"]
-	path = lib/token
-	url = https://github.com/obstudio/ThuliumMusic-Tokenizer
-[submodule "lib/linter"]
-	path = lib/linter
-	url = https://github.com/obstudio/ThuliumMusic-Linter
-[submodule "lib/docs"]
-	path = lib/docs
+[submodule "docs"]
+	path = docs
 	url = https://github.com/obstudio/ThuliumMusic-Documents
-[submodule "editor/library/parser"]
-	path = editor/library/parser
-	url = https://github.com/obstudio/ThuliumMusic-Parser
-[submodule "editor/library/token"]
-	path = editor/library/token
-	url = https://github.com/obstudio/ThuliumMusic-Tokenizer
-[submodule "editor/library/docs"]
-	path = editor/library/docs
-	url = https://github.com/obstudio/ThuliumMusic-Documents
-[submodule "editor/library/linter"]
-	path = editor/library/linter
-	url = https://github.com/obstudio/ThuliumMusic-Linter
