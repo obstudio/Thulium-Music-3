@@ -1,0 +1,9 @@
+## 基本语法
+
++ 音符
+
++ [音符|Note] + [音高操作符|PitchOperator] + [时值操作符|DurationOperator] + [强度操作符|IntensityOperator] + [和弦|Chord] + [休止符|Rest] + [未定音高|UndeterminedPitch] +
+
++ 节奏
+
++ [小节线|BarLine] + [连音线|TieAndSlur] +

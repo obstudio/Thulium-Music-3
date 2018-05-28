@@ -1,5 +1,6 @@
-import { Loader } from './loader'
-export default class Player {
+const { Loader } = require('./loader')
+
+class Player {
   /** 构造方法，初始化Loader */
   constructor() {
     /**
@@ -324,3 +325,5 @@ export default class Player {
     return typeof aValue === 'number' ? aValue : defValue
   }
 }
+
+module.exports = Player

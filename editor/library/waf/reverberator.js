@@ -1,4 +1,4 @@
-export class Reverberator {
+class Reverberator {
   constructor(ctx, irrArrayBuffer) {
     this.ctx = ctx
     this.input = this.ctx.createBiquadFilter()
@@ -30,3 +30,5 @@ export class Reverberator {
     return new Reverberator(ctx, irrArrayBuffer)
   }
 }
+
+module.exports = Reverberator

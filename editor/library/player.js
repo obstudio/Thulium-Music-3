@@ -1,10 +1,11 @@
-import { audioLibDir, defaultInstr } from './config'
-import instrDict from './Config/Instrument.json'
-import drumDict from './Config/Percussion.json'
-import Tokenizer from './token/Tokenizer'
-import WafPlayer from './waf/player'
-import Parser from './parser/Parser'
-import MIDIAdapter from './MIDIAdapter'
+const audioLibDir = 'https://jjyyxx.github.io/webaudiofontdata/data/'
+const defaultInstr = 'Piano'
+const instrDict = require('./config/Instrument.json')
+const drumDict = require('./config/Percussion.json')
+const Tokenizer = require('./token/Tokenizer')
+const WafPlayer = require('./waf/player')
+const Parser = require('./parser/Parser')
+const MIDIAdapter = require('./MIDIAdapter')
 const { library, load } = require('./AsyncProvider')
 window.fonts = window.fonts || {}
 
@@ -30,7 +31,7 @@ function audioLibVar(instr) {
   }
 }
 
-export default class Player {
+class Player {
   constructor(value) {
     // this.value = value
     const result = typeof value === 'string'
@@ -107,3 +108,5 @@ export default class Player {
     }
   }
 }
+
+module.exports = Player

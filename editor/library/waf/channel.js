@@ -1,4 +1,4 @@
-export class Channel {
+class Channel {
   /**
    * ??
    * @param {AudioContext} ctx
@@ -35,3 +35,5 @@ export class Channel {
     return filter
   }
 }
+
+module.exports = Channel

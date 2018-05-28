@@ -2,7 +2,7 @@
  * @class
  * @implements {Tm.Adapter}
  */
-export default class MIDIAdapter {
+class MIDIAdapter {
   adapt(parsedSection) {
     let prevTime = 0
     const trackMap = {}
@@ -28,3 +28,4 @@ export default class MIDIAdapter {
     }
   }
 }
+module.exports = MIDIAdapter

@@ -1,31 +1,7 @@
-// import * as monaco from 'monaco-editor/esm/vs/editor/edcore.main'
-import Tokenizer from './lib/token/Tokenizer'
-import Player from './lib/player'
+const Tokenizer = require('./library/token/Tokenizer')
+const Player = require('./library/player')
+const ColorRules = require('./themes/black.json')
 
-const ColorRules = [
-  { token: 'undef', foreground: 'FF0000' },
-  { token: 'comment', foreground: '008800' },
-
-  { token: 'sfunc', foreground: 'FF909B' },
-  { token: 'func', foreground: 'FF909B' },
-  { token: 'instr', foreground: 'bf00ff', fontStyle: 'bold' },
-  { token: 'macro', foreground: '7CFC00' },
-  { token: 'macroIndicator', foreground: 'bf00ff' },
-  { token: 'inc', foreground: '7CFC00' },
-  { token: 'incPath', foreground: '87CEFA' },
-
-  { token: 'degree', foreground: '00FFFF' },
-  { token: 'pitOp-chord', foreground: '00BBFF' },
-  { token: 'durOp-stac-volOp', foreground: '00FFBB' },
-  { token: 'chordBracket', foreground: '00BBBB' },
-
-  { token: '@bracket', foreground: 'fc8f00' },
-  { token: 'volta', foreground: 'FFFF00' },
-  { token: 'barline', foreground: 'fc8f00' },
-  { token: 'repeat', foreground: 'FFFF00' },
-  { token: 'press-release', foreground: 'fcde00' },
-  { token: 'tie', foreground: 'fcde00' }
-]
 const LangDef = {
   tokenizer: {
     root: [
@@ -554,7 +530,7 @@ const LangDef = {
 }
 
 let commandId = ''
-export function registerPlayCommand(editor) {
+function registerPlayCommand(editor) {
   commandId = editor.addCommand(window.monaco.KeyCode.NumLock, (_, result, index, trackIndex) => {
     if (trackIndex === undefined) {
       let secIndex = 0
@@ -582,7 +558,7 @@ export function registerPlayCommand(editor) {
 }
 
 let defined = false
-export function defineLanguage() {
+function defineLanguage() {
   if (!defined) {
     defined = true
   } else {
@@ -708,3 +684,5 @@ export function defineLanguage() {
     }
   })
 }
+
+module.exports = { defineLanguage, registerPlayCommand }

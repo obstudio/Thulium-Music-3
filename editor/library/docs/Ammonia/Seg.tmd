@@ -1,0 +1,20 @@
+# Seg ((修饰音参数))
+
+? Seg(*segment*)
+  设置*segment*参数。
+
+^ 具体信息 ^
+
++ *segment*参数规定了前倚音、后倚音、琶音中装饰音的长度占比。
++ 当装饰音子音轨中的总拍数不超过4时，每一拍将等同于实际的`segment/4`拍。
++ 当装饰音子音轨中的总拍数大于4时，倚音部分的总拍数将等于`segment`拍。
+ 
+^ 参见 ^
+
++ [GraceNote] + [Arpeggio] + [Appoggiatura] +
+
+^ 相关指南
+
++ 官方库: [Ammonia|.overview]
++ 分类: [修饰音|../Guide/Ornaments]
+

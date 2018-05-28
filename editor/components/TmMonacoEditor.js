@@ -1,12 +1,8 @@
-<template>
-  <div :style="{width, height}"></div>
-</template>
+const FileSaver = require('file-saver')
+const TmLoading = require('./TmLoading')
+const { registerPlayCommand } = require('../Editor')
 
-<script>
-import * as FileSaver from 'file-saver'
-import TmLoading from './TmLoading.vue'
-import { registerPlayCommand } from '@/Editor'
-export default {
+module.exports = {
   name: 'TmMonacoEditor',
   components: {
     TmLoading
@@ -137,15 +133,8 @@ export default {
       editor.updateOptions({ mouseWheelZoom: true })
     }
   },
-  props: ['width', 'height']
+  props: ['width', 'height'],
+  template: `<template>
+    <div :style="{width, height}"></div>
+  </template>`
 }
-</script>
-
-<style>
-.fade {
-    transition-property: opacity;
-    transition-duration: 2s;
-    transition-delay: 1s;
-    transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1)
-}
-</style>

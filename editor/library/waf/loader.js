@@ -1,4 +1,4 @@
-export class Loader {
+class Loader {
   constructor(player) {
     this.player = player
     this.cached = []
@@ -17,3 +17,5 @@ export class Loader {
     return name
   }
 }
+
+module.exports = Loader
