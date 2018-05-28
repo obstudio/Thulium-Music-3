@@ -10,7 +10,7 @@ const extendVue = require('./TmVueExt')
 Vue.use(VueI18n)
 Vue.use(ElementUI)
 extendVue(Vue)
-Vue.component('icon', Icon)
+// Vue.component('icon', Icon)
 Vue.config.productionTip = false
 
 new Vue({

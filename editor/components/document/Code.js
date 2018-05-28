@@ -1,10 +1,6 @@
-<template>
-  <div v-html="res"></div>
-</template>
 
-<script>
-import {defineLanguage} from '../../Editor'
-export default {
+const { defineLanguage } = require('../../Editor')
+module.exports = {
   name: 'Code',
   data() {
     return {
@@ -34,10 +30,8 @@ export default {
           })
       })
     }
-  }
+  },
+  template: `<template>
+    <div v-html="res"></div>
+  </template>`
 }
-</script>
-
-<style>
-
-</style>

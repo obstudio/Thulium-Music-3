@@ -1,7 +1,7 @@
-import Player from './lib/player'
-import Lexer from './lib/doc/Lexer'
+const Player = require('./library/player')
+const Lexer = require('./library/tmdoc/Lexer')
 
-export default (Vue) => {
+module.exports = (Vue) => {
   Vue.prototype.$createPlayer = (v) => new Player(v)
   Vue.prototype.$md = (content) => {
     if (typeof content !== 'string') return []

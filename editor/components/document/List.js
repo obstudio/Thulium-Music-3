@@ -1,4 +1,13 @@
-<template>
+
+module.exports = {
+  name: 'List',
+  props: {
+    node: {
+      type: Object,
+      required: true
+    }
+  },
+  template: `<template>
   <ul v-if="node.inline">
     <li v-for="(item, index) in node.content" :key="index" v-html="item"></li>
   </ul>
@@ -12,20 +21,5 @@
       <component v-for="(comp, index) in item.content" :key="index" :is="comp.type" :node="comp"></component>
     </li>
   </ol>
-</template>
-
-<script>
-export default {
-  name: 'List',
-  props: {
-    node: {
-      type: Object,
-      required: true
-    }
-  }
+</template>`
 }
-</script>
-
-<style>
-
-</style>
