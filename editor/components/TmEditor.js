@@ -1,5 +1,5 @@
 const TmLoading = require('./TmLoading')
-const { defineLanguage } = require('../Editor')
+const { defineLanguage } = require('../../library/Editor')
 const TmMonacoEditor = require('./TmMonacoEditor')
 
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
     TmMonaco: () => ({
       component: new Promise((resolve, reject) => {
         amdRequire(['vs/editor/editor.main'], () => {
-          defineLanguage()
+          defineLanguage('black')
           resolve(TmMonacoEditor)
         })
       }),

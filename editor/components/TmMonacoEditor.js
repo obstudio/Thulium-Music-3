@@ -1,6 +1,6 @@
 const FileSaver = require('file-saver')
 const TmLoading = require('./TmLoading')
-const { registerPlayCommand } = require('../Editor')
+const { registerPlayCommand } = require('../../library/Editor')
 
 module.exports = {
   name: 'TmMonacoEditor',

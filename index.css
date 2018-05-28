@@ -1,5 +1,5 @@
 body {
-    background: none;
+    background: #FFFFF0;
     margin: 0px;
     padding: 0px;
     left: 0px;
@@ -10,25 +10,16 @@ body {
     overflow: hidden;
 }
 
-div.window {
-    background-color: #fff;
-    top: 24px;
-    height: 100%;
-    margin: 0px;
-    padding: 20px;
-}
-
 nav.navbar {
     background-color: #001122;
     color: #fff;
     text-align: left;
     font-size: 24px;
     padding: 12px 20px;
+    margin: 0px;
     height: 24px;
     -webkit-app-region: drag;
     -webkit-user-select: none;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
 }
 
 nav.navbar button {

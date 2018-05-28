@@ -1,5 +1,5 @@
+const { defineLanguage } = require('../../../library/Editor')
 
-const { defineLanguage } = require('../../Editor')
 module.exports = {
   name: 'Code',
   data() {
@@ -22,7 +22,7 @@ module.exports = {
         })
     } else {
       amdRequire(['vs/editor/editor.main'], () => {
-        defineLanguage()
+        defineLanguage('black')
         window.monaco.editor
           .colorize(this.node.content, this.node.lang)
           .then(res => {

@@ -1,6 +1,6 @@
 module.exports = {
   name: 'TmLoading',
-  template: `<div class="full-screen" style="background-color: #2d2d2d; z-index: 33; display: flex; align-items: center; justify-content: center; flex-direction: column">
+  template: `<div class="window" style="background-color: #2d2d2d; z-index: 33; display: flex; align-items: center; justify-content: center; flex-direction: column">
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
       height="60%" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve">
       <g>

@@ -1,6 +1,5 @@
-const Tokenizer = require('../library/token/Tokenizer')
-const Player = require('../library/player')
-const ColorRules = require('./themes/black.json')
+const Tokenizer = require('./token/Tokenizer')
+const Player = require('./player')
 
 const LangDef = {
   tokenizer: {
@@ -558,7 +557,7 @@ function registerPlayCommand(editor) {
 }
 
 let defined = false
-function defineLanguage() {
+function defineLanguage(scheme) {
   if (!defined) {
     defined = true
   } else {
@@ -571,7 +570,7 @@ function defineLanguage() {
   window.monaco.editor.defineTheme('tm', {
     base: 'vs-dark',
     inherit: true,
-    rules: ColorRules,
+    rules: require('./themes/' + scheme + '.json'),
     colors: {}
   })
   window.monaco.editor.setTheme('tm')

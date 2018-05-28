@@ -4,13 +4,18 @@
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
+
+#app.window {
+  padding: 40px;
+}
   
-.full-screen {
+.window {
   width: 100%;
   height: 100%;
   position: absolute;
   left: 0;
-  top: 0;
+  top: 25px;
+  margin: 0px;
   /*overflow: hidden;*/
 }
 

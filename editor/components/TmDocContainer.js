@@ -25,7 +25,7 @@ module.exports = {
         this.$nextTick(() => {
           new Promise((resolve, reject) => {
             window.require(['vs/editor/editor.main'], () => {
-              defineLanguage()
+              defineLanguage('black')
               resolve()
             })
           }).then(() => {
