@@ -30,5 +30,8 @@
   "bugs": {
     "url": "https://github.com/obstudio/Thulium-Music-3/issues"
   },
-  "homepage": "https://github.com/obstudio/Thulium-Music-3#readme"
+  "homepage": "https://github.com/obstudio/Thulium-Music-3#readme",
+  "directories": {
+    "lib": "lib"
+  }
 }
