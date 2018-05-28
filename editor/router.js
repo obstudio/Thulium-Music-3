@@ -1,4 +1,4 @@
-const Vue = require('vue')
+const Vue = require('vue/dist/vue.common')
 const Router = require('vue-router')
 const TmEditor = require('./components/TmEditor')
 const TmDoc = require('./components/TmDoc')

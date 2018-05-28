@@ -7,7 +7,5 @@ module.exports = {
       required: true
     }
   },
-  template: `<template>
-    <p v-html="node.text"></p>
-  </template>`
+  template: `<p v-html="node.text"></p>`
 }

@@ -9,9 +9,7 @@ module.exports = {
       required: true
     }
   },
-  template: `<template>
-    <div>
-      <component v-for="(comp, index) in content" :is="comp.type" :node="comp" :key="index"></component>
-    </div>
-  </template>`
+  template: `<div>
+    <component v-for="(comp, index) in content" :is="comp.type" :node="comp" :key="index"></component>
+  </div>`
 }

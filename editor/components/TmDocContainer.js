@@ -15,7 +15,7 @@ module.exports = {
   },
   methods: {
     async fetchDoc(name) {
-      const doc = await fetch(`/static/docs/${name}.tmd`)
+      const doc = await fetch(`../documents/${name}.tmd`)
       return doc.text()
     },
     setContent() {
@@ -49,10 +49,8 @@ module.exports = {
     }
   },
   props: ['doc'],
-  template: `<template>
-    <div>
-      <textarea v-model="raw" title="输入测试"></textarea>
-      <Document :content="root"></Document>
-    </div>
-  </template>`
+  template: `<div>
+    <textarea v-model="raw" title="输入测试"></textarea>
+    <Document :content="root"></Document>
+  </div>`
 }

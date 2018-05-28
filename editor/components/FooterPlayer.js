@@ -15,8 +15,7 @@ module.exports = {
       return `${min}:${sec.toString().padStart(2, '0')}`
     }
   },
-  template: `<template>
-  <div class="footer-player">
+  template: `<div class="footer-player">
     <el-container class="play-bar">
       <el-aside width="100px" style="height: 104px" class="hidden-xs-only"> <!--Music Image-->
         <img src="static/pic/obstudio.png" width="100" height="100">
@@ -72,6 +71,5 @@ module.exports = {
         </el-row>
       </el-main>
     </el-container>
-  </div>
-</template>`
+  </div>`
 }

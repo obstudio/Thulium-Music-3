@@ -21,7 +21,7 @@ module.exports = {
           this.res = res
         })
     } else {
-      window.require(['vs/editor/editor.main'], () => {
+      amdRequire(['vs/editor/editor.main'], () => {
         defineLanguage()
         window.monaco.editor
           .colorize(this.node.content, this.node.lang)
@@ -31,7 +31,5 @@ module.exports = {
       })
     }
   },
-  template: `<template>
-    <div v-html="res"></div>
-  </template>`
+  template: `<div v-html="res"></div>`
 }

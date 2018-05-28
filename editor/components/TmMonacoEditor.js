@@ -134,7 +134,5 @@ module.exports = {
     }
   },
   props: ['width', 'height'],
-  template: `<template>
-    <div :style="{width, height}"></div>
-  </template>`
+  template: `<div :style="{width, height}"></div>`
 }

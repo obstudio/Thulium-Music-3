@@ -1,4 +1,4 @@
-const Vue = require('vue')
+const Vue = require('vue/dist/vue.common')
 
 Vue.component('Code', require('./Code'))
 Vue.component('List', require('./List'))

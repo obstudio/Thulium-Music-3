@@ -7,7 +7,5 @@ module.exports = {
       required: true
     }
   },
-  template: `<template>
-    <component :is="'h'+node.level" v-html="node.text"></component>
-  </template>`
+  template: `<component :is="'h'+node.level" v-html="node.text"></component>`
 }

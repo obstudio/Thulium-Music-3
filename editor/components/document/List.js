@@ -7,7 +7,7 @@ module.exports = {
       required: true
     }
   },
-  template: `<template>
+  template: `
   <ul v-if="node.inline">
     <li v-for="(item, index) in node.content" :key="index" v-html="item"></li>
   </ul>
@@ -20,6 +20,5 @@ module.exports = {
     <li v-for="(item, index) in node.content" :key="index">
       <component v-for="(comp, index) in item.content" :key="index" :is="comp.type" :node="comp"></component>
     </li>
-  </ol>
-</template>`
+  </ol>`
 }
