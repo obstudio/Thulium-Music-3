@@ -5,8 +5,7 @@ const drumDict = require('./config/Percussion.json')
 const Tokenizer = require('./token/Tokenizer')
 const WafPlayer = require('./waf/player')
 const Parser = require('./parser/Parser')
-const MIDIAdapter = require('./MIDIAdapter')
-const { library, load } = require('./AsyncProvider')
+const MIDIAdapter = require('./adapter/MIDIAdapter')
 window.fonts = window.fonts || {}
 
 function audioLibFile(instr) {
@@ -35,7 +34,7 @@ class Player {
   constructor(value) {
     // this.value = value
     const result = typeof value === 'string'
-      ? new MIDIAdapter().adapt(new Parser(new Tokenizer(value, load, library).tokenize()).parse())
+      ? new MIDIAdapter().adapt(new Parser(new Tokenizer(value, ()=>{}, {}).tokenize()).parse())
       : new MIDIAdapter().adapt(new Parser(value).parse())
     this.tracks = result.tracks
     this.time = result.time

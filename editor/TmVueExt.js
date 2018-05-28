@@ -1,5 +1,5 @@
-const Player = require('./library/player')
-const Lexer = require('./library/tmdoc/Lexer')
+const Player = require('../library/player')
+const Lexer = require('../library/tmdoc/Lexer')
 
 module.exports = (Vue) => {
   Vue.prototype.$createPlayer = (v) => new Player(v)

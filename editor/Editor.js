@@ -1,5 +1,5 @@
-const Tokenizer = require('./library/token/Tokenizer')
-const Player = require('./library/player')
+const Tokenizer = require('../library/token/Tokenizer')
+const Player = require('../library/player')
 const ColorRules = require('./themes/black.json')
 
 const LangDef = {

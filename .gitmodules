@@ -1,3 +1,12 @@
-[submodule "docs"]
-	path = docs
+[submodule "library/parser"]
+	path = library/parser
+	url = https://github.com/obstudio/ThuliumMusic-Parser
+[submodule "library/linter"]
+	path = library/linter
+	url = https://github.com/obstudio/ThuliumMusic-Linter
+[submodule "library/token"]
+	path = library/token
+	url = https://github.com/obstudio/ThuliumMusic-Tokenizer
+[submodule "documents"]
+	path = documents
 	url = https://github.com/obstudio/ThuliumMusic-Documents
