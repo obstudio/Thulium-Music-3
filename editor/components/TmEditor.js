@@ -1,7 +1,7 @@
 const TmLoading = require('./TmLoading')
 const { defineLanguage } = require('../../library/editor/Editor')
 const TmMonacoEditor = require('./TmMonacoEditor')
-const theme = require(__dirname + '/../../themes/dark.json')
+const theme = require(__dirname + '/../../themes/dark.json').tm
 
 module.exports = {
   name: 'TmEditor',

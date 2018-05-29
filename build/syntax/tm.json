@@ -1,0 +1,44 @@
+{
+    "root": [
+        {
+            "include": "comment"
+        }, 
+        {
+            "include": "command"
+        }, 
+        {
+            "include": "track"
+        }
+    ], 
+    "comment": [
+        {
+            "regex": "^//", 
+            "action": {
+                "token": "comment.marker"
+            }
+        }
+    ], 
+    "command.general": [
+        {
+            "regex": "$", 
+            "token": "@pop"
+        }
+    ], 
+    "command": [
+        {
+            "regex": "^#", 
+            "action": {
+                "next": "command.general", 
+                "token": "command.marker"
+            }
+        }
+    ], 
+    "track": [
+        {
+            "regex": ".", 
+            "action": {
+                "token": "track.name"
+            }
+        }
+    ]
+}

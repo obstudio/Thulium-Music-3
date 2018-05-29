@@ -12,8 +12,8 @@ function getSyntax(source) {
 }
 
 const LangDef = {
-  tokenizer: require('./syntax'),
-  tokenPostfix: getSyntax('./tm'),
+  tokenizer: getSyntax('./tm'),
+  tokenPostfix: '.tm',
   defaultToken: 'undef'
 }
 

@@ -1,9 +1,26 @@
 
 tm:
+  # comment
+  - token: comment.default
+    foreground: 75715E
   - token: comment.marker
     foreground: 75715E
+
+  - token: section.name
+    foreground: A6E22E
+    fontStyle: italic
+
+  # command
   - token: command.marker
     foreground: F92672
+  - token: command.keyword
+    foreground: F92672
+
+  # library
+  - token: library.package.name
+    foreground: E6DB74
+
+  # track
   - token: track.name
     foreground: E6DB74
 
