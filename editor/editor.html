@@ -28,16 +28,18 @@
     <script>
       const path = require('path');
 
-      function uriFromPath(_path) {
-        var pathName = path.resolve(_path).replace(/\\/g, '/')
-        if (pathName.length > 0 && pathName.charAt(0) !== '/') {
-          pathName = '/' + pathName
-        }
-        return encodeURI('file://' + pathName)
+      function uriFromPath(...paths) {
+        const result = path.resolve(path.join(...paths)).split(path.sep)
+          .map(name => name
+            .replace(/#/g, '%23')
+            .replace(/ /g, '%20')
+          ).join('/')
+        console.log('file:///' + result)
+        return 'file:///' + result
       }
 
       amdRequire.config({
-        baseUrl: uriFromPath(path.join(__dirname, '../node_modules/monaco-editor/min'))
+        baseUrl: uriFromPath(__dirname, '../node_modules/monaco-editor/min')
       })
 
       // workaround monaco-css not understanding the environment
@@ -46,8 +48,9 @@
       self.process.browser = true
     </script>
       
-    <nav class="navbar">铥铥播放器 Thulium Music</nav>
+    <div class="navbar">铥铥播放器 Thulium Music</div>
     <div id="app" class="window"></div>
     <script src="main.js" type="text/javascript"></script>
+    <div class="status">铥铥播放器 Thulium Music</div>
   </body>
 </html>

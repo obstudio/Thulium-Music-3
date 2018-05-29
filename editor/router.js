@@ -18,7 +18,8 @@ module.exports = new Router({
       name: 'TmEditor',
       component: TmEditor,
       props: {
-        width: '100%'
+        width: '100%',
+        height: '100%'
       }
     },
     {

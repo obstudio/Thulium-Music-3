@@ -49,7 +49,7 @@ function defineLanguage(scheme) {
   window.monaco.editor.defineTheme('tm', {
     base: 'vs-dark',
     inherit: true,
-    rules: require(scheme),
+    rules: scheme,
     colors: {}
   })
   window.monaco.editor.setTheme('tm')

@@ -1,6 +1,7 @@
 const TmLoading = require('./TmLoading')
 const { defineLanguage } = require('../../library/Editor')
 const TmMonacoEditor = require('./TmMonacoEditor')
+const theme = require(__dirname + '/../themes/black.json')
 
 module.exports = {
   name: 'TmEditor',
@@ -9,7 +10,7 @@ module.exports = {
     TmMonaco: () => ({
       component: new Promise((resolve, reject) => {
         amdRequire(['vs/editor/editor.main'], () => {
-          defineLanguage(__dirname + '../editor/themes/black.json')
+          defineLanguage(theme)
           resolve(TmMonacoEditor)
         })
       }),
@@ -45,7 +46,7 @@ module.exports = {
     }
   },
   props: ['width', 'height'],
-  template:`<div :style="{width, height}">
+  template:`<div id="editor">
     <!-- <el-dialog title="提示" :visible.sync="dialogVisible" width="60%">
       <span>为了提供沉浸式的编辑环境，我们请求为当前页面开启全屏模式。在全屏模式下，您随时可以通过F11按键退出。</span>
       <span slot="footer" class="dialog-footer">
