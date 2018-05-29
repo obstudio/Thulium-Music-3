@@ -9,7 +9,7 @@ module.exports = {
     TmMonaco: () => ({
       component: new Promise((resolve, reject) => {
         amdRequire(['vs/editor/editor.main'], () => {
-          defineLanguage('black')
+          defineLanguage(__dirname + '../editor/themes/black.json')
           resolve(TmMonacoEditor)
         })
       }),

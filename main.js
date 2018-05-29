@@ -52,8 +52,7 @@ function createMainWindow () {
     minWidth: 800,
     minHeight: 600,
     show: false,
-    frame: false,
-    transparent: true
+    frame: false
   })
 
   // and load the index.html of the app.
@@ -76,6 +75,8 @@ function createMainWindow () {
 // Some APIs can only be used after this event occurs.
 app.on('ready', async function() {
   const loadingWindow = new BrowserWindow({
+    width: 400,
+    height: 300,
     transparent: true,
     frame: false,
     resizable: false,

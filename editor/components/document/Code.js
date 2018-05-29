@@ -22,7 +22,7 @@ module.exports = {
         })
     } else {
       amdRequire(['vs/editor/editor.main'], () => {
-        defineLanguage('black')
+        defineLanguage(__dirname + '../../themes/black.json')
         window.monaco.editor
           .colorize(this.node.content, this.node.lang)
           .then(res => {

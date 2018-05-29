@@ -4,8 +4,6 @@ const VueI18n = require('vue-i18n')
 const router = require('./router')
 const extendVue = require('./TmVueExt')
 
-amdRequire.config({ paths: { 'vs': __dirname + '/../node_modules/monaco-editor/min/vs/' }})
-
 // Vue files can not be used
 // const Icon = require('vue-awesome/components/Icon')
 // require('node_modules/vue-awesome/dist/vue-awesome.js')
