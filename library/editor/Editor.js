@@ -1,9 +1,19 @@
-const Tokenizer = require('./token/Tokenizer')
-const Player = require('./player')
+const Tokenizer = require('../token/Tokenizer')
+const Player = require('../player')
+
+function getSyntax(source) {
+  const syntax = require(source)
+  for (const context in syntax) {
+    for (const item of syntax[context]) {
+      item.regex = new RegExp(item.regex)
+    }
+  }
+  return syntax
+}
 
 const LangDef = {
-  tokenizer: require('./Syntax'),
-  tokenPostfix: '.tm',
+  tokenizer: require('./syntax'),
+  tokenPostfix: getSyntax('./tm'),
   defaultToken: 'undef'
 }
 

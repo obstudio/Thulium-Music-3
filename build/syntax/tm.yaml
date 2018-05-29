@@ -1,0 +1,25 @@
+root: 
+  - include: comment # 注释
+  - include: command # 命令
+  - include: track   # 音轨
+
+comment:
+  - regex: ^//
+    action: 
+      token: comment.marker
+
+command:
+  - regex: ^#
+    action: 
+      token: command.marker
+      next: command.general
+
+command.general:
+  - regex: $
+    token: '@pop'
+
+track:
+  - regex: '.'
+    action:
+      token: track.name
+

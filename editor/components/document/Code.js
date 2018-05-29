@@ -1,5 +1,5 @@
-const { defineLanguage } = require('../../../library/Editor')
-const theme = require(__dirname + '/../../themes/black.json')
+const { defineLanguage } = require('../../../library/editor/Editor')
+const theme = require(__dirname + '/../../../themes/dark.json')
 
 module.exports = {
   name: 'Code',

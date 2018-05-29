@@ -1,0 +1,1 @@
+{"root":[{"include":"comment"},{"include":"command"},{"include":"track"}],"comment":[{"regex":"^//","action":{"token":"comment.marker"}}],"command":[{"regex":"^#","action":{"token":"command.marker","next":"command.general"}}],"command.general":[{"regex":"$","token":"@pop"}],"track":[{"regex":".","action":{"token":"track.name"}}]}
