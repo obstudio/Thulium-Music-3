@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+*.tm linguist-language=Thulium Music
+*.tml linguist-language=Thulium Music Library
+*.tmd linguist-language=Thulium Music Document

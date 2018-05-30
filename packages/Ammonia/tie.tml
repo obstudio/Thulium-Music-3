@@ -1,0 +1,89 @@
+// TM Ammonia Package - Tie Notations
+// Updated: 2018.5.9.
+
+# Notation
+
+class Tie {
+  constructor() {
+    this.syntax = {
+      default: [
+        FSM.item('Tie', /^\^/)
+      ]
+    }
+
+    this.attributes = {
+      Tie: {
+        detok: '^'
+      }
+    }
+
+    this.metaAttributes = {
+      LastNotes: {
+        initial: []
+      },
+      TiedNotes: {
+        initial: []
+      }
+    }
+  }
+
+  epiNote() {
+    if (this.Result.length > 0) {
+      if (!this.Meta.FirstNotes) {
+        this.Meta.FirstNotes = this.Result
+        if (this.Meta.After.Tie) {
+          this.Meta.TieLeft = true
+        }
+      }
+      const lastNotes = []
+      const tiedNotes = this.Meta.TiedNotes
+      if (this.Meta.After.Tie) {
+        this.Meta.After.Tie = false
+        tiedNotes.push(...this.Meta.LastNotes)
+      }
+      tiedNotes.forEach(lastNote => {
+        const index = this.Result.findIndex(note => {
+          return lastNote.Pitch === note.Pitch && lastNote.Volume === note.Volume
+        })
+        if (index === -1) return
+        const endTime = this.Result[index].StartTime + this.Result[index].Duration
+        if (lastNote.Duration < endTime - lastNote.StartTime) {
+          lastNote.Duration = endTime - lastNote.StartTime
+        }
+        lastNotes.push(lastNote)
+        this.Result.splice(index, 1)
+      })
+      this.Meta.TiedNotes = []
+      this.Meta.LastNotes = lastNotes.concat(this.Result)
+    }
+  }
+
+  proMerge(...subtracks) {
+    const lastNotes = [], tiedNotes = []
+    for (const subtrack of subtracks) {
+      if ((this.Meta.After.Tie || subtrack.Meta.TieLeft) && subtrack.Meta.FirstNotes) {
+        this.Meta.LastNotes.forEach(lastNote => {
+          const firstNote = subtrack.Meta.FirstNotes.find(note => {
+            return lastNote.Pitch === note.Pitch && lastNote.Volume === note.Volume
+          })
+          if (!firstNote) return
+          const endTime = firstNote.StartTime + firstNote.Duration + this.Meta.Duration
+          if (lastNote.Duration < endTime - lastNote.StartTime) {
+            lastNote.Duration = endTime - lastNote.StartTime
+          }
+          lastNotes.push(lastNote)
+          subtrack.Content.splice(subtrack.Content.indexOf(firstNote), 1)
+        })
+      }
+      if (subtrack.Meta.After.Tie) {
+        tiedNotes.push(...subtrack.Meta.LastNotes)
+      } else {
+        lastNotes.push(...subtrack.Meta.LastNotes)
+      }
+    }
+    this.Meta.LastNotes = lastNotes
+    this.Meta.TiedNotes = tiedNotes
+  }
+}
+
+# End
