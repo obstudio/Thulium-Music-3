@@ -19,7 +19,7 @@ module.exports = new Router({
       component: TmEditor,
       props: {
         width: '100%',
-        height: '100%'
+        height: '524px'
       }
     },
     {

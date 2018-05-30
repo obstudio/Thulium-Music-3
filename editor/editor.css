@@ -73,3 +73,38 @@
   transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1)
 }
 
+/* Style the tab */
+.tm-tab {
+  overflow: hidden;
+  border-style: none;
+  border-bottom: 1px solid #2c3e50;
+  background-color: #1e1e1e;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tm-tab button {
+  background-color: inherit;
+  color: #dddddd;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tm-tab button:hover {
+  background-color: #252525;
+}
+
+/* Create an active/current tablink class */
+.tm-tab button.active {
+  background-color: #2c3e50;
+}
+
+.topright {
+  float: right;
+  cursor: pointer;
+  font-size: 28px;
+}
