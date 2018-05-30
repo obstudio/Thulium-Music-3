@@ -30,8 +30,37 @@ tm:
   - token: track.instrument
     foreground: E6DB74
 
-  - token: undef
-    foreground: FF0000
+  # subtrack
+  - token: subtrack.curly
+    foreground: F92672
+    fontStyle: bold
+  - token: subtrack.repeat
+    foreground: AE81FF
+  - token: subtrack.repeat.marker
+    foreground: AE81FF
+
+  # function
+  - token: function.name
+    foreground: FD971F
+  - token: function.marker
+    foreground: FD971F
+
+  # string
+  - token: string.default
+    foreground: E6DB74
+  - token: string.marker
+    foreground: E6DB74
+  - token: string.escape
+    foreground: E6DB74
+
+  # number
+  - token: number.operator
+    foreground: F92672
+  - token: number.constant
+    foreground: AE81FF
+
+  - token: default
+    foreground: FFFFFF
   - token: comment
     foreground: 008800
 

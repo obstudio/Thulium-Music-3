@@ -141,19 +141,21 @@ function defineLanguage(scheme) {
       model.setEOL(0)
       const content = model.getValue(1)
       const index = new Thulium(content, { useFile: false }).Index
-      return [].concat(...index.sections.map((section, sIndex) => 
-        section.tracks.map((track, tIndex) => 
+      return [].concat(...index.sections.map((section, sIndex) => {
+        const result = section.tracks.map((track, tIndex) => 
           codeLensAt(model, index.base + track, `Section ${sIndex + 1} Track ${tIndex + 1}`, {
             id: commandId,
             title: `Track ${tIndex + 1}`,
             arguments: [content, sIndex, tIndex]
           })
-        ).unshift(codeLensAt(model, index.base + section.start, `Section ${sIndex + 1}`, {
+        )
+        result.unshift(codeLensAt(model, index.base + section.start, `Section ${sIndex + 1}`, {
           id: commandId,
           title: `Section ${sIndex + 1}`,
           arguments: [content, sIndex]
         }))
-      ))
+        return result
+      }))
     },
     resolveCodeLens(model, codeLens, token) {
       return codeLens

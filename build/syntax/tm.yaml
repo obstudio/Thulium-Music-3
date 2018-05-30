@@ -1,5 +1,5 @@
 postfix: .thulium
-default: undef
+default: default
 
 tokenizer:
   root: 
@@ -77,6 +77,9 @@ tokenizer:
       action:
         token: track.marker
         next: track.head
+    - - '.'
+      - '@rematch'
+      - track.content
 
   track.head:
     - - :?>
@@ -102,3 +105,100 @@ tokenizer:
     - - '[,>]'
       - '@rematch'
       - '@pop'
+    - include: track.content
+
+  track.content:
+    - - $\s*^
+      - default
+      - '@pop'
+    - - \}
+      - subtrack.curly
+      - '@pop'
+    - include: function.nonalias
+    - include: subtrack
+
+  subtrack:
+    - - \{\d+\*
+      - '@rematch'
+      - subtrack.head.repeat
+    - - \{
+      - '@rematch'
+      - subtrack.head
+
+  subtrack.head:
+    - - \{
+      - subtrack.curly
+      - track.content
+
+  subtrack.head.repeat:
+    - - \{
+      - subtrack.curly
+    - - \d+
+      - subtrack.repeat
+    - - \*
+      - subtrack.repeat.marker
+      - track.content
+
+  function.nonalias:
+    - - '[a-zA-Z][a-zA-Z\d]*\('
+      - '@rematch'
+      - function.minus
+    - - '\([a-zA-Z][a-zA-Z\d]*:'
+      - '@rematch'
+      - function.zero
+
+  function.minus:
+    - - '[a-zA-Z][a-zA-Z\d]*'
+      - function.name
+    - - \(
+      - function.marker
+      - function.argument
+
+  function.zero:
+    - - '[a-zA-Z][a-zA-Z\d]*'
+      - function.name
+    - - \(
+      - function.marker
+    - - ':'
+      - function.marker
+      - function.argument
+
+  function.argument:
+    - - '[\)\]]'
+      - function.marker
+      - '@pop'
+    - - ','
+      - function.marker
+    - include: expression
+    - include: subtrack
+    - - \[
+      - function.marker
+      - function.argument
+    - - \"
+      - string.marker
+      - string.inside
+
+  expression:
+    - - \)
+      - function.marker
+      - '@pop'
+    - - '[+\-*/]'
+      - number.operator
+    - - (\d+(\.\d+)?|\.\d+)
+      - number.constant
+    - include: function.nonalias
+    - - \(
+      - function.marker
+      - expression
+
+  string.inside:
+    - - \"
+      - string.marker
+      - '@pop'
+    - - \\[\s\S]
+      - string.escape
+    - - '[\s\S]'
+      - string.default
+
+
+
