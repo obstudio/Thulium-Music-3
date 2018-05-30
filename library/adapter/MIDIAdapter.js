@@ -3,7 +3,7 @@
  * @implements {Tm.Adapter}
  */
 class MIDIAdapter {
-  adapt(parsedSection) {
+  static adapt(parsedSection) {
     let prevTime = 0
     const trackMap = {}
     for (const section of parsedSection) {

@@ -2,9 +2,8 @@ const audioLibDir = 'https://jjyyxx.github.io/webaudiofontdata/data/'
 const defaultInstr = 'Piano'
 const instrDict = require('./config/Instrument.json')
 const drumDict = require('./config/Percussion.json')
-const Tokenizer = require('./token/Tokenizer')
+const Thulium = require('./Thulium')
 const WafPlayer = require('./waf/player')
-const Parser = require('./parser/Parser')
 const MIDIAdapter = require('./adapter/MIDIAdapter')
 window.fonts = window.fonts || {}
 
@@ -31,11 +30,9 @@ function audioLibVar(instr) {
 }
 
 class Player {
-  constructor(value) {
+  constructor(source) {
     // this.value = value
-    const result = typeof value === 'string'
-      ? new MIDIAdapter().adapt(new Parser(new Tokenizer(value, ()=>{}, {}).tokenize()).parse())
-      : new MIDIAdapter().adapt(new Parser(value).parse())
+    const result = new Thulium(source).adapt()
     this.tracks = result.tracks
     this.time = result.time
     this.dueTime = undefined
@@ -45,8 +42,8 @@ class Player {
 
   play() {
     const instrNames = this.tracks.map((track) => track.Instrument)
-    Promise.all(instrNames.map((instr) => this.player.loader.load(this.ctx, audioLibFile(instr), audioLibVar(instr)))).then(
-      (instrs) => {
+    Promise.all(instrNames.map((instr) => this.player.loader.load(this.ctx, audioLibFile(instr), audioLibVar(instr))))
+      .then((instrs) => {
         const initialTime = this.ctx.currentTime
         this.dueTime = initialTime + this.time
         for (var i = 0, tracksLength = this.tracks.length; i < tracksLength; i++) {
@@ -65,8 +62,7 @@ class Player {
             }
           }
         }
-      }
-    )
+      })
   }
 
   suspend() {
