@@ -6,10 +6,6 @@ tm:
   - token: comment.marker
     foreground: 75715E
 
-  - token: section.name
-    foreground: A6E22E
-    fontStyle: italic
-
   # command
   - token: command.marker
     foreground: F92672
@@ -17,11 +13,21 @@ tm:
     foreground: F92672
 
   # library
-  - token: library.package.name
+  - token: library.package
     foreground: E6DB74
 
+  # section
+  - token: section.name
+    foreground: A6E22E
+    fontStyle: italic
+
   # track
+  - token: track.marker
+    foreground: A6E22E
   - token: track.name
+    foreground: A6E22E
+    fontStyle: italic
+  - token: track.instrument
     foreground: E6DB74
 
   - token: undef

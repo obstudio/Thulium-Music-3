@@ -1,20 +1,36 @@
 const Tokenizer = require('../token/Tokenizer')
 const Player = require('../player')
 
-function getSyntax(source) {
+function getLanguageDefination(source) {
   const syntax = require(source)
-  for (const context in syntax) {
-    for (const item of syntax[context]) {
-      item.regex = new RegExp(item.regex)
-    }
+  const result = {}
+  for (const context in syntax.tokenizer) {
+    result[context] = syntax.tokenizer[context].map(item => {
+      if (item instanceof Array) {
+        item = {
+          regex: item[0],
+          action: {
+            token: item[1],
+            next: item[2]
+          }
+        }
+      }
+      if (item.regex) {
+        const match = item.regex.match(/^(\(\?[i]\))+/)
+        if (match) {
+          const modifier = item.regex[0].split('').filter(c => ['i'].includes(c)).join('')
+          const remain = item.regex.slice(match[0].length)
+          item.regex = new RegExp(remain, modifier)
+        }
+      }
+      return item
+    })
   }
-  return syntax
-}
-
-const LangDef = {
-  tokenizer: getSyntax('./tm'),
-  tokenPostfix: '.tm',
-  defaultToken: 'undef'
+  return {
+    tokenizer: result,
+    tokenPostfix: syntax.postfix,
+    defaultToken: syntax.default
+  }
 }
 
 let commandId = ''
@@ -63,7 +79,7 @@ function defineLanguage(scheme) {
     colors: {}
   })
   window.monaco.editor.setTheme('tm')
-  window.monaco.languages.setMonarchTokensProvider('tm', LangDef)
+  window.monaco.languages.setMonarchTokensProvider('tm', getLanguageDefination('./tm'))
   window.monaco.languages.registerDefinitionProvider('tm', {
     provideDefinition(model, position, token) {
       const matches = model.findMatches('@[A-Za-z0-9]+', false, true, false, '', true)
