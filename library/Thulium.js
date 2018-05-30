@@ -5,7 +5,7 @@ const Tokenizer = require('./token/Tokenizer');
 const Linter = require('./linter/Linter');
 const Adapter = require('./adapter/Adapter')
 
-const packagePath = __dirname + '/../package';
+const packagePath = __dirname + '/../packages';
 const packageInfo = require(packagePath + '/index.json');
 const library = { Path: packagePath, ...packageInfo };
 
@@ -61,7 +61,7 @@ class Thulium {
     return this.MusicClips;
   }
 
-  adapt(form, spec) {
+  adapt(form = 'MIDI', spec) {
     return new Adapter(this.parse(), spec).adapt(form)
   }
 
@@ -69,14 +69,14 @@ class Thulium {
     return new Linter(this.Tokenizer, this.Syntax).detokenize();
   }
 
-  attributes(attrs) {
+  attributes(...attrs) {
     const result = {};
     attrs.forEach(attr => result[attr] = this[attr]);
     return result;
   }
 
   get Tokenizer() {
-    return this.attributes(['Comment', 'Library', 'Sections', 'Warnings']);
+    return this.attributes('Comment', 'Library', 'Sections', 'Warnings', 'Index');
   }
 
   get information() {

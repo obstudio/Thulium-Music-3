@@ -4,7 +4,6 @@ const instrDict = require('./config/Instrument.json')
 const drumDict = require('./config/Percussion.json')
 const Thulium = require('./Thulium')
 const WafPlayer = require('./waf/player')
-const MIDIAdapter = require('./adapter/MIDIAdapter')
 window.fonts = window.fonts || {}
 
 function audioLibFile(instr) {
@@ -30,9 +29,8 @@ function audioLibVar(instr) {
 }
 
 class Player {
-  constructor(source) {
-    // this.value = value
-    const result = new Thulium(source).adapt()
+  constructor(source, spec) {
+    const result = new Thulium(source).adapt('MIDI', spec)
     this.tracks = result.tracks
     this.time = result.time
     this.dueTime = undefined

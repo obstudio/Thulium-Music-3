@@ -17,17 +17,17 @@ module.exports = {
     this.player = undefined
     this.showEditor()
     this.tabs.push({
-        title: 'foo',
-        model: window.monaco.editor.createModel(
-            'foo',
-            'tm'
-        )
+      title: 'foo',
+      model: window.monaco.editor.createModel(
+        'foo',
+        'tm'
+      )
     }, {
-        title: 'bar',
-        model: window.monaco.editor.createModel(
-            'bar',
-            'tm'
-        )
+      title: 'bar',
+      model: window.monaco.editor.createModel(
+        'bar',
+        'tm'
+      )
     })
   },
   methods: {
@@ -37,21 +37,21 @@ module.exports = {
     },
     addTab() {
       this.tabs.push({
-          title: 'New',
-          model: window.monaco.editor.createModel(
-              '',
-              'tm'
-          )
+        title: 'New',
+        model: window.monaco.editor.createModel(
+          '',
+          'tm'
+        )
       })
       this.switchModel(this.tabs.length - 1)
     },
     closeTab(index) {
-        this.tabs.splice(index, 1)
-        if (index === this.activeIndex) {
-            this.switchModel(0)
-        } else if (index <= this.activeIndex){
-            this.activeIndex -= 1
-        }
+      this.tabs.splice(index, 1)
+      if (index === this.activeIndex) {
+        this.switchModel(0)
+      } else if (index <= this.activeIndex){
+        this.activeIndex -= 1
+      }
     },
     showEditor() {
       // const model = window.monaco.editor.createModel(

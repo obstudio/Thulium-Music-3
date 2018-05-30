@@ -5,11 +5,12 @@ class TmAdapter {
       return
     }
     this.source = []
+    if (!(spec instanceof Array)) spec = [spec]
     for (const section of spec) {
       if (section instanceof Object) {
         const tracks = []
         for (const track of section.Tracks) {
-          tracks.push(data[section.Index].Tracks[track])
+          tracks.push(...data[section.Index].Tracks.filter(clip => clip.Index = track))
         }
         this.source.push({
           Tracks: tracks,
@@ -52,7 +53,7 @@ class TmAdapter {
     return tracks
   }
 
-  adapt(form = 'MIDI') {
+  adapt(form) {
     if (form in TmAdapter.Library) {
       return TmAdapter.Library[form].adapt(this.source)
     } else {

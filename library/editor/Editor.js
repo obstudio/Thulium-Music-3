@@ -1,5 +1,5 @@
-const Tokenizer = require('../token/Tokenizer')
 const Player = require('../player')
+const Thulium = require('../Thulium')
 
 function getLanguageDefination(source) {
   const syntax = require(source)
@@ -37,28 +37,24 @@ let commandId = ''
 function registerPlayCommand(editor) {
   commandId = editor.addCommand(window.monaco.KeyCode.NumLock, (_, result, index, trackIndex) => {
     if (trackIndex === undefined) {
-      let secIndex = 0
-      new Player({
-        Library: result.Library,
-        Sections: result.Sections.filter((sec) => sec.Type !== 'Section' || (secIndex++ === index))
-      }).play()
+      new Player(result, index).play()
     } else {
-      let secIndex = 0
-      new Player({
-        Library: result.Library,
-        Sections: result.Sections.filter((sec) => sec.Type !== 'Section' || (secIndex++ === index)).map((sec) => {
-          if (sec.Type === 'Section') {
-            return {
-              Type: 'Section',
-              Settings: sec.Settings,
-              Tracks: [sec.Tracks[trackIndex]]
-            }
-          }
-          return sec
-        })
-      }).play()
+      new Player(result, {index, Tracks: trackIndex}).play()
     }
   }, '')
+}
+
+function codeLensAt(model, line, id, command) {
+  const position = model.getPositionAt(line)
+  return {
+    range: {
+      startLineNumber: position.lineNumber,
+      startColumn: position.column,
+      endLineNumber: position.lineNumber,
+      endColumn: position.column
+    },
+    id, command
+  }
 }
 
 let defined = false
@@ -144,44 +140,20 @@ function defineLanguage(scheme) {
     provideCodeLenses(model, token) {
       model.setEOL(0)
       const content = model.getValue(1)
-      const tokenizer = new Tokenizer(content)
-      tokenizer.tokenize()
-      return tokenizer.sectionIndex.map((ind, i) => {
-        const position = model.getPositionAt(tokenizer.baseIndex + ind)
-        return {
-          range: {
-            startLineNumber: position.lineNumber,
-            startColumn: position.column,
-            endLineNumber: position.lineNumber,
-            endColumn: position.column
-          },
-          id: `Section ${i + 1}`,
-          command: {
+      const index = new Thulium(content, { useFile: false }).Index
+      return [].concat(...index.sections.map((section, sIndex) => 
+        section.tracks.map((track, tIndex) => 
+          codeLensAt(model, index.base + track, `Section ${sIndex + 1} Track ${tIndex + 1}`, {
             id: commandId,
-            title: `Section ${i + 1}`,
-            arguments: [tokenizer.result, i]
-          }
-        }
-      }).concat(...tokenizer.trackIndex.map((tracks, index) => {
-        const base = tokenizer.baseIndex + tokenizer.sectionIndex[index]
-        return tracks.map((track, i) => {
-          const position = model.getPositionAt(track + base)
-          return {
-            range: {
-              startLineNumber: position.lineNumber,
-              startColumn: position.column,
-              endLineNumber: position.lineNumber,
-              endColumn: position.column
-            },
-            id: `Section ${index} Track ${i + 1}`,
-            command: {
-              id: commandId,
-              title: `Track ${i + 1}`,
-              arguments: [tokenizer.result, index, i]
-            }
-          }
-        })
-      }))
+            title: `Track ${tIndex + 1}`,
+            arguments: [content, sIndex, tIndex]
+          })
+        ).unshift(codeLensAt(model, index.base + section.start, `Section ${sIndex + 1}`, {
+          id: commandId,
+          title: `Section ${sIndex + 1}`,
+          arguments: [content, sIndex]
+        }))
+      ))
     },
     resolveCodeLens(model, codeLens, token) {
       return codeLens
