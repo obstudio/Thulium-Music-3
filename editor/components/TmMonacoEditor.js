@@ -8,24 +8,63 @@ module.exports = {
     TmLoading
   },
   data() {
-    return {}
+    return {
+      tabs: [],
+      activeIndex: 0
+    }
   },
   mounted() {
     this.player = undefined
     this.showEditor()
+    this.tabs.push({
+        title: 'foo',
+        model: window.monaco.editor.createModel(
+            'foo',
+            'tm'
+        )
+    }, {
+        title: 'bar',
+        model: window.monaco.editor.createModel(
+            'bar',
+            'tm'
+        )
+    })
   },
   methods: {
+    switchModel(index) {
+      this.activeIndex = index
+      this.editor.setModel(this.tabs[index].model)
+    },
+    addTab() {
+      this.tabs.push({
+          title: 'New',
+          model: window.monaco.editor.createModel(
+              '',
+              'tm'
+          )
+      })
+      this.switchModel(this.tabs.length - 1)
+    },
+    closeTab(index) {
+        this.tabs.splice(index, 1)
+        if (index === this.activeIndex) {
+            this.switchModel(0)
+        } else if (index <= this.activeIndex){
+            this.activeIndex -= 1
+        }
+    },
     showEditor() {
-      const model = window.monaco.editor.createModel(
-        localStorage.getItem('lastText'),
-        'tm'
-      )
+      // const model = window.monaco.editor.createModel(
+      //   localStorage.getItem('lastText'),
+      //   'tm'
+      // )
       const editor = window.monaco.editor.create(this.$el, {
-        model,
+        model: null,
         language: 'tm',
         theme: 'tm',
         folding: false
       })
+      this.editor = editor
       registerPlayCommand(editor)
       editor.addAction({
         id: 'tm-save',
@@ -134,5 +173,14 @@ module.exports = {
     }
   },
   props: ['width', 'height'],
-  template: `<div :style="{width, height}"></div>`
+  template: `
+    <div :style="{width, height}">
+        <div class="tm-tab">
+            <button v-for="(tab, index) in tabs" :key="index" @click="switchModel(index)" :class="{active: index === activeIndex}">
+                {{tab.title}}
+                <span @click.stop="closeTab(index)">&nbsp;X</span>
+            </button>
+            <span @click="addTab" class="topright">+</span>
+        </div>
+    </div>`
 }
