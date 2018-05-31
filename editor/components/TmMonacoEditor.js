@@ -1,6 +1,6 @@
 const FileSaver = require('file-saver')
 const TmLoading = require('./TmLoading')
-const { registerPlayCommand } = require('../../library/editor/Editor')
+const {registerPlayCommand} = require('../../library/editor/Editor')
 
 module.exports = {
   name: 'TmMonacoEditor',
@@ -10,7 +10,8 @@ module.exports = {
   data() {
     return {
       tabs: [],
-      activeIndex: 0
+      activeIndex: 0,
+      isDoc: false
     }
   },
   mounted() {
@@ -21,19 +22,27 @@ module.exports = {
       model: window.monaco.editor.createModel(
         'foo',
         'tm'
-      )
+      ),
+      isDoc: false
     }, {
       title: 'bar',
       model: window.monaco.editor.createModel(
         'bar',
         'tm'
-      )
+      ),
+      isDoc: true
     })
   },
   methods: {
-    switchModel(index) {
+    switchTab(index) {
+      const tab = this.tabs[index]
+      this.isDoc = tab.isDoc
       this.activeIndex = index
-      this.editor.setModel(this.tabs[index].model)
+      if (tab.isDoc) {
+
+      } else {
+        this.editor.setModel(this.tabs[index].model)
+      }
     },
     addTab() {
       this.tabs.push({
@@ -41,15 +50,16 @@ module.exports = {
         model: window.monaco.editor.createModel(
           '',
           'tm'
-        )
+        ),
+        isDoc: false
       })
-      this.switchModel(this.tabs.length - 1)
+      this.switchTab(this.tabs.length - 1)
     },
     closeTab(index) {
       this.tabs.splice(index, 1)
       if (index === this.activeIndex) {
-        this.switchModel(0)
-      } else if (index <= this.activeIndex){
+        this.switchTab(0)
+      } else if (index <= this.activeIndex) {
         this.activeIndex -= 1
       }
     },
@@ -58,7 +68,7 @@ module.exports = {
       //   localStorage.getItem('lastText'),
       //   'tm'
       // )
-      const editor = window.monaco.editor.create(this.$el, {
+      const editor = window.monaco.editor.create(this.$el.children[2], {
         model: null,
         language: 'tm',
         theme: 'tm',
@@ -86,7 +96,7 @@ module.exports = {
           } else {
             name = 'new_file'
           }
-          const blob = new Blob([value], { type: 'text/plain;charset=utf-8' })
+          const blob = new Blob([value], {type: 'text/plain;charset=utf-8'})
           FileSaver.saveAs(blob, `${name}.sml`)
         }
       })
@@ -169,18 +179,22 @@ module.exports = {
         }
       })
       this.$el.addEventListener('dragover', e => e.preventDefault())
-      editor.updateOptions({ mouseWheelZoom: true })
+      editor.updateOptions({mouseWheelZoom: true})
     }
   },
   props: ['width', 'height'],
-  template: `
-    <div :style="{width, height}">
-        <div class="tm-tab">
-            <button v-for="(tab, index) in tabs" :key="index" @click="switchModel(index)" :class="{active: index === activeIndex}">
-                {{tab.title}}
-                <span @click.stop="closeTab(index)">&nbsp;X</span>
-            </button>
-            <span @click="addTab" class="topright">+</span>
-        </div>
-    </div>`
+  template: `<div :style="{width, height}">
+    <div class="tm-tab">
+        <button v-for="(tab, index) in tabs" :key="index" @click="switchTab(index)"
+                :class="{active: index === activeIndex}">
+            {{tab.title}}
+            <span @click.stop="closeTab(index)">&nbsp;X</span>
+        </button>
+        <span @click="addTab" class="topright">+</span>
+    </div>
+    <div :style="{width, height}" v-show="isDoc">
+        <!-- Document here -->
+    </div>
+    <div :style="{width, height}" v-show="!isDoc"></div>
+</div>`
 }
