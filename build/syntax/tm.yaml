@@ -1,59 +1,61 @@
 postfix: .thulium
 default: default
 
+packages: 
+  - ammonia
+  - benzene
+
+variables:
+  span: \d+(~\d+)?
+
 tokenizer:
   root: 
-    - include: comment # 注释
-    - include: command # 命令
-    - include: track   # 音轨
+    - comment # 注释
+    - command # 命令
+    - track   # 音轨
 
   comment:
-    - regex: ^//
-      action:
-        cases:
-          '@eos':
-            token: comment.marker
-          '@default':
-            token: comment.marker
-            next: comment.line
+    # 行注释
+    - - ^//
+      - '@eos':
+          - comment.marker
+        '@default':
+          - comment.marker
+          - comment.line
 
   comment.line:
     # 分割线中央的字段被认为是乐章名
-    - regex: -{3,}.*[^-]-{3,}$
-      action:
-        token: '@rematch'
-        switchTo: comment.section
+    - - -{3,}.*[^-]-{3,}$
+      - '@rematch'
+      - - comment.section
     # 普通的注释内容
     - - .*$
-      - comment.default
+      - comment
       - '@pop'
 
   comment.section:
-    - regex: -{3,}
-      action:
-        cases:
-          '@eos': 
-            token: comment.marker
-            next: '@pop'
-          '@default':
-            token: comment.marker
+    - - -{3,}
+      - '@eos': 
+          - comment.marker
+          - '@pop'
+        '@default':
+          - comment.marker
     - - .*[^-]
       - section.name
 
   command:
+    # 命令
     - - ^# *
       - command.marker
       - command.general
 
   command.general:
-    - regex: (?i)end *$
-      action:
-        token: command.keyword
-        next: '@pop'
-    - regex: (?i)include *
-      action:
-        token: command.keyword
-        switchTo: library.include
+    - - (?i)end *$
+      - command.keyword
+      - '@pop'
+    - - (?i)include *
+      - command.keyword
+      - - library.include
     - regex: (?i)(function|notation) *
       action: 
         token: command.keyword
@@ -73,10 +75,9 @@ tokenizer:
         nextEmbedded: '@pop'
 
   track:
-    - regex: <:?(?=[a-zA-Z\s])
-      action:
-        token: track.marker
-        next: track.head
+    - - <:?(?=[a-zA-Z\s])
+      - track.marker
+      - track.head
     - - '.'
       - '@rematch'
       - track.content
@@ -105,17 +106,55 @@ tokenizer:
     - - '[,>]'
       - '@rematch'
       - '@pop'
-    - include: track.content
+    - track.content
 
   track.content:
-    - - $\s*^
+    - - $\s+^\s*$
       - default
       - '@pop'
     - - \}
       - subtrack.curly
       - '@pop'
-    - include: function.nonalias
-    - include: subtrack
+    - track.comment
+    - function.nonalias
+    - subtrack
+    - - '@(?=[a-zA-Z0-9]+)'
+      - track.macro
+      - track.macro.inside
+    - - '!'
+      - track.operator
+    - - \\(?=({{span}}(,{{span}})*)?:)
+      - subtrack.barline
+      - subtrack.volta
+    - - '[\\\|/]'
+      - subtrack.barline
+    - note
+  
+  track.macro.inside:
+    - - \w+
+      - track.name
+      - '@pop'
+
+  subtrack.volta:
+    - - ':'
+      - subtrack.repeat.marker
+      - '@pop'
+    - - ','
+      - subtrack.repeat.marker
+    - - '{{span}}'
+      - subtrack.repeat
+
+  track.comment:
+    - - <\*
+      - comment.marker
+      - track.comment.inside
+
+  track.comment.inside:
+    - - \*>
+      - comment.marker
+      - '@pop'
+    - - '[\s\S]'
+      - comment
 
   subtrack:
     - - \{\d+\*
@@ -139,6 +178,41 @@ tokenizer:
       - subtrack.repeat.marker
       - track.content
 
+  note:
+    - - '[\[0-7%x]'
+      - '@rematch'
+      - note.inside
+
+  note.inside:
+    - - \[
+      - note.square
+      - pitch
+    - pitch
+    - - "[#',b]"
+      - note.pitop-chord
+    - - ([>:._=\-`])
+      - note.durop-stac-volop
+    - - '.'
+      - '@rematch'
+      - '@pop'
+
+  pitch:
+    - - \]
+      - note.square
+      - '@pop'
+    - - '[0-7%x]'
+      - note.degree
+      - pitch.after
+
+  pitch.after:
+    - - "[#',a-wyzA-Z]"
+      - note.pitop-chord
+    - - '[:>]'
+      - note.durop-stac-volop
+    - - '.'
+      - '@rematch'
+      - '@pop'
+
   function.nonalias:
     - - '[a-zA-Z][a-zA-Z\d]*\('
       - '@rematch'
@@ -152,7 +226,7 @@ tokenizer:
       - function.name
     - - \(
       - function.marker
-      - function.argument
+      - - function.argument
 
   function.zero:
     - - '[a-zA-Z][a-zA-Z\d]*'
@@ -161,7 +235,7 @@ tokenizer:
       - function.marker
     - - ':'
       - function.marker
-      - function.argument
+      - - function.argument
 
   function.argument:
     - - '[\)\]]'
@@ -169,8 +243,9 @@ tokenizer:
       - '@pop'
     - - ','
       - function.marker
-    - include: expression
-    - include: subtrack
+    - track.comment
+    - expression
+    - subtrack
     - - \[
       - function.marker
       - function.argument
@@ -186,7 +261,7 @@ tokenizer:
       - number.operator
     - - (\d+(\.\d+)?|\.\d+)
       - number.constant
-    - include: function.nonalias
+    - function.nonalias
     - - \(
       - function.marker
       - expression
