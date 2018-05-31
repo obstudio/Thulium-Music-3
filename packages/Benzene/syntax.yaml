@@ -1,0 +1,6 @@
+prefix: benzene
+
+notation:
+  - - (\$~|\?=|\?:)
+    - function.alias
+
