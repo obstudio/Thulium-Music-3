@@ -107,6 +107,10 @@ class TmExtension extends TmLanguage {
         }
       })
       result[prefix + '.' + index] = alias.slice(1).map(item => this.transfer(item))
+      result[prefix + '.' + index].unshift(
+        { regex: /\(/, action: { token: 'function.alias' } },
+        { regex: /\)/, action: { token: 'function.alias', next: '@pop' } }
+      )
     }
     return result
   }

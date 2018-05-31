@@ -1,5 +1,5 @@
 const { defineLanguage } = require('../../../library/editor/Editor')
-const theme = require(__dirname + '/../../../themes/dark.json').tm
+const theme = require('../../../themes/Theme').tokenizer
 
 module.exports = {
   name: 'Code',
