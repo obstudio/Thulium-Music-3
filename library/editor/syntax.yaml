@@ -50,13 +50,13 @@ tokenizer:
       - command.general
 
   command.general:
-    - - (?i)end *$
+    - - '[Ee]nd *$'
       - command.keyword
       - '@pop'
-    - - (?i)include *
+    - - '[Ii]nclude *'
       - command.keyword
       - - library.include
-    - - (?i)(function|notation) *
+    - - ([Ff]unction|[Nn]otation) *
       - command.keyword
       - - library.code
       - text/javascript
@@ -162,7 +162,7 @@ tokenizer:
   subtrack.head:
     - - \{
       - subtrack.curly
-      - track.content
+      - - track.content
 
   subtrack.head.repeat:
     - - \{
@@ -171,7 +171,7 @@ tokenizer:
       - subtrack.repeat
     - - \*
       - subtrack.repeat.marker
-      - track.content
+      - - track.content
 
   note:
     - - '[\[0-7%x]'

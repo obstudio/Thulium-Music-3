@@ -4,11 +4,11 @@ const Language = require('./Language')
 
 let commandId = ''
 function registerPlayCommand(editor) {
-  commandId = editor.addCommand(window.monaco.KeyCode.NumLock, (_, result, index, trackIndex) => {
-    if (trackIndex === undefined) {
-      new Player(result, index).play()
+  commandId = editor.addCommand(window.monaco.KeyCode.NumLock, (_, result, Index, Tracks) => {
+    if (Tracks === undefined) {
+      new Player(result, Index).play()
     } else {
-      new Player(result, {index, Tracks: trackIndex}).play()
+      new Player(result, { Index, Tracks }).play()
     }
   }, '')
 }
@@ -26,13 +26,9 @@ function codeLensAt(model, line, id, command) {
   }
 }
 
-let defined = false
+let $defined = false
 function defineLanguage(scheme) {
-  if (!defined) {
-    defined = true
-  } else {
-    return
-  }
+  if ($defined) return
   window.monaco.languages.register({
     id: 'tm',
     extensions: ['tm']
@@ -63,6 +59,7 @@ function defineLanguage(scheme) {
       }
     }
   })
+
   window.monaco.languages.registerCompletionItemProvider('tm', {
     triggerCharacters: ['<', '@'],
     provideCompletionItems(model, position, token) {
@@ -82,14 +79,7 @@ function defineLanguage(scheme) {
           }
         ]
       } else if (char === '@') {
-        const matches = model.findMatches(
-          '<\\*([A-Za-z0-9]+)\\*>',
-          false,
-          true,
-          false,
-          '',
-          true
-        )
+        const matches = model.findMatches('<\\*([A-Za-z0-9]+)\\*>', false, true, false, '', true)
         return matches.map(match => ({
           label: match.matches[1],
           kind: window.monaco.languages.CompletionItemKind.Variable,
@@ -105,24 +95,31 @@ function defineLanguage(scheme) {
       ]
     }
   })
+
   window.monaco.languages.registerCodeLensProvider('tm', {
     provideCodeLenses(model, token) {
       model.setEOL(0)
       const content = model.getValue(1)
-      const index = new Thulium(content, { useFile: false }).Index
+      const song = new Thulium(content, { useFile: false })
+      const index = song.Index
       return [].concat(...index.sections.map((section, sIndex) => {
-        const result = section.tracks.map((track, tIndex) => 
-          codeLensAt(model, index.base + section.start + track, `Section ${sIndex + 1} Track ${tIndex + 1}`, {
-            id: commandId,
-            title: `Track ${tIndex + 1}`,
-            arguments: [content, sIndex, tIndex]
-          })
-        )
-        result.unshift(codeLensAt(model, index.base + section.start, `Section ${sIndex + 1}`, {
+        if (song.parse().every(sect => sect.Index !== sIndex)) return []
+        const sectionIndex = song.parse().findIndex(sect => sect.Index === sIndex)
+        const sectionData = song.parse()[sectionIndex].Tracks
+        const result = [codeLensAt(model, index.base + section.start, `Section ${sIndex + 1}`, {
           id: commandId,
           title: `Section ${sIndex + 1}`,
-          arguments: [content, sIndex]
-        }))
+          arguments: [ content, sectionIndex ]
+        })]
+        section.tracks.forEach((track, tIndex) => {
+          if (sectionData.every(trac => trac.Index !== tIndex)) return
+          const trackIndex = sectionData.findIndex(trac => trac.Index === tIndex)
+          result.push(codeLensAt(model, index.base + track, `Section ${sIndex + 1} Track ${tIndex + 1}`, {
+            id: commandId,
+            title: `Track ${tIndex + 1}`,
+            arguments: [ content, sectionIndex, [ trackIndex ] ]
+          }))
+        })
         return result
       }))
     },
@@ -130,6 +127,7 @@ function defineLanguage(scheme) {
       return codeLens
     }
   })
+  $defined = true
 }
 
 module.exports = { defineLanguage, registerPlayCommand }

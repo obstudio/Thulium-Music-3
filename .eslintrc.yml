@@ -17,8 +17,7 @@ rules:
   linebreak-style:
     - error
     - windows
-  quotes:
-    - error
-    - single
+  no-undef:
+    - warn
   no-unused-vars:
     - warn

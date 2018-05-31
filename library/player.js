@@ -30,7 +30,7 @@ function audioLibVar(instr) {
 
 class Player {
   constructor(source, spec) {
-    const result = new Thulium(source).adapt('MIDI', spec)
+    const result = new Thulium(source, { useFile: false }).adapt('MIDI', spec)
     this.tracks = result.tracks
     this.time = result.time
     this.dueTime = undefined

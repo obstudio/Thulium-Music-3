@@ -71,15 +71,9 @@ class TmLanguage {
 
   toRegExp(string) {
     for (const name in this.source.variables) {
-      string = string.replace('{{' + name + '}}', this.source.variables[name])
+      string = string.replace(new RegExp(`{{${name}}}`, 'g'), this.source.variables[name])
     }
-    const match = string.match(/^(\(\?[i]\))+/)
-    if (match) {
-      const modifier = string[0].split('').filter(c => ['i'].includes(c)).join('')
-      const remain = string.slice(match[0].length)
-      string = new RegExp(remain, modifier)
-    }
-    return string
+    return new RegExp(string)
   }
 }
 

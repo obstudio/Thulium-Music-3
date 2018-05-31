@@ -9,8 +9,12 @@ class TmAdapter {
     for (const section of spec) {
       if (section instanceof Object) {
         const tracks = []
-        for (const track of section.Tracks) {
-          tracks.push(...data[section.Index].Tracks.filter(clip => clip.Index = track))
+        if (!section.Tracks) {
+          tracks.push(...data[section.Index].Tracks)
+        } else {
+          for (const track of section.Tracks) {
+            tracks.push(...data[section.Index].Tracks.filter(clip => clip.Index = track))
+          }
         }
         this.source.push({
           Tracks: tracks,
@@ -55,7 +59,7 @@ class TmAdapter {
 
   adapt(form) {
     if (form in TmAdapter.Library) {
-      return TmAdapter.Library[form].adapt(this.source)
+      return TmAdapter.Library[form].adapt(this.mergeSections(this.source))
     } else {
       throw new Error('adaptation library not found!')
     }
