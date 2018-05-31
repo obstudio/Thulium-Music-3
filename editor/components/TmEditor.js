@@ -30,7 +30,7 @@ module.exports = {
   props: ['width', 'height'],
   template:`<div id="editor">
     <transition mode="in-out">
-      <tm-monaco :width="width" height="480px"></tm-monaco>
+      <tm-monaco :width="width" :height="height"></tm-monaco>
     </transition>
 </div>`
 }

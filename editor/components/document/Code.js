@@ -14,22 +14,32 @@ module.exports = {
       required: true
     }
   },
+  watch: {
+    node(newNode) {
+      this.render(newNode)
+    }
+  },
   mounted() {
-    if ('monaco' in window) {
-      window.monaco.editor
-        .colorize(this.node.content, this.node.lang)
-        .then(res => {
-          this.res = res
-        })
-    } else {
-      amdRequire(['vs/editor/editor.main'], () => {
-        defineLanguage(theme)
+    this.render(this.node)
+  },
+  methods: {
+    render(node) {
+      if ('monaco' in window) {
         window.monaco.editor
-          .colorize(this.node.content, this.node.lang)
+          .colorize(node.content, node.lang)
           .then(res => {
             this.res = res
           })
-      })
+      } else {
+        amdRequire(['vs/editor/editor.main'], () => {
+          defineLanguage(theme)
+          window.monaco.editor
+            .colorize(node.content, node.lang)
+            .then(res => {
+              this.res = res
+            })
+        })
+      }
     }
   },
   template: `<div v-html="res"></div>`

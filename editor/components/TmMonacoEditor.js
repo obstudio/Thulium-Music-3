@@ -1,20 +1,22 @@
 const FileSaver = require('file-saver')
-const TmLoading = require('./TmLoading')
+const TmDocContainer = require('./TmDocContainer')
 const {registerPlayCommand} = require('../../library/editor/Editor')
 
 module.exports = {
   name: 'TmMonacoEditor',
   components: {
-    TmLoading
+    TmDocContainer
   },
   data() {
     return {
       tabs: [],
       activeIndex: 0,
-      isDoc: false
+      isDoc: false,
+      remainHeight: 0
     }
   },
   mounted() {
+    this.remainHeight = this.$el.clientHeight - 44
     this.player = undefined
     this.showEditor()
     this.tabs.push({
@@ -42,22 +44,27 @@ module.exports = {
 
       } else {
         this.editor.setModel(this.tabs[index].model)
+        this.$nextTick(() => {
+          this.editor.layout()
+        })
       }
     },
-    addTab() {
+    addTab(isDoc) {
       this.tabs.push({
         title: 'New',
         model: window.monaco.editor.createModel(
           '',
           'tm'
         ),
-        isDoc: false
+        isDoc: isDoc
       })
       this.switchTab(this.tabs.length - 1)
     },
     closeTab(index) {
       this.tabs.splice(index, 1)
-      if (index === this.activeIndex) {
+      if (this.tabs.length === 0) {
+        this.addTab(false)
+      } else if (index === this.activeIndex) {
         this.switchTab(0)
       } else if (index <= this.activeIndex) {
         this.activeIndex -= 1
@@ -68,7 +75,7 @@ module.exports = {
       //   localStorage.getItem('lastText'),
       //   'tm'
       // )
-      const editor = window.monaco.editor.create(this.$el.children[2], {
+      const editor = window.monaco.editor.create(this.$el.children[1].children[1], {
         model: null,
         language: 'tm',
         theme: 'tm',
@@ -144,8 +151,9 @@ module.exports = {
         }
       })
       addEventListener('resize', e => {
+        this.remainHeight = this.$el.clientHeight - 44
         editor.layout()
-      })
+      }, {passive: true})
       addEventListener('beforeunload', e => {
         const value = editor.getValue()
         if (value !== '') {
@@ -183,18 +191,19 @@ module.exports = {
     }
   },
   props: ['width', 'height'],
-  template: `<div :style="{width, height}">
-    <div class="tm-tab">
+  template: `<div :style="{width, height}" class="tm-container">
+    <div class="tm-tab tm-header">
         <button v-for="(tab, index) in tabs" :key="index" @click="switchTab(index)"
                 :class="{active: index === activeIndex}">
             {{tab.title}}
             <span @click.stop="closeTab(index)">&nbsp;X</span>
         </button>
-        <span @click="addTab" class="topright">+</span>
+        <span @click="addTab(false)" class="topright">编辑器</span>
+        <span @click="addTab(true)" class="topright">文档</span>
     </div>
-    <div :style="{width, height}" v-show="isDoc">
-        <!-- Document here -->
+    <div class="tm-content" :style="{height: remainHeight.toString() + 'px'}">
+        <tm-doc-container doc="overview" v-show="isDoc" style="height: 100%; overflow: auto;"></tm-doc-container>
+        <div style="height: 100%; width: 100%; position: absolute;" v-show="!isDoc"></div>
     </div>
-    <div :style="{width, height}" v-show="!isDoc"></div>
 </div>`
 }

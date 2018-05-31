@@ -166,7 +166,7 @@ function defineLanguage(scheme) {
       const index = new Thulium(content, { useFile: false }).Index
       return [].concat(...index.sections.map((section, sIndex) => {
         const result = section.tracks.map((track, tIndex) => 
-          codeLensAt(model, index.base + track, `Section ${sIndex + 1} Track ${tIndex + 1}`, {
+          codeLensAt(model, index.base + section.start + track, `Section ${sIndex + 1} Track ${tIndex + 1}`, {
             id: commandId,
             title: `Track ${tIndex + 1}`,
             arguments: [content, sIndex, tIndex]

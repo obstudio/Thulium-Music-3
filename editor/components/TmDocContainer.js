@@ -20,7 +20,7 @@ module.exports = {
     },
     setContent() {
       this.fetchDoc(this.doc).then(ret => {
-        this.content = this.$md(ret).result
+        this.raw = ret
         /* this.content = ret
         this.$nextTick(() => {
           new Promise((resolve, reject) => {
@@ -44,13 +44,11 @@ module.exports = {
   },
   watch: {
     doc(val) {
-      this.doc = val
       this.setContent()
     }
   },
   props: ['doc'],
   template: `<div>
-    <textarea v-model="raw" title="输入测试"></textarea>
     <Document :content="root"></Document>
   </div>`
 }
