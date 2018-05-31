@@ -1,0 +1,4 @@
+notation:
+  - - (\$~|\?=|\?:)
+    - function.alias
+

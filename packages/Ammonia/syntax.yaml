@@ -1,8 +1,62 @@
-chord: Mmadqpouij
-
-alias:
-  - alias
+variables:
+  note: ([\[\]a-zA-Z0-7x%#',:>=\-\.`_])
+  expr: (\d+([./]\d+)?|\.\d+|Log2\(\d+\)([+\-]\d+)?)
 
 notation:
-  - notation
+  - - '[\$~]'
+    - function.alias
+  - - '[&*^]'
+    - track.operator
+
+alias:
+
+  # Key
+  - - \(1=[#b]*[A-G][',]*\)
+    - - 1=
+      - function.alias
+    - - "[#bA-G',]"
+      - string
+
+  # GraceNote & Appoggiatura
+  - - \(({{note}}*\^|\^{{note}}*)\)
+    - - \^
+      - function.alias
+    - note
+
+  # Vol
+  - - \((\d+(\.\d+)?|\.\d+)%\)
+    - - \%
+      - function.alias
+    - number
+
+  # BarBeat
+  - - \(\d+/\d+\)
+    - - /
+      - function.alias
+    - number
+
+  # Spd
+  - - \(\d+\.?\d*\)
+    - number
+
+  # KeyShift
+  - - \([+\-]\d+\)
+    - - '[+\-]'
+      - function.alias
+    - number
+
+  # Tuplet
+  - - \(\d+~\)
+    - - \~
+      - function.alias
+    - number
+
+  # Tremolo
+  - - \({{expr}}[=\-]\)
+    - - '[=\-]\)'
+      - function.alias
+      - '@pop'
+    - expression
+
+
 

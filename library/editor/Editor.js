@@ -1,60 +1,6 @@
 const Player = require('../player')
 const Thulium = require('../Thulium')
-
-function getLanguageDefination(source) {
-  const syntax = require(source)
-  const result = {}
-  for (const context in syntax.tokenizer) {
-    result[context] = syntax.tokenizer[context].map(item => {
-      if (item instanceof Array) {
-        if (item[1] instanceof Object) {
-          for (const cond in item[1]) {
-            if (item[1][cond] instanceof Array) {
-              item[1][cond] = {
-                token: item[1][cond][0],
-                next: item[1][cond][1]
-              }
-            }
-          }
-          item = {
-            regex: item[0],
-            action: { cases: item[1] }
-          }
-        } else {
-          const opration = item[2]
-          item = {
-            regex: item[0],
-            action: { token: item[1] }
-          }
-          if (opration instanceof Array) {
-            item.action.switchTo = opration[0]
-          } else if (opration) {
-            item.action.next = opration
-          }
-        }
-      } else if (!(item instanceof Object)) {
-        item = { include: item }
-      }
-      if (item.regex) {
-        for (const name in syntax.variables) {
-          item.regex = item.regex.replace('{{' + name + '}}', syntax.variables[name])
-        }
-        const match = item.regex.match(/^(\(\?[i]\))+/)
-        if (match) {
-          const modifier = item.regex[0].split('').filter(c => ['i'].includes(c)).join('')
-          const remain = item.regex.slice(match[0].length)
-          item.regex = new RegExp(remain, modifier)
-        }
-      }
-      return item
-    })
-  }
-  return {
-    tokenizer: result,
-    tokenPostfix: syntax.postfix,
-    defaultToken: syntax.default
-  }
-}
+const Language = require('./Language')
 
 let commandId = ''
 function registerPlayCommand(editor) {
@@ -98,7 +44,7 @@ function defineLanguage(scheme) {
     colors: {}
   })
   window.monaco.editor.setTheme('tm')
-  window.monaco.languages.setMonarchTokensProvider('tm', getLanguageDefination('./tm'))
+  window.monaco.languages.setMonarchTokensProvider('tm', Language)
   window.monaco.languages.registerDefinitionProvider('tm', {
     provideDefinition(model, position, token) {
       const matches = model.findMatches('@[A-Za-z0-9]+', false, true, false, '', true)

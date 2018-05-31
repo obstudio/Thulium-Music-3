@@ -99,5 +99,7 @@ class Thulium {
   }
 }
 
+Thulium.$library = library;
+
 module.exports = Thulium;
 

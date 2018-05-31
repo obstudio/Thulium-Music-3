@@ -1,4 +1,4 @@
-postfix: .thulium
+postfix: thulium
 default: default
 
 packages: 
@@ -56,11 +56,10 @@ tokenizer:
     - - (?i)include *
       - command.keyword
       - - library.include
-    - regex: (?i)(function|notation) *
-      action: 
-        token: command.keyword
-        switchTo: library.code
-        nextEmbedded: text/javascript
+    - - (?i)(function|notation) *
+      - command.keyword
+      - - library.code
+      - text/javascript
 
   library.include:
     - - '[a-zA-Z]\w* *$'
@@ -68,19 +67,16 @@ tokenizer:
       - '@pop'
 
   library.code:
-    - regex: ^#
-      action: 
-        token: '@rematch'
-        next: '@pop'
-        nextEmbedded: '@pop'
+    - - ^#
+      - '@rematch'
+      - '@pop'
+      - '@pop'
 
   track:
-    - - <:?(?=[a-zA-Z\s])
+    - - ^<:?(?=[a-zA-Z\s])
       - track.marker
       - track.head
-    - - '.'
-      - '@rematch'
-      - track.content
+    - track.content
 
   track.head:
     - - :?>
@@ -109,15 +105,14 @@ tokenizer:
     - track.content
 
   track.content:
-    - - $\s+^\s*$
-      - default
-      - '@pop'
     - - \}
       - subtrack.curly
       - '@pop'
     - track.comment
     - function.nonalias
     - subtrack
+    - alias    # 将由系统生成
+    - notation # 将由系统生成
     - - '@(?=[a-zA-Z0-9]+)'
       - track.macro
       - track.macro.inside
@@ -259,12 +254,15 @@ tokenizer:
       - '@pop'
     - - '[+\-*/]'
       - number.operator
-    - - (\d+(\.\d+)?|\.\d+)
-      - number.constant
+    - number
     - function.nonalias
     - - \(
       - function.marker
       - expression
+
+  number:
+    - - (\d+(\.\d+)?|\.\d+)
+      - number.constant
 
   string.inside:
     - - \"
