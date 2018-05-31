@@ -111,6 +111,8 @@ tokenizer:
     - track.comment
     - function.nonalias
     - subtrack
+    - alias    # 将由系统生成
+    - notation # 将由系统生成
     - - '@(?=[a-zA-Z0-9]+)'
       - track.macro
       - track.macro.inside

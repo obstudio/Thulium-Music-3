@@ -2,31 +2,29 @@ const yaml = require('js-yaml')
 const fs = require('fs')
 
 class TmLanguage {
-  constructor(loadBuffer = false, saveBuffer = false) {
+  constructor(path, loadBuffer = false, saveBuffer = false) {
     if (loadBuffer) {
-      this.source = require('./library/editor/tm.buffer.json')
+      this.source = require(path + '/syntax.buffer.json')
     } else {
-      this.source = yaml.safeLoad(fs.readFileSync(
-        './library/editor/tm.yaml',
-        { encoding: 'utf8' }
-      ))
+      this.source = yaml.safeLoad(fs.readFileSync(path + '/syntax.yaml', { encoding: 'utf8' }))
       if (saveBuffer) {
-        fs.writeFileSync(
-          './library/editor/tm.buffer.json',
-          JSON.stringify(this.source),
-          { encoding: 'utf8' }
-        )
+        fs.writeFileSync(path + '/syntax.buffer.json', JSON.stringify(this.source), { encoding: 'utf8' })
       }
     }
-    this.variables = this.source.variables
-    this.tokenizer = this.source.tokenizer
   }
 
-  get definition() {
+  definition() {
     const result = {}
-    for (const ctx in this.tokenizer) {
-      result[ctx] = this.tokenizer[ctx].map(item => this.transfer(item))
+    for (const ctx in this.source.tokenizer) {
+      result[ctx] = this.source.tokenizer[ctx].map(item => this.transfer(item))
     }
+    result.notation = []
+    result.alias = []
+    this.source.packages.forEach(name => {
+      Object.assign(result, new TmExtension(name).definition())
+      result.notation.push({ include: 'notation.' + name })
+      result.alias.push({ include: 'alias.' + name })
+    })
     return {
       tokenizer: result,
       tokenPostfix: '.' + this.source.postfix,
@@ -67,19 +65,51 @@ class TmLanguage {
     } else if (!(item instanceof Object)) {
       item = { include: item }
     }
-    if (item.regex) {
-      for (const name in this.variables) {
-        item.regex = item.regex.replace('{{' + name + '}}', this.variables[name])
-      }
-      const match = item.regex.match(/^(\(\?[i]\))+/)
-      if (match) {
-        const modifier = item.regex[0].split('').filter(c => ['i'].includes(c)).join('')
-        const remain = item.regex.slice(match[0].length)
-        item.regex = new RegExp(remain, modifier)
-      }
-    }
+    if (item.regex) item.regex = this.toRegExp(item.regex)
     return item
+  }
+
+  toRegExp(string) {
+    for (const name in this.source.variables) {
+      string = string.replace('{{' + name + '}}', this.source.variables[name])
+    }
+    const match = string.match(/^(\(\?[i]\))+/)
+    if (match) {
+      const modifier = string[0].split('').filter(c => ['i'].includes(c)).join('')
+      const remain = string.slice(match[0].length)
+      string = new RegExp(remain, modifier)
+    }
+    return string
+  }
+}
+
+class TmExtension extends TmLanguage {
+  constructor(name) {
+    super('./packages/' + name, false, false)
+    if (!this.source.alias) this.source.alias = {}
+    if (!this.source.notation) this.source.notation = []
+    if (!this.source.variables) this.source.variables = {}
+    this.name = name
+  }
+
+  definition() {
+    const prefix = 'alias.' + this.name
+    const result = {}
+    result[prefix] = []
+    result['notation.' + this.name] = this.source.notation.map(item => this.transfer(item))
+    for (let index = 0; index < this.source.alias.length; index++) {
+      const alias = this.source.alias[index]
+      result[prefix].push({
+        regex: this.toRegExp(alias[0]),
+        action: {
+          token: '@rematch',
+          next: prefix + '.' + index
+        }
+      })
+      result[prefix + '.' + index] = alias.slice(1).map(item => this.transfer(item))
+    }
+    return result
   }
 }
   
-module.exports = new TmLanguage().definition
+module.exports = new TmLanguage('./library/editor').definition()

@@ -45,10 +45,10 @@ tm:
     foreground: AE81FF
   - token: subtrack.repeat.marker
     foreground: AE81FF
-  - token: track.barline
+  - token: subtrack.barline
     foreground: F92672
     fontWeight: bold
-  - token: track.barline.plain
+  - token: subtrack.barline.plain
     foreground: F92672
     fontWeight: normal
 
@@ -67,9 +67,11 @@ tm:
     foreground: FD971F
   - token: function.marker
     foreground: FD971F
+  - token: function.alias
+    foreground: FD971F
 
   # string
-  - token: string.default
+  - token: string
     foreground: E6DB74
   - token: string.marker
     foreground: E6DB74

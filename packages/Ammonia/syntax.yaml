@@ -1,7 +1,5 @@
-prefix: ammonia
-
 variables:
-  note: "[\[\]a-zA-Z0-7x%#',:>=\-\.`_]"
+  note: ([\[\]a-zA-Z0-7x%#',:>=\-\.`_])
   expr: (\d+([./]\d+)?|\.\d+|Log2\(\d+\)([+\-]\d+)?)
 
 notation:
@@ -13,48 +11,48 @@ notation:
 alias:
 
   # Key
-  - \(1=[#b]*[A-G][',]*\)
+  - - \(1=[#b]*[A-G][',]*\)
     - - 1=
       - function.alias
     - - "[#bA-G',]"
       - string
 
   # GraceNote & Appoggiatura
-  - \(({{note}}*\^|\^{{note}}*)\)
+  - - \(({{note}}*\^|\^{{note}}*)\)
     - - \^
       - function.alias
     - note
 
   # Vol
-  - \((\d+(\.\d+)?|\.\d+)%\)
+  - - \((\d+(\.\d+)?|\.\d+)%\)
     - - \%
       - function.alias
     - number
 
   # BarBeat
-  - \(\d+/\d+\)
+  - - \(\d+/\d+\)
     - - /
       - function.alias
     - number
 
   # Spd
-  - \(\d+\.?\d*\)
+  - - \(\d+\.?\d*\)
     - number
 
   # KeyShift
-  - \([+\-]\d+\)
+  - - \([+\-]\d+\)
     - - '[+\-]'
       - function.alias
     - number
 
   # Tuplet
-  - \(\d+~\)
+  - - \(\d+~\)
     - - \~
       - function.alias
     - number
 
   # Tremolo
-  - (?={{expr}}[=\-]\)
+  - - \({{expr}}[=\-]\)
     - - '[=\-]\)'
       - function.alias
       - '@pop'
