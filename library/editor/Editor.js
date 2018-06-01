@@ -5,6 +5,33 @@ const instrument = [
   ...Object.keys(require('../config/instrument.json')),
   ...Object.keys(require('../config/percussion.json'))
 ]
+const instDocs = require('../../language/zh-CN/instruments.json')
+
+// See window.monaco.languages.CompletionItemKind
+const instCompletions = instrument.map(inst => {
+  return {
+    label: inst,
+    kind: 5, // Variable
+    documentation: inst + '\n' + instDocs[inst],
+    insertText: inst
+  }
+})
+const packCompletions = Thulium.$library.Packages.map(pack => {
+  return {
+    label: pack,
+    kind: 8, // Module
+    documentation: pack,
+    insertText: pack
+  }
+})
+const cmdCompletions = ['include', 'notation', 'function', 'chord', 'end'].map(cmd => {
+  return {
+    label: cmd,
+    kind: 13, // Keyword
+    documentation: cmd,
+    insertText: cmd
+  }
+})
 
 let commandId = ''
 function registerPlayCommand(editor) {
@@ -65,47 +92,30 @@ function defineLanguage(scheme) {
   })
 
   window.monaco.languages.registerCompletionItemProvider('tm', {
-    triggerCharacters: [],
+    triggerCharacters: ['@', '#'],
     provideCompletionItems(model, position, token) {
       const offset = model.getOffsetAt(position)
       const content = model.getValue(1)
+      const char = content.charAt(offset - 1)
+      const line = model.getLineContent(position.lineNumber)
       const song = new Thulium(content, { useFile: false })
-      console.log(song.matchScope('inst', offset))
+      console.log(line)
       if (song.matchScope('inst', offset)) {
-        return instrument.map(inst => {
+        return instCompletions
+      } else if (song.matchScope('pack', offset)) {
+        return packCompletions
+      } else if (line.match(/^# */) && position.column) {
+        return cmdCompletions
+      } else if (char === '@') {
+        return song.Macro.map(macro => {
           return {
-            label: inst,
-            kind: window.monaco.languages.CompletionItemKind.Variable,
-            documentation: inst,
-            insertText: inst
+            label: macro.name,
+            kind: 17, // Reference
+            documentation: macro.code,
+            insertText: macro.name
           }
         })
       }
-      // if (char === '<') {
-      //   return 
-          // return {
-          //   label: inst,
-          //   kind: window.monaco.languages.CompletionItemKind.Variable,
-          //   documentation: inst,
-          //   insertText: inst
-          // }
-      //   })
-      // } else if (char === '@') {
-      //   // FIXME: use thulium api
-      //   const matches = model.findMatches('<:([A-Za-z0-9]+):>', false, true, false, '', true)
-      //   return matches.map(match => ({
-      //     label: match.matches[1],
-      //     kind: window.monaco.languages.CompletionItemKind.Variable,
-      //     insertText: match.matches[1]
-      //   }))
-      // }
-      // return [
-      //   {
-      //     label: 'Oct',
-      //     kind: window.monaco.languages.CompletionItemKind.Function,
-      //     insertText: ''
-      //   }
-      // ]
     }
   })
 

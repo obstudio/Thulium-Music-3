@@ -61,6 +61,8 @@ tokenizer:
     foreground: 66D9EF
   - token: note.durop-stac-volop
     foreground: 66D9EF
+  - token: note.declaration
+    foreground: F92672
 
   # function
   - token: function.name

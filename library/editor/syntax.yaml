@@ -102,7 +102,22 @@ tokenizer:
     - - '[,>]'
       - '@rematch'
       - '@pop'
+    - - \[[a-zA-Z](?:(=)([1-7][#b',]*)+)?\]
+      - '@rematch'
+      - track.macropitch
     - track.content
+
+  track.macropitch:
+    - - \[
+      - note.square
+    - - \]
+      - note.square
+    - - "[a-zA-Z1-7]"
+      - note.degree
+    - - "[#',]"
+      - note.pitop-chord
+    - - '='
+      - number.operator
 
   track.content:
     - - \}

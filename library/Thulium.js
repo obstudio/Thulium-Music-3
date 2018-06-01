@@ -72,7 +72,7 @@ class Thulium {
   }
 
   matchScope(name, position) {
-    return this.Scoping[name].some(scope => scope.start <= position && scope.end > position)
+    return this.Scoping[name].some(scope => scope.start < position && scope.end >= position)
   }
 
   attributes(...attrs) {
