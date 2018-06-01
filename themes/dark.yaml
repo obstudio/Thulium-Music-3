@@ -40,17 +40,17 @@ tokenizer:
   # subtrack
   - token: subtrack.curly
     foreground: F92672
-    fontWeight: bold
+    fontStyle: bold
   - token: subtrack.repeat
     foreground: AE81FF
   - token: subtrack.repeat.marker
     foreground: AE81FF
   - token: subtrack.barline
     foreground: F92672
-    fontWeight: bold
+    fontStyle: bold
   - token: subtrack.barline.plain
     foreground: F92672
-    fontWeight: normal
+    fontStyle: normal
 
   # note
   - token: note.square

@@ -90,7 +90,17 @@ class TmExtension extends TmLanguage {
     const prefix = 'alias.' + this.name
     const result = {}
     result[prefix] = []
-    result['notation.' + this.name] = this.source.notation.map(item => this.transfer(item))
+
+    const transferNotation = item => {
+      const prefix = 'notation.' + this.name + '.'
+      if (item[2] && !item[2].startsWith('@')) {
+        result[prefix + item[2]] = this.source[item[2]].map(transferNotation)
+        item[2] = prefix + item[2]
+      }
+      return this.transfer(item)
+    }
+
+    result['notation.' + this.name] = this.source.notation.map(transferNotation)
     for (let index = 0; index < this.source.alias.length; index++) {
       const alias = this.source.alias[index]
       result[prefix].push({

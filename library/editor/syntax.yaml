@@ -121,10 +121,18 @@ tokenizer:
     - - \\(?=({{span}}(,{{span}})*)?:)
       - subtrack.barline
       - subtrack.volta
+    - - \|(?=\|)
+      - subtrack.barline.plain
+      - track.terminator.inside
     - - '[\\\|/]'
       - subtrack.barline
     - note
   
+  track.terminator.inside:
+    - - \|
+      - subtrack.barline
+      - '@pop'
+
   track.macro.inside:
     - - \w+
       - track.name

@@ -7,6 +7,48 @@ notation:
     - function.alias
   - - '[&*^]'
     - track.operator
+  - - DC|DS|Coda|ToCoda|DaCapo|DaSegno|Fine|s|\+
+    - track.operator
+  - - \|(?=\|:)
+    - subtrack.barline
+    - repeat.begin.inner
+  - - :(?=\|\|:)
+    - subtrack.barline.plain
+    - repeat.beginend.inner
+  - - :\|(?=\|)
+    - subtrack.barline.plain
+    - repeat.end.inner
+  - - \[(\d+(~\d+)?\.)+\]
+    - '@rematch'
+    - volta
+
+repeat.begin.inner:
+  - - '\|:'
+    - subtrack.barline.plain
+    - '@pop'
+
+repeat.end.inner:
+  - - \|
+    - subtrack.barline
+    - '@pop'
+
+repeat.beginend.inner:
+  - - \|
+    - subtrack.barline
+  - - ':'
+    - subtrack.barline.plain
+    - '@pop'
+
+volta:
+  - - \[
+    - subtrack.barline
+  - - \]
+    - subtrack.barline
+    - '@pop'
+  - - \d+(~\d+)?
+    - number.constant
+  - - \.
+    - track.operator
 
 alias:
 

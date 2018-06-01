@@ -32,5 +32,5 @@ module.exports = {
     <transition mode="in-out">
       <tm-monaco :width="width" :height="height"></tm-monaco>
     </transition>
-</div>`
+  </div>`
 }

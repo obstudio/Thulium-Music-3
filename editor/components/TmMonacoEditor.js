@@ -1,6 +1,6 @@
 const FileSaver = require('file-saver')
 const TmDocContainer = require('./TmDocContainer')
-const {registerPlayCommand} = require('../../library/editor/Editor')
+const { registerPlayCommand } = require('../../library/editor/Editor')
 
 module.exports = {
   name: 'TmMonacoEditor',
@@ -193,17 +193,17 @@ module.exports = {
   props: ['width', 'height'],
   template: `<div :style="{width, height}" class="tm-container">
     <div class="tm-tab tm-header">
-        <button v-for="(tab, index) in tabs" :key="index" @click="switchTab(index)"
-                :class="{active: index === activeIndex}">
-            {{tab.title}}
-            <span @click.stop="closeTab(index)">&nbsp;X</span>
-        </button>
-        <span @click="addTab(false)" class="topright">编辑器</span>
-        <span @click="addTab(true)" class="topright">文档</span>
+      <button v-for="(tab, index) in tabs" :key="index" @click="switchTab(index)"
+              :class="{active: index === activeIndex}">
+        {{tab.title}}
+        <span @click.stop="closeTab(index)">&nbsp;X</span>
+      </button>
+      <span @click="addTab(false)" class="topright">编辑器</span>
+      <span @click="addTab(true)" class="topright">文档</span>
     </div>
     <div class="tm-content" :style="{height: remainHeight.toString() + 'px'}">
-        <tm-doc-container doc="overview" v-show="isDoc" style="height: 100%; overflow: auto;"></tm-doc-container>
-        <div style="height: 100%; width: 100%; position: absolute;" v-show="!isDoc"></div>
+      <tm-doc-container doc="overview" v-show="isDoc" style="height: 100%; overflow: auto;"></tm-doc-container>
+      <div style="height: 100%; width: 100%; position: absolute;" v-show="!isDoc"></div>
     </div>
-</div>`
+  </div>`
 }

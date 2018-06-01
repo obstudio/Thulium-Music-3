@@ -1,7 +1,13 @@
-const {app, Menu, Tray, BrowserWindow, webFrame} = require('electron')
+const {
+  app, Menu, Tray,
+  BrowserWindow,
+  nativeImage
+} = require('electron')
 
 const path = require('path')
 const url = require('url')
+
+const icon = nativeImage.createFromPath('./assets/logo.ico')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -9,7 +15,7 @@ let mainWindow
 let trayIcon
 
 async function initialization() {
-  trayIcon = new Tray('./assets/logo.ico')
+  trayIcon = new Tray(icon)
   trayIcon.setToolTip('Thulium Music')
   trayIcon.setContextMenu(Menu.buildFromTemplate([
     {
@@ -40,7 +46,7 @@ async function initialization() {
 
   // For test
   // return new Promise(resolve => {
-    // setTimeout(() => resolve(20), 2000)
+  //   setTimeout(() => resolve(20), 2000)
   // })
 }
 
@@ -51,6 +57,7 @@ function createMainWindow () {
     center: true,
     minWidth: 800,
     minHeight: 600,
+    icon: icon,
     show: false,
     frame: false
   })
@@ -80,7 +87,8 @@ app.on('ready', async function() {
     transparent: true,
     frame: false,
     resizable: false,
-    movable: false
+    movable: false,
+    icon: icon
   })
 
   loadingWindow.loadURL(url.format({
