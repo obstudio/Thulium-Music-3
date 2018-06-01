@@ -11,7 +11,7 @@ module.exports = {
     return {
       tabs: [],
       activeIndex: 0,
-      isDoc: false,
+      type: 'tm',
       remainHeight: 0
     }
   },
@@ -25,51 +25,49 @@ module.exports = {
         'foo',
         'tm'
       ),
-      isDoc: false
+      type: 'tm'
     }, {
       title: 'bar',
-      model: window.monaco.editor.createModel(
-        'bar',
-        'tm'
-      ),
-      isDoc: true
+      type: 'doc'
     })
   },
+
   methods: {
     switchTab(index) {
       const tab = this.tabs[index]
-      this.isDoc = tab.isDoc
+      this.type = tab.type
       this.activeIndex = index
-      if (tab.isDoc) {
-        // do
-      } else {
+      if (tab.type === 'tm') {
         this.editor.setModel(this.tabs[index].model)
         this.$nextTick(() => {
           this.editor.layout()
         })
       }
     },
-    addTab(isDoc) {
-      this.tabs.push({
+
+    addTab(type) {
+      const tab = {
         title: 'New',
-        model: window.monaco.editor.createModel(
-          '',
-          'tm'
-        ),
-        isDoc: isDoc
-      })
+        type: type
+      }
+      if (type === 'tm') {
+        tab.model = window.monaco.editor.createModel('', 'tm')
+      }
+      this.tabs.push(tab)
       this.switchTab(this.tabs.length - 1)
     },
+
     closeTab(index) {
       this.tabs.splice(index, 1)
       if (this.tabs.length === 0) {
-        this.addTab(false)
+        this.addTab('tm')
       } else if (index === this.activeIndex) {
         this.switchTab(0)
       } else if (index <= this.activeIndex) {
         this.activeIndex -= 1
       }
     },
+
     showEditor() {
       // const model = window.monaco.editor.createModel(
       //   localStorage.getItem('lastText'),
@@ -198,12 +196,12 @@ module.exports = {
         {{tab.title}}
         <span @click.stop="closeTab(index)">&nbsp;X</span>
       </button>
-      <span @click="addTab(false)" class="topright">编辑器</span>
-      <span @click="addTab(true)" class="topright">文档</span>
+      <span @click="addTab('tm')" class="topright">编辑器</span>
+      <span @click="addTab('doc')" class="topright">文档</span>
     </div>
     <div class="tm-content" :style="{height: remainHeight.toString() + 'px'}">
-      <tm-doc-container doc="overview" v-show="isDoc" style="height: 100%; overflow: auto;"></tm-doc-container>
-      <div style="height: 100%; width: 100%; position: absolute;" v-show="!isDoc"></div>
+      <tm-doc-container doc="overview" v-show="type === 'doc'" style="height: 100%; overflow: auto;"></tm-doc-container>
+      <div style="height: 100%; width: 100%; position: absolute;" v-show="type === 'tm'"></div>
     </div>
   </div>`
 }

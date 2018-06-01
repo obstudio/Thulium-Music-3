@@ -65,15 +65,13 @@ function defineLanguage(scheme) {
   })
 
   window.monaco.languages.registerCompletionItemProvider('tm', {
-    triggerCharacters: ['<', '@'],
+    triggerCharacters: [],
     provideCompletionItems(model, position, token) {
-      const char = model.getValueInRange({
-        startLineNumber: position.lineNumber,
-        endLineNumber: position.lineNumber,
-        startColumn: position.column - 1,
-        endColumn: position.column
-      })
-      if (char === '<') {
+      const offset = model.getOffsetAt(position)
+      const content = model.getValue(1)
+      const song = new Thulium(content, { useFile: false })
+      console.log(song.matchScope('inst', offset))
+      if (song.matchScope('inst', offset)) {
         return instrument.map(inst => {
           return {
             label: inst,
@@ -82,21 +80,32 @@ function defineLanguage(scheme) {
             insertText: inst
           }
         })
-      } else if (char === '@') {
-        const matches = model.findMatches('<\\*([A-Za-z0-9]+)\\*>', false, true, false, '', true)
-        return matches.map(match => ({
-          label: match.matches[1],
-          kind: window.monaco.languages.CompletionItemKind.Variable,
-          insertText: match.matches[1]
-        }))
       }
-      return [
-        {
-          label: 'Oct',
-          kind: window.monaco.languages.CompletionItemKind.Function,
-          insertText: ''
-        }
-      ]
+      // if (char === '<') {
+      //   return 
+          // return {
+          //   label: inst,
+          //   kind: window.monaco.languages.CompletionItemKind.Variable,
+          //   documentation: inst,
+          //   insertText: inst
+          // }
+      //   })
+      // } else if (char === '@') {
+      //   // FIXME: use thulium api
+      //   const matches = model.findMatches('<:([A-Za-z0-9]+):>', false, true, false, '', true)
+      //   return matches.map(match => ({
+      //     label: match.matches[1],
+      //     kind: window.monaco.languages.CompletionItemKind.Variable,
+      //     insertText: match.matches[1]
+      //   }))
+      // }
+      // return [
+      //   {
+      //     label: 'Oct',
+      //     kind: window.monaco.languages.CompletionItemKind.Function,
+      //     insertText: ''
+      //   }
+      // ]
     }
   })
 

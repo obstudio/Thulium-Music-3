@@ -15,6 +15,7 @@ class Thulium {
       var directory = path.dirname(input);
       input = fs.readFileSync(input, 'utf8');
     }
+
     function loadFile(filename) {
       if (fs.existsSync(filename + '.tml')) {
         const content = fs.readFileSync(filename + '.tml', {encoding: 'utf8'});
@@ -44,6 +45,7 @@ class Thulium {
         throw new Error(`File "${filename}.tml" was not found!`);
       }
     }
+
     const tokenizer = new Tokenizer(input, {
       loadFile: loadFile,
       $library: library,
@@ -67,6 +69,10 @@ class Thulium {
 
   detokenize() {
     return new Linter(this.Tokenizer, this.Syntax).detokenize();
+  }
+
+  matchScope(name, position) {
+    return this.Scoping[name].some(scope => scope.start <= position && scope.end > position)
   }
 
   attributes(...attrs) {

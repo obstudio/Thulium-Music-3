@@ -15,7 +15,7 @@ module.exports = {
   },
   methods: {
     async fetchDoc(name) {
-      const doc = await fetch(`../documents/${name}.tmd`)
+      const doc = await fetch(`./documents/${name}.tmd`)
       return doc.text()
     },
     setContent() {
