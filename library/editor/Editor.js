@@ -1,6 +1,10 @@
 const Player = require('../player')
 const Thulium = require('../Thulium')
 const Language = require('./Language')
+const instrument = [
+  ...Object.keys(require('../config/instrument.json')),
+  ...Object.keys(require('../config/percussion.json'))
+]
 
 let commandId = ''
 function registerPlayCommand(editor) {
@@ -43,19 +47,19 @@ function defineLanguage(scheme) {
   window.monaco.languages.setMonarchTokensProvider('tm', Language)
   window.monaco.languages.registerDefinitionProvider('tm', {
     provideDefinition(model, position, token) {
-      const matches = model.findMatches('@[A-Za-z0-9]+', false, true, false, '', true)
-      const trueMatch = matches.find(
-        match =>
-          match.range.startLineNumber === position.lineNumber &&
-          match.range.endLineNumber === position.lineNumber &&
-          match.range.startColumn <= position.column &&
-          match.range.endColumn >= position.column
+      const matches = model.findMatches('@[A-Za-z][A-Za-z0-9]*', false, true, false, '', true)
+      const trueMatch = matches.find(match =>
+        match.range.startLineNumber === position.lineNumber &&
+        match.range.endLineNumber === position.lineNumber &&
+        match.range.startColumn <= position.column &&
+        match.range.endColumn >= position.column
       )
       if (!trueMatch) return
-      const def = model.findMatches(`<:${trueMatch.matches[0].slice(1)}:>`, false, false, true, '', false)[0]
+      const defs = model.findMatches(`<:${trueMatch.matches[0].slice(1)}:>`, false, false, true, '', false)
+      const definition = defs[0] // FIXME: find last index before
       return {
         uri: model.uri,
-        range: def.range
+        range: definition.range
       }
     }
   })
@@ -70,14 +74,14 @@ function defineLanguage(scheme) {
         endColumn: position.column
       })
       if (char === '<') {
-        return [
-          {
-            label: 'Piano',
+        return instrument.map(inst => {
+          return {
+            label: inst,
             kind: window.monaco.languages.CompletionItemKind.Variable,
-            documentation: 'Piano',
-            insertText: 'Piano>'
+            documentation: inst,
+            insertText: inst
           }
-        ]
+        })
       } else if (char === '@') {
         const matches = model.findMatches('<\\*([A-Za-z0-9]+)\\*>', false, true, false, '', true)
         return matches.map(match => ({

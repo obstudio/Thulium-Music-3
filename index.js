@@ -1,12 +1,14 @@
 const Vue = require('vue/dist/vue.common')
 const ElementUI = require('element-ui')
 const VueI18n = require('vue-i18n')
-const router = require('./router')
-const extendVue = require('./TmVueExt')
+const router = require('./editor/router')
+const Player = require('./library/player')
+const Lexer = require('./library/tmdoc/Lexer')
 
 // Vue files can not be used
 // const Icon = require('vue-awesome/components/Icon')
 // require('node_modules/vue-awesome/dist/vue-awesome.js')
+// Vue.component('icon', Icon)
 
 const App = {
   name: 'App',
@@ -18,8 +20,12 @@ const App = {
 
 Vue.use(VueI18n)
 Vue.use(ElementUI)
-extendVue(Vue)
-// Vue.component('icon', Icon)
+Vue.prototype.$createPlayer = (v) => new Player(v)
+Vue.prototype.$md = (content) => {
+  if (typeof content !== 'string') return []
+  return new Lexer().lex(content)
+}
+
 Vue.config.productionTip = false
 
 new Vue({

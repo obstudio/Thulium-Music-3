@@ -41,7 +41,7 @@ module.exports = {
       this.isDoc = tab.isDoc
       this.activeIndex = index
       if (tab.isDoc) {
-
+        // do
       } else {
         this.editor.setModel(this.tabs[index].model)
         this.$nextTick(() => {
