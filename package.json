@@ -4,12 +4,18 @@
   "description": "Thulium Music 3",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "Thulium"
   },
   "keywords": [],
   "author": "Obstudio",
   "devDependencies": {
     "electron": "^2.0.0",
+    "electron-builder": "^20.15.1",
     "eslint": "^4.19.1"
   },
   "dependencies": {
@@ -31,7 +37,5 @@
     "url": "https://github.com/obstudio/Thulium-Music-3/issues"
   },
   "homepage": "https://github.com/obstudio/Thulium-Music-3#readme",
-  "directories": {
-    "lib": "lib"
-  }
+  "postinstall": "electron-builder install-app-deps"
 }
