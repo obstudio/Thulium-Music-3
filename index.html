@@ -20,24 +20,6 @@
       // Save Monaco's amd require and restore Node's require
       const amdRequire = global.require
       global.require = nodeRequire
-      const path = require('path')
-
-      function uriFromPath(...paths) {
-        const result = path.resolve(path.join(...paths)).split(path.sep)
-          .map(name => name
-            .replace(/#/g, '%23')
-            .replace(/ /g, '%20')
-          ).join('/')
-        return 'file:///' + result
-      }
-
-      amdRequire.config({
-        baseUrl: uriFromPath(__dirname, 'node_modules/monaco-editor/min')
-      })
-
-      // work around monaco not understanding the environment
-      self.module = undefined
-      self.process.browser = true
     </script>
       
     <div id="app"> <!-- content will be injected --> </div>

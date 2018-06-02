@@ -1,8 +1,28 @@
+const path = require('path')
+
+function uriFromPath(...paths) {
+  const result = path.resolve(path.join(...paths)).split(path.sep)
+    .map(name => name
+      .replace(/#/g, '%23')
+      .replace(/ /g, '%20')
+    ).join('/')
+  return 'file:///' + result
+}
+
+amdRequire.config({
+  baseUrl: uriFromPath(__dirname, 'node_modules/monaco-editor/min')
+})
+
+// work around monaco not understanding the environment
+self.module = undefined
+self.process.browser = true
+
 const Vue = require('vue/dist/vue.common')
 const ElementUI = require('element-ui')
 const VueI18n = require('vue-i18n')
 const Router = require('vue-router')
 
+const TmUser = require('./user')
 const Player = require('./library/player')
 const Lexer = require('./library/tmdoc/Lexer')
 const TmEditor = require('./components/TmEditor')
@@ -17,7 +37,9 @@ const HelloWorld = require('./components/HelloWorld')
 Vue.use(Router)
 Vue.use(VueI18n)
 Vue.use(ElementUI)
-Vue.prototype.$createPlayer = () => new Player(...arguments)
+Vue.prototype.$createPlayer = (source, spec) => {
+  return new Player(source, spec)
+}
 Vue.prototype.$markdown = (content) => {
   if (typeof content !== 'string') return []
   return new Lexer().lex(content)

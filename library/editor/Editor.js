@@ -5,7 +5,7 @@ const instrument = [
   ...Object.keys(require('../config/instrument.json')),
   ...Object.keys(require('../config/percussion.json'))
 ]
-const instDocs = require('../../language/zh-CN/instruments.json')
+const instDocs = require('../../languages/zh-CN/instruments.json')
 
 // See window.monaco.languages.CompletionItemKind
 const instCompletions = instrument.map(inst => {
