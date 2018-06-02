@@ -1,0 +1,300 @@
+postfix: thulium
+default: default
+
+packages: 
+  - ammonia
+  - benzene
+
+variables:
+  span: \d+(~\d+)?
+
+tokenizer:
+  root: 
+    - comment # 注释
+    - command # 命令
+    - track   # 音轨
+
+  comment:
+    # 行注释
+    - - ^//
+      - '@eos':
+          - comment.marker
+        '@default':
+          - comment.marker
+          - comment.line
+
+  comment.line:
+    # 分割线中央的字段被认为是乐章名
+    - - -{3,}.*[^-]-{3,}$
+      - '@rematch'
+      - - comment.section
+    # 普通的注释内容
+    - - .*$
+      - comment
+      - '@pop'
+
+  comment.section:
+    - - -{3,}
+      - '@eos': 
+          - comment.marker
+          - '@pop'
+        '@default':
+          - comment.marker
+    - - .*[^-]
+      - section.name
+
+  command:
+    # 命令
+    - - ^# *
+      - command.marker
+      - command.general
+
+  command.general:
+    - - '[Ee]nd *$'
+      - command.keyword
+      - '@pop'
+    - - '[Ii]nclude *'
+      - command.keyword
+      - - library.include
+    - - ([Ff]unction|[Nn]otation) *
+      - command.keyword
+      - - library.code
+      - text/javascript
+
+  library.include:
+    - - '[a-zA-Z]\w* *$'
+      - library.package
+      - '@pop'
+
+  library.code:
+    - - ^#
+      - '@rematch'
+      - '@pop'
+      - '@pop'
+
+  track:
+    - - ^<:?(?=[a-zA-Z\s])
+      - track.marker
+      - track.head
+    - track.content
+
+  track.head:
+    - - :?>
+      - track.marker
+      - '@pop'
+    - - '[a-zA-Z]\w*:'
+      - '@rematch'
+      - track.name
+    - - ','
+      - track.marker
+    - - '[a-zA-Z]\w*'
+      - track.instrument
+      - track.instrument
+
+  track.name:
+    - - ':'
+      - track.marker
+      - '@pop'
+    - - \w+
+      - track.name
+
+  track.instrument:
+    - - '[,>]'
+      - '@rematch'
+      - '@pop'
+    - - \[[a-zA-Z](?:(=)([1-7][#b',]*)+)?\]
+      - '@rematch'
+      - track.macropitch
+    - track.content
+
+  track.macropitch:
+    - - \[
+      - note.square
+    - - \]
+      - note.square
+    - - "[a-zA-Z1-7]"
+      - note.degree
+    - - "[#',]"
+      - note.pitop-chord
+    - - '='
+      - number.operator
+
+  track.content:
+    - - \}
+      - subtrack.curly
+      - '@pop'
+    - track.comment
+    - function.nonalias
+    - subtrack
+    - alias    # 将由系统生成
+    - notation # 将由系统生成
+    - - '@(?=[a-zA-Z0-9]+)'
+      - track.macro
+      - track.macro.inside
+    - - '!'
+      - track.operator
+    - - \\(?=({{span}}(,{{span}})*)?:)
+      - subtrack.barline
+      - subtrack.volta
+    - - \|(?=\|)
+      - subtrack.barline.plain
+      - track.terminator.inside
+    - - '[\\\|/]'
+      - subtrack.barline
+    - note
+  
+  track.terminator.inside:
+    - - \|
+      - subtrack.barline
+      - '@pop'
+
+  track.macro.inside:
+    - - \w+
+      - track.name
+      - '@pop'
+
+  subtrack.volta:
+    - - ':'
+      - subtrack.repeat.marker
+      - '@pop'
+    - - ','
+      - subtrack.repeat.marker
+    - - '{{span}}'
+      - subtrack.repeat
+
+  track.comment:
+    - - <\*
+      - comment.marker
+      - track.comment.inside
+
+  track.comment.inside:
+    - - \*>
+      - comment.marker
+      - '@pop'
+    - - '[\s\S]'
+      - comment
+
+  subtrack:
+    - - \{\d+\*
+      - '@rematch'
+      - subtrack.head.repeat
+    - - \{
+      - '@rematch'
+      - subtrack.head
+
+  subtrack.head:
+    - - \{
+      - subtrack.curly
+      - - track.content
+
+  subtrack.head.repeat:
+    - - \{
+      - subtrack.curly
+    - - \d+
+      - subtrack.repeat
+    - - \*
+      - subtrack.repeat.marker
+      - - track.content
+
+  note:
+    - - '[\[0-7%x]'
+      - '@rematch'
+      - note.inside
+
+  note.inside:
+    - - \[
+      - note.square
+      - pitch
+    - pitch
+    - - "[#',b]"
+      - note.pitop-chord
+    - - ([>:._=\-`])
+      - note.durop-stac-volop
+    - - '.'
+      - '@rematch'
+      - '@pop'
+
+  pitch:
+    - - \]
+      - note.square
+      - '@pop'
+    - - '[0-7%x]'
+      - note.degree
+      - pitch.after
+
+  pitch.after:
+    - - "[#',a-wyzA-Z]"
+      - note.pitop-chord
+    - - '[:>]'
+      - note.durop-stac-volop
+    - - '.'
+      - '@rematch'
+      - '@pop'
+
+  function.nonalias:
+    - - '[a-zA-Z][a-zA-Z\d]*\('
+      - '@rematch'
+      - function.minus
+    - - '\([a-zA-Z][a-zA-Z\d]*:'
+      - '@rematch'
+      - function.zero
+
+  function.minus:
+    - - '[a-zA-Z][a-zA-Z\d]*'
+      - function.name
+    - - \(
+      - function.marker
+      - - function.argument
+
+  function.zero:
+    - - '[a-zA-Z][a-zA-Z\d]*'
+      - function.name
+    - - \(
+      - function.marker
+    - - ':'
+      - function.marker
+      - - function.argument
+
+  function.argument:
+    - - '[\)\]]'
+      - function.marker
+      - '@pop'
+    - - ','
+      - function.marker
+    - track.comment
+    - expression
+    - subtrack
+    - - \[
+      - function.marker
+      - function.argument
+    - - \"
+      - string.marker
+      - string.inside
+
+  expression:
+    - - \)
+      - function.marker
+      - '@pop'
+    - - '[+\-*/]'
+      - number.operator
+    - number
+    - function.nonalias
+    - - \(
+      - function.marker
+      - expression
+
+  number:
+    - - (\d+(\.\d+)?|\.\d+)
+      - number.constant
+
+  string.inside:
+    - - \"
+      - string.marker
+      - '@pop'
+    - - \\[\s\S]
+      - string.escape
+    - - '[\s\S]'
+      - string.default
+
+
+

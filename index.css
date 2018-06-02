@@ -15,6 +15,7 @@ body {
     color: #fff;
     text-align: left;
     font-size: 24px;
+    font-family: source-san-sans-CN;
     padding: 12px 20px;
     margin: 0px;
     height: 24px;
@@ -65,3 +66,14 @@ div.hello {
     padding: 20px 40px;
 }
 
+@font-face {
+    font-family: source-san-sans-CN;
+    src: url(./assets/SourceHanSansCN/SourceHanSansCN-Normal.otf);
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: source-san-sans-CN;
+    src: url(./assets/SourceHanSansCN/SourceHanSansCN-Bold.otf);
+    font-weight: bold;
+}

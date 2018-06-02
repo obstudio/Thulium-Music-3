@@ -1,0 +1,104 @@
+variables:
+  note: ([\[\]a-zA-Z0-7x%#',:>=\-\.`_])
+  expr: (\d+([./]\d+)?|\.\d+|Log2\(\d+\)([+\-]\d+)?)
+
+notation:
+  - - '[\$~]'
+    - function.alias
+  - - '[&*^]'
+    - track.operator
+  - - DC|DS|Coda|ToCoda|DaCapo|DaSegno|Fine|s|\+
+    - track.operator
+  - - \|(?=\|:)
+    - subtrack.barline
+    - repeat.begin.inner
+  - - :(?=\|\|:)
+    - subtrack.barline.plain
+    - repeat.beginend.inner
+  - - :\|(?=\|)
+    - subtrack.barline.plain
+    - repeat.end.inner
+  - - \[(\d+(~\d+)?\.)+\]
+    - '@rematch'
+    - volta
+
+repeat.begin.inner:
+  - - '\|:'
+    - subtrack.barline.plain
+    - '@pop'
+
+repeat.end.inner:
+  - - \|
+    - subtrack.barline
+    - '@pop'
+
+repeat.beginend.inner:
+  - - \|
+    - subtrack.barline
+  - - ':'
+    - subtrack.barline.plain
+    - '@pop'
+
+volta:
+  - - \[
+    - subtrack.barline
+  - - \]
+    - subtrack.barline
+    - '@pop'
+  - - \d+(~\d+)?
+    - number.constant
+  - - \.
+    - track.operator
+
+alias:
+
+  # Key
+  - - \(1=[#b]*[A-G][',]*\)
+    - - 1=
+      - function.alias
+    - - "[#bA-G',]"
+      - string
+
+  # GraceNote & Appoggiatura
+  - - \(({{note}}*\^|\^{{note}}*)\)
+    - - \^
+      - function.alias
+    - note
+
+  # Vol
+  - - \((\d+(\.\d+)?|\.\d+)%\)
+    - - \%
+      - function.alias
+    - number
+
+  # BarBeat
+  - - \(\d+/\d+\)
+    - - /
+      - function.alias
+    - number
+
+  # Spd
+  - - \(\d+\.?\d*\)
+    - number
+
+  # KeyShift
+  - - \([+\-]\d+\)
+    - - '[+\-]'
+      - function.alias
+    - number
+
+  # Tuplet
+  - - \(\d+~\)
+    - - \~
+      - function.alias
+    - number
+
+  # Tremolo
+  - - \({{expr}}[=\-]\)
+    - - '[=\-]\)'
+      - function.alias
+      - '@pop'
+    - expression
+
+
+
