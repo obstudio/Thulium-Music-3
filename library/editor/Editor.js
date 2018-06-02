@@ -67,7 +67,7 @@ function defineLanguage(scheme) {
   window.monaco.editor.defineTheme('tm', {
     base: 'vs-dark',
     inherit: true,
-    rules: scheme,
+    rules: scheme.tokenizer,
     colors: {}
   })
   window.monaco.editor.setTheme('tm')
@@ -99,7 +99,6 @@ function defineLanguage(scheme) {
       const char = content.charAt(offset - 1)
       const line = model.getLineContent(position.lineNumber)
       const song = new Thulium(content, { useFile: false })
-      console.log(line)
       if (song.matchScope('inst', offset)) {
         return instCompletions
       } else if (song.matchScope('pack', offset)) {

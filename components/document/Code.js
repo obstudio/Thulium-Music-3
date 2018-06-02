@@ -1,5 +1,5 @@
-const { defineLanguage } = require('../../../library/editor/Editor')
-const theme = require('../../../themes/Theme').tokenizer
+const { defineLanguage } = require('../../library/editor/Editor')
+const theme = require('../../themes/Theme')
 
 module.exports = {
   name: 'Code',
@@ -27,17 +27,11 @@ module.exports = {
       if ('monaco' in window) {
         window.monaco.editor
           .colorize(node.content, node.lang)
-          .then(res => {
-            this.res = res
-          })
+          .then(res => this.res = res)
       } else {
         amdRequire(['vs/editor/editor.main'], () => {
           defineLanguage(theme)
-          window.monaco.editor
-            .colorize(node.content, node.lang)
-            .then(res => {
-              this.res = res
-            })
+          this.render(node)
         })
       }
     }

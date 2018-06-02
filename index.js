@@ -1,12 +1,13 @@
 const Vue = require('vue/dist/vue.common')
 const ElementUI = require('element-ui')
 const VueI18n = require('vue-i18n')
+const Router = require('vue-router')
+
 const Player = require('./library/player')
 const Lexer = require('./library/tmdoc/Lexer')
-const Router = require('vue-router')
-const TmEditor = require('./editor/components/TmEditor')
-const TmDoc = require('./editor/components/TmDoc')
-const HelloWorld = require('./editor/components/HelloWorld')
+const TmEditor = require('./components/TmEditor')
+const TmDoc = require('./components/TmDoc')
+const HelloWorld = require('./components/HelloWorld')
 
 // Vue files can not be used
 // const Icon = require('vue-awesome/components/Icon')

@@ -1,7 +1,7 @@
 const TmLoading = require('./TmLoading')
-const { defineLanguage } = require('../../library/editor/Editor')
+const { defineLanguage } = require('../library/editor/Editor')
 const TmMonacoEditor = require('./TmMonacoEditor')
-const theme = require('../../themes/Theme').tokenizer
+const theme = require('../themes/Theme')
 
 module.exports = {
   name: 'TmEditor',
