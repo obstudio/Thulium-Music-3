@@ -10,7 +10,7 @@ module.exports = {
   },
   computed: {
     root() {
-      return this.$md(this.raw)
+      return this.$markdown(this.raw)
     }
   },
   methods: {

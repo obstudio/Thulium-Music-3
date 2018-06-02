@@ -1,27 +1,23 @@
 const Vue = require('vue/dist/vue.common')
 const ElementUI = require('element-ui')
 const VueI18n = require('vue-i18n')
-const router = require('./editor/router')
 const Player = require('./library/player')
 const Lexer = require('./library/tmdoc/Lexer')
+const Router = require('vue-router')
+const TmEditor = require('./editor/components/TmEditor')
+const TmDoc = require('./editor/components/TmDoc')
+const HelloWorld = require('./editor/components/HelloWorld')
 
 // Vue files can not be used
 // const Icon = require('vue-awesome/components/Icon')
 // require('node_modules/vue-awesome/dist/vue-awesome.js')
 // Vue.component('icon', Icon)
 
-const App = {
-  name: 'App',
-  template: `<div id="app" class="window">
-    <router-view/>
-    <!-- <footer-player style="text-align: center;" :InitialTime="75" :TotalTime="100" :Volume="75"/> -->
-  </div>`
-}
-
+Vue.use(Router)
 Vue.use(VueI18n)
 Vue.use(ElementUI)
-Vue.prototype.$createPlayer = (v) => new Player(v)
-Vue.prototype.$md = (content) => {
+Vue.prototype.$createPlayer = () => new Player(...arguments)
+Vue.prototype.$markdown = (content) => {
   if (typeof content !== 'string') return []
   return new Lexer().lex(content)
 }
@@ -30,6 +26,40 @@ Vue.config.productionTip = false
 
 new Vue({
   el: '#app',
-  router,
-  render: h => h(App)
+  router: new Router({
+    routes: [
+      {
+        path: '/',
+        name: 'HomePage',
+        component: HelloWorld
+      },
+      {
+        path: '/editor',
+        name: 'TmEditor',
+        component: TmEditor,
+        props: {
+          width: '100%',
+          height: '100%'
+        }
+      },
+      {
+        path: '/docs/:doc?',
+        name: 'TmDocument',
+        component: TmDoc
+      }
+    ]
+  }),
+
+  data() {
+    return {
+      title: 'Thulium Music',
+      status: 'succeed'
+    }
+  },
+
+  template: `<div>
+    <div class="navbar">{{ title }}</div>
+    <div class="window"><router-view/></div>
+    <div class="status">{{ status }}</div>
+  </div>`
 })

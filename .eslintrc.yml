@@ -22,4 +22,4 @@ rules:
   no-unused-vars:
     - warn
   no-useless-escape:
-    - null
+    - off
