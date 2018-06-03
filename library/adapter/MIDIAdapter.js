@@ -1,6 +1,5 @@
 /**
  * @class
- * @implements {Tm.Adapter}
  */
 class MIDIAdapter {
   static adapt(tracks) {
