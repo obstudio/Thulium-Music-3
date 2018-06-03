@@ -57,7 +57,7 @@ body {
     position: absolute;
     left: 0;
     top: 48px;
-    bottom: 28px;
+    bottom: 0;
     margin: 0;
     /*overflow: hidden;*/
 }
