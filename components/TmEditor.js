@@ -18,7 +18,7 @@ module.exports = {
   },
   computed: {
     remainHeight() {
-      return `${this.height - 44 - 28}px`
+      return `${this.height - 40 - 28}px`
     }
   },
   mounted() {
@@ -190,17 +190,19 @@ module.exports = {
     }
   },
   props: ['width', 'height'],
-  template: `<div class="tm-container">
-  <div class="tm-tab tm-header">
-    <button v-for="(tab, index) in tabs" :key="index" @click="switchTab(index)" :class="{active: index === activeIndex}">
-      {{tab.title}}
-      <span @click.stop="closeTab(index)">&nbsp;X</span>
-    </button>
-    <i class="el-icon-plus" @click="addTab"></i>
-  </div>
+  template: `<div class="tm-editor">
+    <div class="header">
+      <button class="toolbar-toggler" @click="addTab">+</button>
+      <div class="tm-tabs">
+        <button v-for="(tab, index) in tabs" :key="index" @click="switchTab(index)" :class="{active: index === activeIndex}">
+          {{tab.title}}
+          <span @click.stop="closeTab(index)">&nbsp;X</span>
+        </button>
+      </div>
+    </div>
   <div class="tm-content" :style="{height: remainHeight}"></div>
   <div class="status">
-    行{{row}}列{{column}}
+    行 {{row}}，列 {{column}}
   </div>
 </div>`
 }

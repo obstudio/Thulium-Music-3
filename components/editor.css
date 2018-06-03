@@ -86,16 +86,42 @@
   transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1)
 }
 
+.monaco-editor .editor-scrollable {
+  border-left: 1px solid #2e2e2e;
+}
+
 /* Style the tab */
-.tm-tab {
+.tm-editor .header {
+  height: 40px;
   overflow: hidden;
   border-style: none;
   border-bottom: 1px solid #2c3e50;
   background-color: #1e1e1e;
 }
 
+button.toolbar-toggler {
+  font-size: 20px;
+  left: 0px;
+  top: 0px;
+  width: 48px;
+  height: 100%;
+  padding: 12px 16px;
+  text-align: -webkit-center;
+  background-color: inherit;
+  color: #dddddd;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.tm-tabs {
+  height: 100%;
+}
+
 /* Style the buttons that are used to open the tab content */
-.tm-tab button {
+.tm-tabs button {
   background-color: inherit;
   color: #dddddd;
   float: left;
@@ -106,11 +132,11 @@
   transition: 0.3s;
 }
 
-.tm-tab button:hover {
+.tm-tabs button:hover {
   background-color: #252525;
 }
 
-.tm-tab button.active {
+.tm-tabs button.active {
   background-color: #2c3e50;
 }
 

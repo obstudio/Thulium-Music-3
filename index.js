@@ -6,9 +6,6 @@ const Router = require('vue-router')
 const TmUser = require('./user')
 const Player = require('./library/player')
 const Lexer = require('./library/tmdoc/Lexer')
-const TmEditor = require('./components/TmEditor')
-const TmDoc = require('./components/TmDoc')
-const Entry = require('./components/Entry')
 
 // Vue files can not be used
 // const Icon = require('vue-awesome/components/Icon')
@@ -35,26 +32,28 @@ new Vue({
       {
         path: '/',
         name: 'HomePage',
-        component: Entry
+        component: require('./components/Entry')
       },
       {
         path: '/editor',
         name: 'TmEditor',
-        component: TmEditor
+        component: require('./components/TmEditor')
       },
       {
         path: '/docs',
         name: 'TmDocument',
-        component: TmDoc
+        component: require('./components/TmDoc')
       }
     ]
   }),
+
   mounted() {
     addEventListener('resize', () => {
       this.height = window.innerHeight - 48
       this.width = window.innerWidth - (this.sidebar ? 64 : 0)
     }, {passive: true})
   },
+
   data() {
     return {
       title: 'Thulium Music',
@@ -64,12 +63,13 @@ new Vue({
       sidebar: true
     }
   },
-  template: `<div>
+
+  template: `<div :class="{ 'sidebar-showed': sidebar }">
     <div class="navbar">
-      <button @click="sidebar = !sidebar">x</button>
-      {{ title }}
+      <button @click="sidebar = !sidebar">{{ sidebar ? '<' : '>' }}</button>
+      <div class="title">{{ title }}</div>
     </div>
-    <div class="window" :class="{ 'sidebar-showed': sidebar }">
+    <div class="window">
       <div class="sidebar">
         <el-menu default-active="1" :collapse="true" background-color="#545c64" :router="true">
           <el-menu-item index="/">
