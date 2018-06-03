@@ -3,21 +3,18 @@
  */
 class MIDIAdapter {
   static adapt(tracks) {
-    const trackMap = {}
-    const durs = []
-    for (const track of tracks) {
-      durs.push(track.Meta.Duration)
-      if (track.ID in trackMap) {
-        trackMap[track.ID].Meta.Duration += track.Meta.Duration
-        trackMap[track.ID].Content.push(...track.Content)
-      } else {
-        trackMap[track.ID] = track
-      }
-    }
+    let endTime = 0
     return {
-      tracks: Object.values(trackMap),
-      time: Math.max(...durs)
+      tracks: tracks.map((track) => {
+        endTime = Math.max(endTime, track.Content[0].StartTime + track.Meta.Duration)
+        return {
+          Instrument: track.Name.split('.')[1],
+          Content: track.Content
+        }
+      }),
+      time: endTime
     }
   }
 }
+
 module.exports = MIDIAdapter

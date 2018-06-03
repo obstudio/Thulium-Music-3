@@ -1,4 +1,4 @@
-const { Loader } = require('./loader')
+const Loader = require('./loader')
 
 class Player {
   /** 构造方法，初始化Loader */
