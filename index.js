@@ -1,22 +1,3 @@
-const path = require('path')
-
-function uriFromPath(...paths) {
-  const result = path.resolve(path.join(...paths)).split(path.sep)
-    .map(name => name
-      .replace(/#/g, '%23')
-      .replace(/ /g, '%20')
-    ).join('/')
-  return 'file:///' + result
-}
-
-amdRequire.config({
-  baseUrl: uriFromPath(__dirname, 'node_modules/monaco-editor/min')
-})
-
-// work around monaco not understanding the environment
-self.module = undefined
-self.process.browser = true
-
 const Vue = require('vue/dist/vue.common')
 const ElementUI = require('element-ui')
 const VueI18n = require('vue-i18n')
@@ -27,7 +8,7 @@ const Player = require('./library/player')
 const Lexer = require('./library/tmdoc/Lexer')
 const TmEditor = require('./components/TmEditor')
 const TmDoc = require('./components/TmDoc')
-const HelloWorld = require('./components/HelloWorld')
+const Entry = require('./components/Entry')
 
 // Vue files can not be used
 // const Icon = require('vue-awesome/components/Icon')
@@ -54,7 +35,7 @@ new Vue({
       {
         path: '/',
         name: 'HomePage',
-        component: HelloWorld
+        component: Entry
       },
       {
         path: '/editor',
@@ -62,27 +43,36 @@ new Vue({
         component: TmEditor,
         props: {
           width: '100%',
-          height: '100%'
+          height: 524
         }
       },
       {
-        path: '/docs/:doc?',
+        path: '/docs',
         name: 'TmDocument',
-        component: TmDoc
+        component: TmDoc,
+        props: {
+          height: 524
+        }
       }
     ]
   }),
-
+  mounted() {
+    addEventListener('resize', () => {
+      this.height = window.innerHeight - 76
+    })
+  },
   data() {
     return {
       title: 'Thulium Music',
-      status: 'succeed'
+      status: 'succeed',
+      height: 600 - 76 // initial height
     }
   },
-
   template: `<div>
-    <div class="navbar">{{ title }}</div>
-    <div class="window"><router-view/></div>
-    <div class="status">{{ status }}</div>
-  </div>`
+  <div class="navbar">{{ title }}</div>
+  <div class="window">
+    <router-view :height="height"/>
+  </div>
+  <div class="status">{{ status }}</div>
+</div>`
 })
