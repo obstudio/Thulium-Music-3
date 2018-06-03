@@ -3,7 +3,7 @@ const TmDoc = require('./TmDoc')
 const {registerPlayCommand} = require('../library/editor/Editor')
 
 module.exports = {
-  name: 'TmMonacoEditor',
+  name: 'TmEditor',
   components: {
     TmDoc
   },
@@ -11,12 +11,14 @@ module.exports = {
     return {
       tabs: [],
       activeIndex: 0,
-      type: 'tm'
+      type: 'tm',
+      row: 1,
+      column: 1
     }
   },
   computed: {
     remainHeight() {
-      return `${this.height - 44}px`
+      return `${this.height - 44 - 28}px`
     }
   },
   mounted() {
@@ -24,15 +26,10 @@ module.exports = {
     this.showEditor()
     this.tabs.push({
       title: 'foo',
-      model: window.monaco.editor.createModel(
-        'foo',
-        'tm'
-      ),
+      model: window.monaco.editor.createModel('foo', 'tm'),
       type: 'tm'
-    }, {
-      title: 'bar',
-      type: 'doc'
     })
+    this.switchTab(0)
   },
 
   methods: {
@@ -40,21 +37,16 @@ module.exports = {
       const tab = this.tabs[index]
       this.type = tab.type
       this.activeIndex = index
-      if (tab.type === 'tm') {
-        this.editor.setModel(this.tabs[index].model)
-        this.$nextTick(() => {
-          this.editor.layout()
-        })
-      }
+      this.editor.setModel(this.tabs[index].model)
+      this.$nextTick(() => {
+        this.editor.layout()
+      })
     },
 
-    addTab(type) {
+    addTab() {
       const tab = {
         title: 'New',
-        type: type
-      }
-      if (type === 'tm') {
-        tab.model = window.monaco.editor.createModel('', 'tm')
+        model: window.monaco.editor.createModel('', 'tm')
       }
       this.tabs.push(tab)
       this.switchTab(this.tabs.length - 1)
@@ -63,7 +55,7 @@ module.exports = {
     closeTab(index) {
       this.tabs.splice(index, 1)
       if (this.tabs.length === 0) {
-        this.addTab('tm')
+        this.addTab()
       } else if (index === this.activeIndex) {
         this.switchTab(0)
       } else if (index <= this.activeIndex) {
@@ -76,7 +68,7 @@ module.exports = {
       //   localStorage.getItem('lastText'),
       //   'tm'
       // )
-      const editor = window.monaco.editor.create(this.$el.children[1].children[1], {
+      const editor = window.monaco.editor.create(this.$el.children[1], {
         model: null,
         language: 'tm',
         theme: 'tm',
@@ -151,6 +143,10 @@ module.exports = {
           }
         }
       })
+      editor.onDidChangeCursorPosition((e) => {
+        this.row = e.position.lineNumber
+        this.column = e.position.column
+      })
       addEventListener('resize', e => {
         editor.layout()
       }, {passive: true})
@@ -197,12 +193,11 @@ module.exports = {
       {{tab.title}}
       <span @click.stop="closeTab(index)">&nbsp;X</span>
     </button>
-    <span @click="addTab('tm')" class="topright">编辑器</span>
-    <span @click="addTab('doc')" class="topright">文档</span>
+    <span @click="addTab" class="topright">+</span>
   </div>
-  <div class="tm-content" :style="{height: remainHeight}">
-    <tm-doc doc="overview" v-show="type === 'doc'" :height="this.height - 44"></tm-doc>
-    <div style="width: 100%; height: 100%" v-show="type === 'tm'"></div>
+  <div class="tm-content" :style="{height: remainHeight}"></div>
+  <div class="status">
+    行{{row}}列{{column}}
   </div>
 </div>`
 }

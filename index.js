@@ -54,14 +54,14 @@ new Vue({
   }),
   mounted() {
     addEventListener('resize', () => {
-      this.height = window.innerHeight - 76
-    })
+      this.height = window.innerHeight - 48
+    }, {passive: true})
   },
   data() {
     return {
       title: 'Thulium Music',
       status: 'succeed',
-      height: 600 - 76 // initial height
+      height: 600 - 48 // initial height
     }
   },
   template: `<div>
@@ -69,6 +69,5 @@ new Vue({
   <div class="window">
     <router-view :height="height"/>
   </div>
-  <div class="status">{{ status }}</div>
 </div>`
 })

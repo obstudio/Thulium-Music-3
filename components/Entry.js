@@ -1,6 +1,6 @@
 
 module.exports = {
-  name: 'HelloWorld',
+  name: 'Entry',
   data () {
     return {
       msg: 'Welcome to Thulium Music Player'
