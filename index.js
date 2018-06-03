@@ -52,7 +52,7 @@ new Vue({
   mounted() {
     addEventListener('resize', () => {
       this.height = window.innerHeight - 48
-      this.width = window.innerWidth - 64
+      this.width = window.innerWidth - (this.sidebar ? 64 : 0)
     }, {passive: true})
   },
   data() {
@@ -60,36 +60,41 @@ new Vue({
       title: 'Thulium Music',
       status: 'succeed',
       height: 600 - 48, // initial height
-      width: 800 - 64
+      width: 800 - 64,
+      sidebar: true
     }
   },
   template: `<div>
-  <div class="navbar">{{ title }}</div>
-  <div class="window">
-    <div style="height: 100%; width: 64px; background: #545c64; position: absolute;">
-      <el-menu default-active="1" :collapse="true" background-color="#545c64" :router="true">
-        <el-menu-item index="/">
-          <i class="el-icon-menu"></i>
-          <span slot="title">主页</span>
-        </el-menu-item>
-        <el-menu-item index="/editor">
-          <i class="el-icon-edit"></i>
-          <span slot="title">编辑器</span>
-        </el-menu-item>
-        <el-menu-item index="/docs">
-          <i class="el-icon-document"></i>
-          <span slot="title">文档</span>
-        </el-menu-item>
-        <el-menu-item index="/settings">
-          <i class="el-icon-setting"></i>
-          <span slot="title">设置</span>
-        </el-menu-item>
-      </el-menu>
+    <div class="navbar">
+      <button @click="sidebar = !sidebar">x</button>
+      {{ title }}
     </div>
-    <keep-alive>
-      <router-view :height="height"
-                   style="vertical-align: top; position: absolute; left: 64px; right: 0; height: 100%"/>
-    </keep-alive>
-  </div>
-</div>`
+    <div class="window" :class="{ 'sidebar-showed': sidebar }">
+      <div class="sidebar">
+        <el-menu default-active="1" :collapse="true" background-color="#545c64" :router="true">
+          <el-menu-item index="/">
+            <i class="el-icon-menu"></i>
+            <span slot="title">主页</span>
+          </el-menu-item>
+          <el-menu-item index="/editor">
+            <i class="el-icon-edit"></i>
+            <span slot="title">编辑器</span>
+          </el-menu-item>
+          <el-menu-item index="/docs">
+            <i class="el-icon-document"></i>
+            <span slot="title">文档</span>
+          </el-menu-item>
+          <el-menu-item index="/settings">
+            <i class="el-icon-setting"></i>
+            <span slot="title">设置</span>
+          </el-menu-item>
+        </el-menu>
+      </div>
+      <div class="main" :width="width">
+        <keep-alive>
+          <router-view :height="height"/>
+        </keep-alive>
+      </div>
+    </div>
+  </div>`
 })

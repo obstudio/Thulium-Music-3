@@ -27,22 +27,36 @@ body {
 }
 
 .navbar button {
-    text-align: right;
     -webkit-app-region: no-drag;
+    background-color: inherit;
+    color: #dddddd;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
 }
 
-.status {
-    width: 100%;
-    bottom: 0;
-    height: 12px;
-    margin: 0;
-    padding: 8px 4px;
-    position: absolute;
+.navbar button:hover {
+    background-color: #252525;
+}
+
+.navbar button.active {
     background-color: #2c3e50;
-    color: #fff;
-    text-align: left;
-    font-size: 12px;
-    -webkit-user-select: none;
+}
+
+.sidebar {
+    height: 100%;
+    width: 64px;
+    left: -64px;
+    background: #545c64;
+    position: absolute;
+    transition: 0.3s;
+}
+
+.sidebar-showed > .sidebar {
+    left: 0px;
 }
 
 #app {
@@ -64,6 +78,19 @@ body {
 
 div.hello {
     padding: 20px 40px;
+}
+
+div.main {
+    vertical-align: top;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    height: 100%;
+    transition: 0.3s;
+}
+
+.sidebar-showed > div.main {
+    left: 64px;
 }
 
 @font-face {
