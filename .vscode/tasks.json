@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "vue-devtools",
+      "command": "node_modules/.bin/vue-devtools.cmd",
+      "args": [],
+      "type": "shell"
+    }
+  ]
+}
