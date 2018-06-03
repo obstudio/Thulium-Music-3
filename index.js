@@ -42,17 +42,13 @@ new Vue({
         name: 'TmEditor',
         component: TmEditor,
         props: {
-          width: '100%',
-          height: 524
+          width: '100%'
         }
       },
       {
         path: '/docs',
         name: 'TmDocument',
-        component: TmDoc,
-        props: {
-          height: 524
-        }
+        component: TmDoc
       }
     ]
   }),
