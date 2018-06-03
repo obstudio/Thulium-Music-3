@@ -40,6 +40,9 @@ module.exports = {
       this.editor.setModel(this.tabs[index].model)
       this.$nextTick(() => {
         this.editor.layout()
+        const position = this.editor.getPosition()
+        this.row = position.lineNumber
+        this.column = position.column
       })
     },
 
@@ -187,13 +190,13 @@ module.exports = {
     }
   },
   props: ['width', 'height'],
-  template: `<div :style="{width}" class="tm-container">
+  template: `<div class="tm-container">
   <div class="tm-tab tm-header">
     <button v-for="(tab, index) in tabs" :key="index" @click="switchTab(index)" :class="{active: index === activeIndex}">
       {{tab.title}}
       <span @click.stop="closeTab(index)">&nbsp;X</span>
     </button>
-    <span @click="addTab" class="topright">+</span>
+    <i class="el-icon-plus" @click="addTab"></i>
   </div>
   <div class="tm-content" :style="{height: remainHeight}"></div>
   <div class="status">
