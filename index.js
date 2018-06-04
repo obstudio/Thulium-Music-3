@@ -69,34 +69,36 @@ new Vue({
       width: 800 - 64,
       sidebar: true,
       settings: global.user.Settings,
-      brower: global.remote.getCurrentWindow()
+      browser: global.remote.getCurrentWindow()
     }
   },
 
   methods: {
     toggleMaximize() {
-      if (this.brower.isMaximized()) {
-        this.brower.unmaximize()
+      if (this.browser.isMaximized()) {
+        this.browser.unmaximize()
       } else {
-        this.brower.maximize()
+        this.browser.maximize()
       }
     }
   },
 
   template: `<div :class="[{'sidebar-showed': sidebar}, settings.theme]">
     <div class="navbar">
+      <div class="top-border"></div>
       <button class="sidebar-toggler" @click="sidebar = !sidebar">
         {{ sidebar ? '<' : '>' }}
       </button>
       <div class="title">{{ title }}</div>
       <div class="top-right">
-        <button @click="brower.minimize()" class="minimize">-</button>
+        <button @click="browser.minimize()" class="minimize">-</button>
         <button @click="toggleMaximize()" class="maximize">0</button>
-        <button @click="brower.close()" class="close">x</button>
+        <button @click="browser.close()" class="close">x</button>
       </div>
     </div>
     <div class="window">
       <div class="sidebar">
+        <div class="left-border"></div>
         <el-menu default-active="1" :collapse="true" background-color="#545c64" :router="true">
           <el-menu-item index="/">
             <i class="el-icon-menu"></i>
