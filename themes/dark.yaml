@@ -1,11 +1,5 @@
 
-navbar:
-  background: 001122
-  foreground: FFFFFF
-
-editor:
-  background: 1E1E1E
-  basetheme: vs-dark
+basetheme: vs-dark
 
 tokenizer:
   - token: default

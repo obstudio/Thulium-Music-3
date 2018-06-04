@@ -14,11 +14,16 @@ class TmTheme {
         }
       }
       window.monaco.editor.defineTheme(theme, {
-        base: this[theme].editor.basetheme,
+        base: this[theme].basetheme,
         inherit: true,
         rules: this[theme].tokenizer,
         colors: {}
       })
+      const link = document.createElement('link')
+      link.setAttribute('rel', 'stylesheet')
+      link.setAttribute('type', 'text/css')
+      link.setAttribute('href', 'themes/' + theme + '.css')
+      document.getElementsByTagName('head')[0].appendChild(link)
     }
   }
 }

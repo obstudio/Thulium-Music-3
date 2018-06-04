@@ -18,7 +18,7 @@ module.exports = {
       required: true
     }
   },
-  template: `<div class="tm-doc-root">
+  template: `<div class="tm-doc">
     <component v-for="(comp, index) in content" :is="comp.type" :node="comp" :key="index"></component>
   </div>`
 }

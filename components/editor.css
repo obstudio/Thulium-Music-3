@@ -1,23 +1,13 @@
 .status {
   width: 100%;
   bottom: 0;
-  height: 12px;
+  height: 20px;
   margin: 0;
   padding: 4px 8px;
   position: absolute;
-  background-color: #2c3e50;
-  color: #fff;
   text-align: left;
   font-size: 12px;
   -webkit-user-select: none;
-}
-
-.monaco-editor .editor-scrollable {
-  border-left: 1px solid #2e2e2e;
-}
-
-.tm-editor {
-  background-color: #1e1e1e;
 }
 
 /* .tm-editor > .content {
@@ -33,7 +23,6 @@
   height: 40px;
   overflow: hidden;
   border-style: none;
-  border-bottom: 1px solid #2c3e50;
 }
 
 button.toolbar-toggler {
@@ -44,8 +33,6 @@ button.toolbar-toggler {
   height: 100%;
   padding: 12px 16px;
   text-align: -webkit-center;
-  background-color: inherit;
-  color: #dddddd;
   float: left;
   border: none;
   outline: none;
@@ -59,22 +46,12 @@ button.toolbar-toggler {
 
 /* Style the buttons that are used to open the tab content */
 .tm-tabs button {
-  background-color: inherit;
-  color: #dddddd;
   float: left;
   border: none;
   outline: none;
   cursor: pointer;
   padding: 14px 16px;
   transition: 0.3s;
-}
-
-.tm-tabs button:hover {
-  background-color: #252525;
-}
-
-.tm-tabs button.active {
-  background-color: #2c3e50;
 }
 
 .topright {
