@@ -3,6 +3,7 @@ const ElementUI = require('element-ui')
 const VueI18n = require('vue-i18n')
 const Router = require('vue-router')
 
+global.remote = require('electron').remote
 global.user = require('./user')
 const Player = require('./library/player')
 const Lexer = require('./library/tmdoc/Lexer')
@@ -67,16 +68,32 @@ new Vue({
       height: 600 - 48, // initial height
       width: 800 - 64,
       sidebar: true,
-      settings: user.Settings
+      settings: global.user.Settings,
+      brower: global.remote.getCurrentWindow()
     }
   },
 
-  template: `<div :class="[{ 'sidebar-showed': sidebar }, settings.theme]">
+  methods: {
+    toggleMaximize() {
+      if (this.brower.isMaximized()) {
+        this.brower.unmaximize()
+      } else {
+        this.brower.maximize()
+      }
+    }
+  },
+
+  template: `<div :class="[{'sidebar-showed': sidebar}, settings.theme]">
     <div class="navbar">
       <button class="sidebar-toggler" @click="sidebar = !sidebar">
         {{ sidebar ? '<' : '>' }}
       </button>
       <div class="title">{{ title }}</div>
+      <div class="top-right">
+        <button @click="brower.minimize()" class="minimize">-</button>
+        <button @click="toggleMaximize()" class="maximize">0</button>
+        <button @click="brower.close()" class="close">x</button>
+      </div>
     </div>
     <div class="window">
       <div class="sidebar">

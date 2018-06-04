@@ -22,7 +22,7 @@ body {
 }
 
 .navbar > div.title {
-    padding: 10px 64px;
+    padding: 10px 144px;
     text-align: -webkit-center;
     font-size: 20px;
 }
@@ -37,11 +37,26 @@ body {
     transition: 0.3s;
 }
 
-.navbar button.sidebar-toggler {
+.navbar > div.top-right {
+    position: absolute;
+    top: 0px;
+    height: 100%;
+    right: 0px;
+    float: right;
+}
+
+.navbar > div.top-right button.minimize { right: 96px }
+.navbar > div.top-right button.maximize { right: 48px }
+.navbar > div.top-right button.close { right: 0px }
+
+.navbar button {
     font-size: 20px;
-    left: 0px;
     width: 48px;
     padding: 12px 16px;
+}
+
+.navbar button.sidebar-toggler {
+    left: 0px;
     float: left;
 }
 
