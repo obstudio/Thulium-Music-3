@@ -58,19 +58,12 @@ function codeLensAt(model, line, id, command) {
 }
 
 let $defined = false
-function defineLanguage(scheme) {
+function defineLanguage() {
   if ($defined) return
   window.monaco.languages.register({
     id: 'tm',
     extensions: ['tm']
   })
-  window.monaco.editor.defineTheme('tm', {
-    base: 'vs-dark',
-    inherit: true,
-    rules: scheme.tokenizer,
-    colors: {}
-  })
-  window.monaco.editor.setTheme('tm')
   window.monaco.languages.setMonarchTokensProvider('tm', Language)
   window.monaco.languages.registerDefinitionProvider('tm', {
     provideDefinition(model, position, token) {

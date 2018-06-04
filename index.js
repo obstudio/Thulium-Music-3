@@ -3,7 +3,7 @@ const ElementUI = require('element-ui')
 const VueI18n = require('vue-i18n')
 const Router = require('vue-router')
 
-const TmUser = require('./user')
+global.user = require('./user')
 const Player = require('./library/player')
 const Lexer = require('./library/tmdoc/Lexer')
 
@@ -47,6 +47,12 @@ new Vue({
     ]
   }),
 
+  watch: {
+    sidebar(value) {
+      this.width = window.innerWidth - (value ? 64 : 0)
+    }
+  },
+
   mounted() {
     addEventListener('resize', () => {
       this.height = window.innerHeight - 48
@@ -60,13 +66,16 @@ new Vue({
       status: 'succeed',
       height: 600 - 48, // initial height
       width: 800 - 64,
-      sidebar: true
+      sidebar: true,
+      settings: user.Settings
     }
   },
 
-  template: `<div :class="{ 'sidebar-showed': sidebar }">
+  template: `<div :class="[{ 'sidebar-showed': sidebar }, settings.theme]">
     <div class="navbar">
-      <button @click="sidebar = !sidebar">{{ sidebar ? '<' : '>' }}</button>
+      <button class="sidebar-toggler" @click="sidebar = !sidebar">
+        {{ sidebar ? '<' : '>' }}
+      </button>
       <div class="title">{{ title }}</div>
     </div>
     <div class="window">
@@ -90,9 +99,9 @@ new Vue({
           </el-menu-item>
         </el-menu>
       </div>
-      <div class="main" :width="width">
+      <div class="main">
         <keep-alive>
-          <router-view :height="height"/>
+          <router-view :height="height" :width="width"/>
         </keep-alive>
       </div>
     </div>

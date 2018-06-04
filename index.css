@@ -8,13 +8,8 @@ body {
     height: 100%;
     position: absolute;
     overflow: hidden;
-}
-
-#app {
-    font-family: "Avenir", Helvetica, Arial, sans-serif;
+    font-family: source-san-sans-CN;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: #2c3e50;
 }
 
 .navbar {
@@ -33,36 +28,38 @@ body {
     padding: 10px 64px;
     text-align: -webkit-center;
     font-size: 20px;
-    font-family: source-san-sans-CN;
 }
 
 .navbar button {
-    font-size: 20px;
-    left: 0px;
     top: 0px;
-    width: 48px;
     height: 100%;
-    padding: 12px 16px;
     -webkit-app-region: no-drag;
     background-color: inherit;
     color: #dddddd;
-    float: left;
     border: none;
     outline: none;
     cursor: pointer;
     transition: 0.3s;
 }
 
-.sidebar-showed .navbar button {
+.navbar button.sidebar-toggler {
+    font-size: 20px;
+    left: 0px;
+    width: 48px;
+    padding: 12px 16px;
+    float: left;
+}
+
+.sidebar-showed button.sidebar-toggler {
     width: 64px;
     background-color: #545c64;
 }
 
-.navbar button:hover {
+button.sidebar-toggler:hover {
     background-color: #252525;
 }
 
-.navbar button.active {
+button.sidebar-toggler.active {
     background-color: #2c3e50;
 }
 

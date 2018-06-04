@@ -15,10 +15,11 @@ class TmUser {
   }
 
   saveSettings() {
-    fs.writeFileSync(
+    fs.writeFile(
       TmUser.UserPath + 'settings.json',
       JSON.stringify(this.Settings),
-      { encoding: 'utf8' }
+      { encoding: 'utf8' },
+      () => {}
     )
   }
 

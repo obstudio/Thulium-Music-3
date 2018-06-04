@@ -1,12 +1,9 @@
 const FileSaver = require('file-saver')
-const TmDoc = require('./TmDoc')
 const {registerPlayCommand} = require('../library/editor/Editor')
 
 module.exports = {
   name: 'TmEditor',
-  components: {
-    TmDoc
-  },
+
   data() {
     return {
       tabs: [],
@@ -16,11 +13,21 @@ module.exports = {
       column: 1
     }
   },
+
   computed: {
     remainHeight() {
       return `${this.height - 40 - 28}px`
     }
   },
+
+  watch: {
+    width() {
+      this.$nextTick(() => {
+        this.editor.layout()
+      })
+    }
+  },
+
   mounted() {
     this.player = undefined
     this.showEditor()
@@ -29,6 +36,7 @@ module.exports = {
       model: window.monaco.editor.createModel('foo', 'tm'),
       type: 'tm'
     })
+    window.monaco.editor.setTheme(window.user.Settings.theme)
     this.switchTab(0)
   },
 
@@ -159,6 +167,7 @@ module.exports = {
           localStorage.setItem('lastText', value)
         }
       })
+
       this.$el.addEventListener('drop', e => {
         e.preventDefault()
         const dt = e.dataTransfer
@@ -200,9 +209,9 @@ module.exports = {
         </button>
       </div>
     </div>
-  <div class="tm-content" :style="{height: remainHeight}"></div>
-  <div class="status">
-    行 {{row}}，列 {{column}}
-  </div>
-</div>`
+    <div class="content" :style="{height: remainHeight, width: width + 'px'}"></div>
+    <div class="status">
+      行 {{row}}，列 {{column}}
+    </div>
+  </div>`
 }
