@@ -30,7 +30,7 @@ function audioLibVar(instr) {
 
 class Player {
   constructor(source, spec) {
-    const result = new Thulium(source, { useFile: false }).adapt('MIDI', spec)
+    const result = new Thulium(source, {useFile: false}).adapt('MIDI', spec)
     this.tracks = result.tracks
     this.time = result.time
     this.dueTime = undefined
@@ -44,20 +44,18 @@ class Player {
       .then((instrs) => {
         const initialTime = this.ctx.currentTime
         this.dueTime = initialTime + this.time
-        for (var i = 0, tracksLength = this.tracks.length; i < tracksLength; i++) {
+        for (let i = 0, tracksLength = this.tracks.length; i < tracksLength; i++) {
           const content = this.tracks[i].Content
-          for (var j = 0, contentLength = content.length; j < contentLength; j++) {
-            if (content[j].Type === 'Note') {
-              this.player.queueWaveTable(
-                this.ctx,
-                this.ctx.destination,
-                window.fonts[instrs[i]],
-                content[j].StartTime + initialTime,
-                ((content[j].Pitch === null) ? (drumDict[this.tracks[i].Instrument]) : (content[j].Pitch + 60)),
-                content[j].Duration,
-                content[j].Volume
-              )
-            }
+          for (let j = 0, contentLength = content.length; j < contentLength; j++) {
+            this.player.queueWaveTable(
+              this.ctx,
+              this.ctx.destination,
+              window.fonts[instrs[i]],
+              content[j].StartTime + initialTime,
+              ((content[j].Pitch === null) ? (drumDict[this.tracks[i].Instrument]) : (content[j].Pitch + 60)),
+              content[j].Duration,
+              content[j].Volume
+            )
           }
         }
       })
@@ -92,12 +90,12 @@ class Player {
       return
     }
     switch (this.ctx.state) {
-    case 'running':
-      this.suspend()
-      break
-    case 'suspended':
-      this.resume()
-      break
+      case 'running':
+        this.suspend()
+        break
+      case 'suspended':
+        this.resume()
+        break
     }
   }
 }

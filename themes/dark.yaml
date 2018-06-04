@@ -1,4 +1,6 @@
 
+basetheme: vs-dark
+
 tokenizer:
   - token: default
     foreground: FFFFFF

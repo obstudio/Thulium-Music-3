@@ -1,55 +1,52 @@
 body {
-    background: #FFFFF0;
-    margin: 0px;
-    padding: 0px;
-    left: 0px;
-    top: 0px;
+    margin: 0;
+    padding: 0;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
     position: absolute;
     overflow: hidden;
+    font-family: source-san-sans-CN;
+    -webkit-font-smoothing: antialiased;
 }
 
 .navbar {
-    background-color: #001122;
-    color: #fff;
-    text-align: left;
-    font-size: 24px;
-    font-family: source-san-sans-CN;
-    padding: 12px 20px;
-    margin: 0px;
-    height: 24px;
+    height: 48px;
     top: 0px;
     width: 100%;
     position: absolute;
+    overflow: hidden;
     -webkit-app-region: drag;
     -webkit-user-select: none;
 }
 
+.navbar > div.title {
+    padding: 10px 64px;
+    text-align: -webkit-center;
+    font-size: 20px;
+}
+
 .navbar button {
-    text-align: right;
+    top: 0px;
+    height: 100%;
     -webkit-app-region: no-drag;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.status {
-    width: 100%;
-    bottom: 0px;
-    height: 12px;
-    margin: 0px;
-    padding: 8px 4px;
-    position: absolute;
-    background-color: #2c3e50;
-    color: #fff;
-    text-align: left;
-    font-size: 12px;
-    -webkit-user-select: none;
+.navbar button.sidebar-toggler {
+    font-size: 20px;
+    left: 0px;
+    width: 48px;
+    padding: 12px 16px;
+    float: left;
 }
 
-#app {
-    font-family: "Avenir", Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: #2c3e50;
+.sidebar-showed button.sidebar-toggler {
+    width: 64px;
 }
 
 .window {
@@ -57,13 +54,40 @@ body {
     position: absolute;
     left: 0;
     top: 48px;
-    bottom: 28px;
-    margin: 0px;
+    bottom: 0;
+    margin: 0;
     /*overflow: hidden;*/
 }
 
-div.hello {
-    padding: 20px 40px;
+.sidebar {
+    height: 100%;
+    width: 64px;
+    left: -64px;
+    position: absolute;
+    transition: 0.3s;
+}
+
+.sidebar-showed .sidebar {
+    left: 0px;
+    -webkit-app-region: drag;
+    -webkit-user-select: none;
+}
+
+.sidebar .el-menu-item {
+    -webkit-app-region: no-drag;
+}
+
+div.main {
+    vertical-align: top;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    height: 100%;
+    transition: 0.3s;
+}
+
+.sidebar-showed div.main {
+    left: 64px;
 }
 
 @font-face {

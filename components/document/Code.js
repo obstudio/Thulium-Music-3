@@ -1,6 +1,3 @@
-const { defineLanguage } = require('../../library/editor/Editor')
-const theme = require('../../themes/Theme')
-
 module.exports = {
   name: 'Code',
   data() {
@@ -24,16 +21,7 @@ module.exports = {
   },
   methods: {
     render(node) {
-      if ('monaco' in window) {
-        window.monaco.editor
-          .colorize(node.content, node.lang)
-          .then(res => this.res = res)
-      } else {
-        amdRequire(['vs/editor/editor.main'], () => {
-          defineLanguage(theme)
-          this.render(node)
-        })
-      }
+      window.monaco.editor.colorize(node.content, node.lang).then(res => this.res = res)
     }
   },
   template: `<div v-html="res"></div>`
