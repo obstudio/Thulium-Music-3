@@ -35,8 +35,10 @@ body {
 }
 
 .navbar > div.title {
+    top: 0px;
+    height: 48px;
     padding-left: 48px;
-    padding-right: 144px;
+    padding-right: 120px;
     padding-top: 10px;
     padding-bottom: 10px;
     text-align: -webkit-center;
@@ -48,9 +50,18 @@ body {
     padding-left: 64px;
 }
 
+.navbar > div.top-right {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    right: 2px;
+    float: right;
+}
+
 .navbar button {
     top: 0px;
     height: 100%;
+    position: absolute;
     -webkit-app-region: no-drag;
     border: none;
     outline: none;
@@ -58,32 +69,25 @@ body {
     transition: 0.3s;
 }
 
-.navbar > div.top-right {
-    position: absolute;
-    top: 0px;
-    height: 100%;
-    right: 0px;
-    float: right;
+.navbar > div.top-right button {
+    width: 40px;
+    padding: 8px 0px;
+    text-align: -webkit-center;
 }
 
-.navbar > div.top-right button.minimize { right: 96px }
-.navbar > div.top-right button.maximize { right: 48px }
+.navbar > div.top-right button.minimize { right: 80px }
+.navbar > div.top-right button.maximize { right: 40px }
 .navbar > div.top-right button.close { right: 0px }
-
-.navbar button {
-    font-size: 20px;
-    width: 48px;
-    padding: 12px 16px;
-}
 
 .navbar button.sidebar-toggler {
     left: 0px;
+    width: 48px;
+    font-size: 20px;
     float: left;
+    padding: 12px 16px;
 }
 
-.sidebar-showed button.sidebar-toggler {
-    width: 64px;
-}
+.sidebar-showed .navbar button.sidebar-toggler { width: 64px }
 
 .window {
     width: 100%;
@@ -92,7 +96,6 @@ body {
     top: 48px;
     bottom: 0;
     margin: 0;
-    /*overflow: hidden;*/
 }
 
 .sidebar {
@@ -112,6 +115,7 @@ body {
 .sidebar > div.left-border {
     left: 0px;
     width: 2px;
+    top: 0px;
     height: 100%;
     position: absolute;
     -webkit-app-region: no-drag;
