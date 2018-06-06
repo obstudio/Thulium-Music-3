@@ -1,13 +1,15 @@
 
 module.exports = {
-  name: 'home',
+  name: 'Settings',
   data () {
     return {
-      msg: 'Welcome to Thulium Music Player'
+      msg: 'Settings'
     }
   },
   template: `<div class="home">
     <h1>{{ msg }}</h1>
-    <p>最近编辑的歌曲...</p>
+    <div>
+      <!---->
+    </div>
   </div>`
 }

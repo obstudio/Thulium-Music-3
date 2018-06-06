@@ -44,6 +44,11 @@ new Vue({
         path: '/docs',
         name: 'TmDocument',
         component: require('./components/TmDoc')
+      },
+      {
+        path: '/settings',
+        name: 'Settings',
+        component: require('./components/Settings')
       }
     ]
   }),
