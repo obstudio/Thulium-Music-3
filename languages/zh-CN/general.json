@@ -1,0 +1,14 @@
+{
+    "window": {
+        "about": "关于",
+        "community": "社区",
+        "documents": "文档",
+        "editor": "编辑器",
+        "player": "播放器",
+        "settings": "设置",
+        "title": "铥铥播放器"
+    },
+    "settings": {
+        "title": "设置"
+    }
+}

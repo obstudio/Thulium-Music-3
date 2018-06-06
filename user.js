@@ -3,10 +3,12 @@ const path = require('path')
 const process = require('process')
 const defaultSettings = require('./default.json')
 
+global.library = {}
+global.library.Languages = require('./languages/index.json')
+global.library.Themes = require('./themes/index.json')
+
 class TmUser {
   constructor() {
-    this.Languages = require('./languages/index.json')
-    this.Themes = require('./themes/index.json')
     if (!fs.existsSync(TmUser.UserPath + 'settings.json')) {
       if (!fs.existsSync(TmUser.UserPath)) fs.mkdirSync(TmUser.UserPath)
       this.Settings = defaultSettings
@@ -14,6 +16,7 @@ class TmUser {
     } else {
       this.Settings = require(TmUser.UserPath + 'settings.json')
     }
+    this.Captions = require('./languages/' + this.Settings.language + '/general.json')
   }
 
   saveSettings() {
@@ -47,5 +50,9 @@ default:
   // DO SOMETHING
 }
 
-module.exports = new TmUser()
+const user = new TmUser()
 
+module.exports = {
+  state: user,
+  mutations: {}
+}

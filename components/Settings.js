@@ -4,22 +4,26 @@ module.exports = {
 
   data() {
     return {
+      lib: global.library,
       msg: 'Settings'
     }
   },
 
   computed: {
-    user: () => global.user.state,
+    captions: () => global.user.state.Captions.settings,
     language: {
       get: () => global.user.state.Settings.language,
-      set: (value) => global.user.commit('setSetting', {key: 'language', value})
+      set: (value) => {
+        global.user.state.Settings.language = value
+        global.user.state.Captions = require('../languages/' + value + '/general.json')
+      }
     }
   },
 
   render: VueCompile(`<div class="tm-settings">
-    <h1>{{ msg }}</h1>
-    <el-select v-model="language" placeholder="请选择">
-      <el-option v-for="item in user.Languages" :key="item.key" :label="item.description" :value="item.key"/>
+    <h1>{{ captions.title }}</h1>
+    <el-select v-model="language" placeholder="请选择语言">
+      <el-option v-for="item in lib.Languages" :key="item.key" :label="item.description" :value="item.key"/>
     </el-select>
   </div>`)
 }

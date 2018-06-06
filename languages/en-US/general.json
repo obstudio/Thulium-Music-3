@@ -1,0 +1,14 @@
+{
+    "window": {
+        "about": "About",
+        "community": "Community",
+        "documents": "Documents",
+        "editor": "Editor",
+        "player": "Player",
+        "settings": "Settings",
+        "title": "Thulium Music"
+    },
+    "settings": {
+        "title": "Settings"
+    }
+}

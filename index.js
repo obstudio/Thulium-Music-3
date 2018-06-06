@@ -8,7 +8,6 @@ global.VueCompile = (template) => {
   return VueCompiler.compileToFunctions(template).render
 }
 
-global.remote = require('electron').remote
 const Player = require('./library/player')
 const Lexer = require('./library/tmdoc/Lexer')
 // Vue files can not be used
@@ -20,6 +19,7 @@ Vue.use(Vuex)
 Vue.use(Router)
 Vue.use(VueI18n)
 Vue.use(ElementUI)
+Vue.config.productionTip = false
 Vue.prototype.$createPlayer = (source, spec) => {
   return new Player(source, spec)
 }
@@ -28,20 +28,11 @@ Vue.prototype.$markdown = (content) => {
   return new Lexer().lex(content)
 }
 
-Vue.config.productionTip = false
-
-global.user = new Vuex.Store({
-  state: require('./user'),
-  mutations: {
-    setSetting({key, value}) {
-      this.state.Settings[key] = value
-    }
-  }
-})
+global.remote = require('electron').remote
+global.user = new Vuex.Store(require('./user'))
 
 new Vue({
   el: '#app',
-  store: global.store,
   router: new Router({
     routes: [
       {
@@ -82,7 +73,6 @@ new Vue({
 
   data() {
     return {
-      title: 'Thulium Music',
       status: 'succeed',
       height: 600 - 48, // initial height
       width: 800 - 64,
@@ -92,7 +82,8 @@ new Vue({
   },
 
   computed: {
-    settings: () => global.user.state.Settings
+    settings: () => global.user.state.Settings,
+    captions: () => global.user.state.Captions.window
   },
 
   methods: {
@@ -111,7 +102,7 @@ new Vue({
       <button class="sidebar-toggler" @click="sidebar = !sidebar">
         {{ sidebar ? '<' : '>' }}
       </button>
-      <div class="title">{{ title }}</div>
+      <div class="title">{{ captions.title }}</div>
       <div class="top-right">
         <button @click="browser.minimize()" class="minimize">-</button>
         <button @click="toggleMaximize()" class="maximize">0</button>
