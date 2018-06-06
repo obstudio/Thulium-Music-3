@@ -5,6 +5,8 @@ const defaultSettings = require('./default.json')
 
 class TmUser {
   constructor() {
+    this.Languages = require('./languages/index.json')
+    this.Themes = require('./themes/index.json')
     if (!fs.existsSync(TmUser.UserPath + 'settings.json')) {
       if (!fs.existsSync(TmUser.UserPath)) fs.mkdirSync(TmUser.UserPath)
       this.Settings = defaultSettings
@@ -44,8 +46,6 @@ case 'win32':
 default:
   // DO SOMETHING
 }
-
-TmUser.LangList = require('./languages/index.json')
 
 module.exports = new TmUser()
 

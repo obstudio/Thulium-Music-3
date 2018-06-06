@@ -38,12 +38,12 @@ new Vue({
       {
         path: '/editor',
         name: 'TmEditor',
-        component: require('./components/TmEditor')
+        component: require('./components/Editor')
       },
       {
         path: '/docs',
         name: 'TmDocument',
-        component: require('./components/TmDoc')
+        component: require('./components/Document')
       },
       {
         path: '/settings',

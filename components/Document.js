@@ -1,4 +1,4 @@
-const Document = require('./document')
+const Document = require('./document/')
 module.exports = {
   name: 'TmDoc',
   components: {

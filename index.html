@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <title>Thulium Music</title>
     <link href="index.css" rel="stylesheet">
-    <link href="components/entry.css" rel="stylesheet">
-    <link href="components/editor.css" rel="stylesheet">
-    <link href="components/document.css" rel="stylesheet">
     <link href="node_modules/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
     <link href="node_modules/element-ui/lib/theme-chalk/display.css" rel="stylesheet">
     <!--TODO: remove in production mode -->
@@ -37,7 +34,7 @@
       const { defineLanguage } = require('./library/editor/Editor')
       amdRequire(['vs/editor/editor.main'], () => {
         defineLanguage()
-        const theme = require('./themes/theme')
+        const Themes = require('./themes/theme')
       })
     </script>
     
