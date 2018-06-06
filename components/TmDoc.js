@@ -42,7 +42,7 @@ module.exports = {
       this.setContent()
     }
   },
-  template: `<el-row>
+  render: VueCompile(`<el-row>
   <el-col :span="6" :style="{height: docHeight}">
     <el-menu style="height: 100%" @select="switchDoc">
       <el-menu-item v-for="item in items" :key="item" :index="item">
@@ -54,5 +54,5 @@ module.exports = {
   <el-col :span="17" :offset="1" style="overflow: auto;" :style="{height: docHeight}">
     <Document :content="root"></Document>
   </el-col>
-</el-row>`
+</el-row>`)
 }

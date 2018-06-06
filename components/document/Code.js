@@ -24,5 +24,5 @@ module.exports = {
       window.monaco.editor.colorize(node.content, node.lang).then(res => this.res = res)
     }
   },
-  template: `<div v-html="res"></div>`
+  render: VueCompile(`<div v-html="res"></div>`)
 }

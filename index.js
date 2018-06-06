@@ -1,13 +1,16 @@
-const Vue = require('vue/dist/vue.common')
-const ElementUI = require('element-ui')
+const Vue = require('vue')
+const ElementUI = require('element-ui/lib')
 const VueI18n = require('vue-i18n')
 const Router = require('vue-router')
+const VueCompiler = require('vue-template-compiler/browser')
+global.VueCompile = (template) => {
+  return VueCompiler.compileToFunctions(template).render
+}
 
 global.remote = require('electron').remote
 global.user = require('./user')
 const Player = require('./library/player')
 const Lexer = require('./library/tmdoc/Lexer')
-
 // Vue files can not be used
 // const Icon = require('vue-awesome/components/Icon')
 // require('node_modules/vue-awesome/dist/vue-awesome.js')
@@ -83,7 +86,7 @@ new Vue({
     }
   },
 
-  template: `<div :class="[{'sidebar-showed': sidebar}, settings.theme]">
+  render: VueCompile(`<div :class="[{'sidebar-showed': sidebar}, settings.theme]">
     <div class="navbar">
       <div class="top-border"></div>
       <button class="sidebar-toggler" @click="sidebar = !sidebar">
@@ -99,7 +102,7 @@ new Vue({
     <div class="window">
       <div class="sidebar">
         <div class="left-border"></div>
-        <el-menu default-active="1" :collapse="true" background-color="#545c64" :router="true">
+        <el-menu default-active="/" :collapse="true" background-color="#545c64" :router="true">
           <el-menu-item index="/">
             <i class="el-icon-menu"></i>
             <span slot="title">主页</span>
@@ -124,5 +127,5 @@ new Vue({
         </keep-alive>
       </div>
     </div>
-  </div>`
+  </div>`)
 })

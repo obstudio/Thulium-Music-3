@@ -6,5 +6,5 @@ module.exports = {
       required: true
     }
   },
-  template: `<span v-html="node.text"></span>`
+  render: VueCompile(`<span v-html="node.text"></span>`)
 }
