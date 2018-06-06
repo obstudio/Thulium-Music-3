@@ -2,13 +2,13 @@ const Vue = require('vue')
 const ElementUI = require('element-ui/lib')
 const VueI18n = require('vue-i18n')
 const Router = require('vue-router')
+const Vuex = require('vuex')
 const VueCompiler = require('vue-template-compiler/browser')
 global.VueCompile = (template) => {
   return VueCompiler.compileToFunctions(template).render
 }
 
 global.remote = require('electron').remote
-global.user = require('./user')
 const Player = require('./library/player')
 const Lexer = require('./library/tmdoc/Lexer')
 // Vue files can not be used
@@ -16,6 +16,7 @@ const Lexer = require('./library/tmdoc/Lexer')
 // require('node_modules/vue-awesome/dist/vue-awesome.js')
 // Vue.component('icon', Icon)
 
+Vue.use(Vuex)
 Vue.use(Router)
 Vue.use(VueI18n)
 Vue.use(ElementUI)
@@ -29,8 +30,18 @@ Vue.prototype.$markdown = (content) => {
 
 Vue.config.productionTip = false
 
+global.user = new Vuex.Store({
+  state: require('./user'),
+  mutations: {
+    setSetting({key, value}) {
+      this.state.Settings[key] = value
+    }
+  }
+})
+
 new Vue({
   el: '#app',
+  store: global.store,
   router: new Router({
     routes: [
       {
@@ -76,9 +87,12 @@ new Vue({
       height: 600 - 48, // initial height
       width: 800 - 64,
       sidebar: true,
-      settings: global.user.Settings,
       browser: global.remote.getCurrentWindow()
     }
+  },
+
+  computed: {
+    settings: () => global.user.state.Settings
   },
 
   methods: {

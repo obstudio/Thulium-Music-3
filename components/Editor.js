@@ -36,7 +36,9 @@ module.exports = {
       model: window.monaco.editor.createModel('foo', 'tm'),
       type: 'tm'
     })
-    window.monaco.editor.setTheme(window.user.Settings.theme)
+    if (global.user) {
+      window.monaco.editor.setTheme(global.user.state.Settings.theme)
+    }
     this.switchTab(0)
   },
 
