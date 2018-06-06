@@ -199,7 +199,7 @@ module.exports = {
     }
   },
   props: ['width', 'height'],
-  template: `<div class="tm-editor">
+  render: VueCompile(`<div class="tm-editor">
     <div class="header">
       <button class="toolbar-toggler" @click="addTab">+</button>
       <div class="tm-tabs">
@@ -213,5 +213,5 @@ module.exports = {
     <div class="status">
       行 {{row}}，列 {{column}}
     </div>
-  </div>`
+  </div>`)
 }

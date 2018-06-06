@@ -1,4 +1,4 @@
-const Vue = require('vue/dist/vue.common')
+const Vue = require('vue')
 
 Vue.component('Code', require('./Code'))
 Vue.component('List', require('./List'))
@@ -18,7 +18,7 @@ module.exports = {
       required: true
     }
   },
-  template: `<div class="tm-doc">
+  render: VueCompile(`<div class="tm-doc">
     <component v-for="(comp, index) in content" :is="comp.type" :node="comp" :key="index"></component>
-  </div>`
+  </div>`)
 }
