@@ -82,7 +82,8 @@ new Vue({
 
   computed: {
     settings: () => global.user.state.Settings,
-    captions: () => global.user.state.Captions.window
+    captions: () => global.user.state.Captions.window,
+    styles: () => global.user.state.Styles
   },
 
   methods: {
@@ -156,7 +157,8 @@ new Vue({
     </div>
     <div class="window">
       <div class="sidebar">
-        <el-menu default-active="/" :collapse="true" :router="true" background-color="inherit">
+        <el-menu default-active="/" :collapse="true" :router="true"
+          :backgroundColor="'#' + styles.sidebar.background">
           <el-menu-item index="/">
             <i class="el-icon-menu"></i>
             <span slot="title">{{ captions.homepage }}</span>

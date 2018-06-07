@@ -33,14 +33,14 @@
       self.module = undefined
       self.process.browser = true
       const { defineLanguage } = require('./library/editor/Editor')
-      const themes = require('./themes/theme')
+      global.themes = require('./themes/theme')
       amdRequire(['vs/editor/editor.main'], () => {
         defineLanguage()
         global.library.Themes.forEach(theme => {
           window.monaco.editor.defineTheme(theme.key, {
-            base: themes[theme.key].basetheme,
+            base: global.themes[theme.key].basetheme,
             inherit: true,
-            rules: themes[theme.key].tokenizer,
+            rules: global.themes[theme.key].tokenizer,
             colors: {}
           })
         })

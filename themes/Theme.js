@@ -3,7 +3,7 @@ const fs = require('fs')
 
 class TmTheme {
   constructor(loadBuffer = false, saveBuffer = false) {
-    for (const theme of TmTheme.$) {
+    for (const theme of global.library.Themes) {
       const name = theme.key
       const path = './themes/' + name
       if (loadBuffer) {
@@ -22,9 +22,5 @@ class TmTheme {
     }
   }
 }
-
-TmTheme.$ = require('./index.json')
   
-const themes = new TmTheme()
-
-module.exports = themes
+module.exports = new TmTheme()
