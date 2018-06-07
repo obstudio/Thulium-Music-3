@@ -15,3 +15,6 @@ div.tm-settings {
 .tm-settings .control {
 }
 
+.tm-settings div {
+    user-select: none;
+}

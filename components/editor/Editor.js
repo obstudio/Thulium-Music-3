@@ -18,7 +18,8 @@ module.exports = {
     remainHeight() {
       return `${this.height - 40 - 24}px`
     },
-    settings: () => global.user.state.Settings
+    settings: () => global.user.state.Settings,
+    captions: () => global.user.state.Captions.editor
   },
 
   watch: {
@@ -66,6 +67,9 @@ module.exports = {
     layout() {
       this.$nextTick(() => {
         this.editor.layout()
+        // const minimap = document.getElementsByClassName('minimap')[0]
+        // const canvas = minimap.getElementsByTagName('canvas')[0]
+        // canvas.style.background = ''
       })
     },
 
@@ -195,8 +199,9 @@ module.exports = {
     <div class="header">
       <button class="toolbar-toggler" @click="addTab">+</button>
       <div class="tm-tabs">
-        <button v-for="(tab, index) in tabs" :key="index" @click="switchTab(index)" :class="{active: index === activeIndex}">
-          {{tab.title}}
+        <button v-for="(tab, index) in tabs" @click="switchTab(index)"
+          :key="index" :class="{ active: index === activeIndex }">
+          {{ tab.title }}
           <span @click.stop="closeTab(index)">&nbsp;X</span>
         </button>
       </div>
@@ -205,7 +210,7 @@ module.exports = {
       :class="{'hide-minimap': !settings.minimap}"
       :style="{height: remainHeight, width: width + 'px'}"/>
     <div class="status">
-      行 {{row}}，列 {{column}}
+      {{ captions.line }} {{ row }}, {{ captions.column }} {{column}}
     </div>
   </div>`)
 }

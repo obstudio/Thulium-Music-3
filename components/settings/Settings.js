@@ -48,6 +48,7 @@ module.exports = {
             return theme.description.default === label
           }
         }).key
+        global.user.state.Styles = global.themes[key]
         global.user.state.Settings.theme = key
       }
     }

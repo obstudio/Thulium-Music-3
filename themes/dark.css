@@ -1,16 +1,17 @@
 
+.dark .main > div { background-color: #FFFFF0 }
+
 /* navbar */
 .dark .navbar { background-color: #001122; color: #FFFFFF }
-.dark .navbar button { background-color: inherit; color: #dddddd }
-.dark .navbar button:hover { background-color: #252525 }
+.dark .navbar button { background-color: #001122; color: #dddddd }
 .dark .navbar button path { fill: #FFFFFF }
+.dark .navbar button:hover { background-color: #252525 }
 .dark .show-sidebar button.sidebar-toggler { background-color: #545c64 }
+.dark .show-sidebar button.sidebar-toggler path { background-color: #dedede }
+.dark .show-sidebar button.sidebar-toggler:hover { background-color: #545c64 }
 
 /* sidebar */
 .dark .sidebar { background-color: #545c64 }
-
-/* homepage */
-.dark div.home { background-color: #FFFFF0 }
 
 /* editor */
 .dark .tm-editor { background-color: #1e1e1e }
@@ -39,8 +40,3 @@
 .dark .tm-doc code {  background-color: rgba(27, 31, 35, 0.05) }
 .dark .tm-grey { color: grey }
 
-/* documents */
-.dark div.tm-document { background-color: #FFFFF0 }
-
-/* settings */
-.dark div.tm-settings { background-color: #FFFFF0 }

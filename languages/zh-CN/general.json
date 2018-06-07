@@ -9,6 +9,12 @@
         "settings": "设置",
         "title": "铥铥播放器"
     },
+    "editor": {
+        "column": "列",
+        "line": "行",
+        "section": "乐章",
+        "track": "音轨"
+    },
     "settings": {
         "basic": "基本设置",
         "editor": "编辑器设置",

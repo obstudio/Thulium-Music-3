@@ -9,6 +9,12 @@
         "settings": "Settings",
         "title": "Thulium Music"
     },
+    "editor": {
+        "column": "Column",
+        "line": "Line",
+        "section": "Section",
+        "track": "Track"
+    },
     "settings": {
         "basic": "Basic Settings",
         "editor": "Editor Settings",
