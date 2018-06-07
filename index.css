@@ -1,7 +1,7 @@
-@import "./components/entry.css";
-@import "./components/editor.css";
-@import "./components/document.css";
-@import "./components/settings.css";
+@import "./components/homepage/entry.css";
+@import "./components/editor/editor.css";
+@import "./components/document/document.css";
+@import "./components/settings/settings.css";
 
 body {
     margin: 0;

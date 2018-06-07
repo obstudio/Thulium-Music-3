@@ -21,7 +21,7 @@ module.exports = {
       set: label => {
         const key = global.library.Languages.find(lang => lang.description === label).key
         global.user.state.Settings.language = key
-        global.user.state.Captions = require('../languages/' + key + '/general.json')
+        global.user.state.Captions = require('../../languages/' + key + '/general.json')
       }
     },
     theme: {

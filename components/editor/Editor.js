@@ -1,5 +1,5 @@
 const FileSaver = require('file-saver')
-const {registerPlayCommand} = require('../library/editor/Editor')
+const {registerPlayCommand} = require('../../library/editor/Editor')
 
 module.exports = {
   name: 'TmEditor',
@@ -16,7 +16,7 @@ module.exports = {
 
   computed: {
     remainHeight() {
-      return `${this.height - 40 - 28}px`
+      return `${this.height - 40 - 24}px`
     },
     settings: () => global.user.state.Settings
   },

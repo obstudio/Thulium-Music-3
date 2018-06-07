@@ -38,22 +38,22 @@ new Vue({
       {
         path: '/',
         name: 'HomePage',
-        component: require('./components/Entry')
+        component: require('./components/homepage/entry')
       },
       {
         path: '/editor',
         name: 'TmEditor',
-        component: require('./components/Editor')
+        component: require('./components/Editor/editor')
       },
       {
         path: '/docs',
         name: 'TmDocument',
-        component: require('./components/Document')
+        component: require('./components/document/document')
       },
       {
         path: '/settings',
         name: 'Settings',
-        component: require('./components/Settings')
+        component: require('./components/Settings/settings')
       }
     ]
   }),
