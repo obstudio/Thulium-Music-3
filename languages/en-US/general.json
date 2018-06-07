@@ -13,6 +13,7 @@
         "basic": "Basic Settings",
         "editor": "Editor Settings",
         "language": "Language",
+        "line-ending": "Line Ending",
         "minimap": "Show Minimap",
         "theme": "Theme",
         "title": "Settings"

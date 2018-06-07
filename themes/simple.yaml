@@ -1,0 +1,90 @@
+
+basetheme: vs-dark
+
+tokenizer:
+  - token: default
+    foreground: FFFFFF
+
+  # comment
+  - token: comment
+    foreground: 75715E
+  - token: comment.marker
+    foreground: 75715E
+
+  # command
+  - token: command.marker
+    foreground: F92672
+  - token: command.keyword
+    foreground: F92672
+
+  # library
+  - token: library.package
+    foreground: E6DB74
+
+  # section
+  - token: section.name
+    foreground: A6E22E
+    fontStyle: italic
+
+  # track
+  - token: track.marker
+    foreground: A6E22E
+  - token: track.name
+    foreground: A6E22E
+    fontStyle: italic
+  - token: track.instrument
+    foreground: E6DB74
+  - token: track.operator
+    foreground: F92672
+  - token: track.macro
+    foreground: A6E22E
+
+  # subtrack
+  - token: subtrack.curly
+    foreground: F92672
+    fontStyle: bold
+  - token: subtrack.repeat
+    foreground: AE81FF
+  - token: subtrack.repeat.marker
+    foreground: AE81FF
+  - token: subtrack.barline
+    foreground: F92672
+    fontStyle: bold
+  - token: subtrack.barline.plain
+    foreground: F92672
+    fontStyle: normal
+
+  # note
+  - token: note.square
+    foreground: 66D9EF
+  - token: note.degree
+    foreground: 66D9EF
+  - token: note.pitop-chord
+    foreground: 66D9EF
+  - token: note.durop-stac-volop
+    foreground: 66D9EF
+  - token: note.declaration
+    foreground: F92672
+
+  # function
+  - token: function.name
+    foreground: FD971F
+  - token: function.marker
+    foreground: FD971F
+  - token: function.alias
+    foreground: FD971F
+
+  # string
+  - token: string
+    foreground: E6DB74
+  - token: string.marker
+    foreground: E6DB74
+  - token: string.escape
+    foreground: E6DB74
+
+  # number
+  - token: number.operator
+    foreground: F92672
+  - token: number.constant
+    foreground: AE81FF
+

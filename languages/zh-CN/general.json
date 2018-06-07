@@ -13,6 +13,7 @@
         "basic": "基本设置",
         "editor": "编辑器设置",
         "language": "语言",
+        "line-ending": "行尾序列",
         "minimap": "显示小地图",
         "theme": "主题",
         "title": "设置"

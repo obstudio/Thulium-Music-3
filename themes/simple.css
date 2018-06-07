@@ -1,0 +1,48 @@
+
+/* navbar */
+.simple .navbar { background-color: #ffffff; color: #333333 }
+.simple .navbar button { background-color: inherit; color: inherit }
+.simple .navbar button:hover { background-color: #ededed }
+.simple .navbar button.active { background-color: #2c3e50 }
+.simple .navbar button path { fill: #333333 }
+.simple.show-sidebar button.sidebar-toggler { background-color: #545c64 }
+
+/* sidebar */
+.simple .sidebar { background-color: #2f353a }
+
+/* homepage */
+.simple div.home { background-color: #f7f7f7 }
+
+/* editor */
+.simple .tm-editor { background-color: #1e1e1e }
+.simple .tm-editor .editor-scrollable { border-left: 1px solid #2c3e50 }
+.simple .tm-editor > .header { border-bottom: 1px solid #2c3e50 }
+.simple .tm-editor > .status { background-color: #2c3e50; color: #ffffff }
+.simple .tm-editor button.toolbar-toggler { background-color: inherit; color: #dddddd }
+.simple .tm-tabs button { background-color: inherit; color: #dddddd }
+.simple .tm-tabs button:hover { background-color: #252525 }
+.simple .tm-tabs button.active { background-color: #2c3e50 }
+.simple .monaco-editor .decorationsOverviewRuler { display: none }
+.simple .monaco-editor .monaco-editor-background { background-color: #1e1e1e }
+.simple .monaco-editor .margin { background-color: #1e1e1e; color: #d4d4d4 }
+
+/* document */
+.simple .tm-doc { color: #24292e }
+.simple .tm-doc blockquote { color: #6a737d; border-left: 0.25em solid #dfe2e5 }
+.simple .tm-doc pre { background-color: #f6f8fa }
+.simple .tm-doc h1 { border-bottom: 1px solid #eaecef }
+.simple .tm-doc h2 { border-bottom: 1px solid #eaecef }
+.simple .tm-doc hr { border-bottom: 1px solid #dfe2e5; background-color: #e1e4e8 }
+.simple .tm-doc table th, .tm-doc table td { border: 1px solid #dfe2e5 }
+.simple .tm-doc table tr { background-color: #fff; border-top: 1px solid #c6cbd1 }
+.simple .tm-doc table tr :nth-child(2n) { background-color: #f6f8fa }
+.simple .tm-doc a { background-color: transparent; color: #0366d6 }
+.simple .tm-doc img { background-color: #fff }
+.simple .tm-doc code {  background-color: rgba(27, 31, 35, 0.05) }
+.simple .tm-grey { color: grey }
+
+/* documents */
+.simple div.tm-document { background-color: #f7f7f7 }
+
+/* settings */
+.simple div.tm-settings { background-color: #f7f7f7 }

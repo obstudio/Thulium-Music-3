@@ -6,6 +6,7 @@ const defaultSettings = require('./default.json')
 global.library = {}
 global.library.Languages = require('./languages/index.json')
 global.library.Themes = require('./themes/index.json')
+global.library.LineEndings = [ 'LF', 'CRLF' ]
 
 class TmUser {
   constructor() {
@@ -45,12 +46,14 @@ switch (process.platform) {
 case 'win32': 
   TmUser.UserPath = path.join(process.env.LOCALAPPDATA, 'Obstudio/Thulium 3/')
   TmUser.DataPath = path.join(process.env.ALLUSERSPROFILE, 'Obstudio/Thulium 3/')
+  TmUser.LineEnding = 'CRLF'
   break
 default:
   // DO SOMETHING
 }
 
 const user = new TmUser()
+user.Settings['line-ending'] = TmUser.LineEnding
 
 module.exports = {
   state: user,

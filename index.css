@@ -37,24 +37,17 @@ body {
 .navbar > div.title {
     top: 0px;
     height: 48px;
-    padding-left: 48px;
-    padding-right: 120px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding: 10px 0px;
     text-align: -webkit-center;
     font-size: 20px;
     transition: 0.3s;
 }
 
-.show-sidebar .navbar > div.title {
-    padding-left: 64px;
-}
-
 .navbar > div.top-right {
     position: absolute;
-    top: 2px;
-    bottom: 2px;
-    right: 2px;
+    top: 4px;
+    bottom: 4px;
+    right: 4px;
     float: right;
 }
 
@@ -84,10 +77,14 @@ body {
     width: 48px;
     font-size: 20px;
     float: left;
-    padding: 12px 16px;
+    padding: 12px 12px;
 }
 
-.show-sidebar .navbar button.sidebar-toggler { width: 64px }
+.show-sidebar .navbar button.sidebar-toggler {
+    width: 64px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
 
 .window {
     width: 100%;

@@ -1,6 +1,18 @@
 [
     {
         "key": "dark",
-        "description": "dark"
+        "description": {
+            "default": "dark",
+            "en-US": "dark",
+            "zh-CN": "暗色"
+        }
+    },
+    {
+        "key": "simple",
+        "description": {
+            "default": "simple",
+            "en-US": "simple",
+            "zh-CN": "简约"
+        }
     }
 ]
