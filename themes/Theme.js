@@ -3,7 +3,7 @@ const fs = require('fs')
 
 class TmTheme {
   constructor(loadBuffer = false, saveBuffer = false) {
-    for (const theme of TmTheme.$) {
+    for (const theme of global.library.Themes) {
       const name = theme.key
       const path = './themes/' + name
       if (loadBuffer) {
@@ -14,12 +14,6 @@ class TmTheme {
           fs.writeFileSync(path + '.buffer.json', JSON.stringify(this[name]), { encoding: 'utf8' })
         }
       }
-      window.monaco.editor.defineTheme(name, {
-        base: this[name].basetheme,
-        inherit: true,
-        rules: this[name].tokenizer,
-        colors: {}
-      })
       const link = document.createElement('link')
       link.setAttribute('rel', 'stylesheet')
       link.setAttribute('type', 'text/css')
@@ -28,7 +22,5 @@ class TmTheme {
     }
   }
 }
-
-TmTheme.$ = require('./index.json')
   
 module.exports = new TmTheme()

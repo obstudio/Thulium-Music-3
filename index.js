@@ -86,7 +86,8 @@ new Vue({
 
   computed: {
     settings: () => global.user.state.Settings,
-    captions: () => global.user.state.Captions.window
+    captions: () => global.user.state.Captions.window,
+    styles: () => global.user.state.Styles
   },
 
   methods: {
@@ -99,7 +100,8 @@ new Vue({
     }
   },
 
-  render: VueCompile(`<div :class="[{'show-sidebar': sidebar}, settings.theme]">
+  render: VueCompile(`<div :class="settings.theme">
+    <div :class="{'show-sidebar': sidebar}">
     <div class="navbar">
       <button class="sidebar-toggler" @click="sidebar = !sidebar">
         <div v-if="sidebar">
@@ -159,7 +161,8 @@ new Vue({
     </div>
     <div class="window">
       <div class="sidebar">
-        <el-menu default-active="/" :collapse="true" background-color="#545c64" :router="true">
+        <el-menu default-active="/" :collapse="true" :router="true"
+          :backgroundColor="'#' + styles.sidebar.background">
           <el-menu-item index="/">
             <i class="el-icon-menu"></i>
             <span slot="title">{{ captions.homepage }}</span>
@@ -184,6 +187,7 @@ new Vue({
           <router-view :height="height" :width="width"/>
         </keep-alive>
       </div>
+    </div>
     </div>
   </div>`)
 })

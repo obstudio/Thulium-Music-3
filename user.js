@@ -3,11 +3,6 @@ const path = require('path')
 const process = require('process')
 const defaultSettings = require('./default.json')
 
-global.library = {}
-global.library.Languages = require('./languages/index.json')
-global.library.Themes = require('./themes/index.json')
-global.library.LineEndings = [ 'LF', 'CRLF' ]
-
 class TmUser {
   constructor() {
     if (!fs.existsSync(TmUser.UserPath + 'settings.json')) {
@@ -18,6 +13,7 @@ class TmUser {
       this.Settings = require(TmUser.UserPath + 'settings.json')
     }
     this.Captions = require('./languages/' + this.Settings.language + '/general.json')
+    this.Styles = global.themes[this.Settings.theme]
   }
 
   saveSettings() {
@@ -54,6 +50,14 @@ default:
 
 const user = new TmUser()
 user.Settings['line-ending'] = TmUser.LineEnding
+global.saveSettings = function() {
+  fs.writeFile(
+    TmUser.UserPath + 'settings.json',
+    JSON.stringify(global.user.state.Settings),
+    { encoding: 'utf8' },
+    () => {}
+  )
+}
 
 module.exports = {
   state: user,
