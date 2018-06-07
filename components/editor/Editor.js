@@ -1,14 +1,14 @@
 const FileSaver = require('file-saver')
 const {registerPlayCommand} = require('../../library/editor/Editor')
+const Tab = require('../../library/editor/Tab')
 
 module.exports = {
   name: 'TmEditor',
 
   data() {
     return {
-      tabs: [],
+      tabs: Tab.load(true),
       activeIndex: 0,
-      type: 'tm',
       row: 1,
       column: 1
     }
@@ -23,20 +23,13 @@ module.exports = {
 
   watch: {
     width() {
-      this.$nextTick(() => {
-        this.editor.layout()
-      })
+      this.layout()
     }
   },
 
   mounted() {
     this.player = undefined
     this.showEditor()
-    this.tabs.push({
-      title: 'foo',
-      model: window.monaco.editor.createModel('foo', 'tm'),
-      type: 'tm'
-    })
     if (global.user) {
       window.monaco.editor.setTheme(global.user.state.Settings.theme)
     }
@@ -46,23 +39,16 @@ module.exports = {
   methods: {
     switchTab(index) {
       const tab = this.tabs[index]
-      this.type = tab.type
       this.activeIndex = index
-      this.editor.setModel(this.tabs[index].model)
-      this.$nextTick(() => {
-        this.editor.layout()
-        const position = this.editor.getPosition()
-        this.row = position.lineNumber
-        this.column = position.column
-      })
+      this.editor.setModel(tab.model)
+      const position = this.editor.getPosition()
+      this.row = position.lineNumber
+      this.column = position.column
+      this.layout()
     },
 
     addTab() {
-      const tab = {
-        title: 'New',
-        model: window.monaco.editor.createModel('', 'tm')
-      }
-      this.tabs.push(tab)
+      this.tabs.push(new Tab())
       this.switchTab(this.tabs.length - 1)
     },
 
@@ -75,6 +61,12 @@ module.exports = {
       } else if (index <= this.activeIndex) {
         this.activeIndex -= 1
       }
+    },
+
+    layout() {
+      this.$nextTick(() => {
+        this.editor.layout()
+      })
     },
 
     showEditor() {
@@ -162,15 +154,11 @@ module.exports = {
         this.column = e.position.column
       })
       addEventListener('resize', e => {
-        editor.layout()
+        this.layout()
       }, {passive: true})
       addEventListener('beforeunload', e => {
-        const value = editor.getValue()
-        if (value !== '') {
-          localStorage.setItem('lastText', value)
-        }
+        Tab.save(this.tabs)
       })
-
       this.$el.addEventListener('drop', e => {
         e.preventDefault()
         const dt = e.dataTransfer
