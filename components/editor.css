@@ -18,6 +18,8 @@
   transition: 0.3s;
 } */
 
+.tm-editor .hide-minimap .minimap { display: none }
+
 /* Style the tab */
 .tm-editor > .header {
   height: 40px;

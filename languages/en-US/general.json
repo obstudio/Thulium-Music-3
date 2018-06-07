@@ -10,6 +10,11 @@
         "title": "Thulium Music"
     },
     "settings": {
+        "basic": "Basic Settings",
+        "editor": "Editor Settings",
+        "language": "Language",
+        "minimap": "Show Minimap",
+        "theme": "Theme",
         "title": "Settings"
     }
 }

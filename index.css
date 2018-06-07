@@ -46,7 +46,7 @@ body {
     transition: 0.3s;
 }
 
-.sidebar-showed .navbar > div.title {
+.show-sidebar .navbar > div.title {
     padding-left: 64px;
 }
 
@@ -87,7 +87,7 @@ body {
     padding: 12px 16px;
 }
 
-.sidebar-showed .navbar button.sidebar-toggler { width: 64px }
+.show-sidebar .navbar button.sidebar-toggler { width: 64px }
 
 .window {
     width: 100%;
@@ -106,7 +106,7 @@ body {
     transition: 0.3s;
 }
 
-.sidebar-showed .sidebar {
+.show-sidebar .sidebar {
     left: 0px;
     -webkit-app-region: drag;
     -webkit-user-select: none;
@@ -121,9 +121,8 @@ body {
     -webkit-app-region: no-drag;
 }
 
-.sidebar .el-menu-item {
-    -webkit-app-region: no-drag;
-}
+.sidebar .el-menu { border-right: 0px }
+.sidebar .el-menu-item { -webkit-app-region: no-drag }
 
 div.main {
     vertical-align: top;
@@ -134,7 +133,7 @@ div.main {
     transition: 0.3s;
 }
 
-.sidebar-showed div.main {
+.show-sidebar div.main {
     left: 64px;
 }
 

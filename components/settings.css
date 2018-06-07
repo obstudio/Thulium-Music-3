@@ -3,3 +3,15 @@ div.tm-settings {
     height: 100%;
 }
 
+.tm-settings .setting {
+    margin: 12px 0px;
+}
+
+.tm-settings .caption {
+    padding: 2px 24px;
+    font-size: 20px;
+}
+
+.tm-settings .control {
+}
+

@@ -42,7 +42,7 @@ module.exports = {
       this.setContent()
     }
   },
-  render: VueCompile(`<el-row>
+  render: VueCompile(`<el-row class="tm-document">
   <el-col :span="6" :style="{height: docHeight}">
     <el-menu style="height: 100%" @select="switchDoc">
       <el-menu-item v-for="item in items" :key="item" :index="item">

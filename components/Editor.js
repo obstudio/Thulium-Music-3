@@ -17,7 +17,8 @@ module.exports = {
   computed: {
     remainHeight() {
       return `${this.height - 40 - 28}px`
-    }
+    },
+    settings: () => global.user.state.Settings
   },
 
   watch: {
@@ -200,6 +201,7 @@ module.exports = {
       editor.updateOptions({mouseWheelZoom: true})
     }
   },
+  
   props: ['width', 'height'],
   render: VueCompile(`<div class="tm-editor">
     <div class="header">
@@ -211,7 +213,9 @@ module.exports = {
         </button>
       </div>
     </div>
-    <div class="content" :style="{height: remainHeight, width: width + 'px'}"></div>
+    <div class="content"
+      :class="{'hide-minimap': !settings.minimap}"
+      :style="{height: remainHeight, width: width + 'px'}"/>
     <div class="status">
       行 {{row}}，列 {{column}}
     </div>

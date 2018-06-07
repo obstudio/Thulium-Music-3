@@ -95,7 +95,7 @@ new Vue({
     }
   },
 
-  render: VueCompile(`<div :class="[{'sidebar-showed': sidebar}, settings.theme]">
+  render: VueCompile(`<div :class="[{'show-sidebar': sidebar}, settings.theme]">
     <div class="navbar">
       <button class="sidebar-toggler" @click="sidebar = !sidebar">
         <div v-if="sidebar">
