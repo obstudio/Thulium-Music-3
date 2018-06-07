@@ -2,6 +2,7 @@
   "version": 50,
   "theme": "dark",
   "language": "zh-CN",
+  "fallback": "zh-CN",
   "data-path": "C:\\Program Data\\Obstudtio\\Thulium 3\\",
   
   "minimap": true,

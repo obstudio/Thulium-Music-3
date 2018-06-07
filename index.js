@@ -4,9 +4,6 @@ const VueI18n = require('vue-i18n')
 const Router = require('vue-router')
 const Vuex = require('vuex')
 const VueCompiler = require('vue-template-compiler/browser')
-global.VueCompile = (template) => {
-  return VueCompiler.compileToFunctions(template).render
-}
 
 const Player = require('./library/player')
 const Lexer = require('./library/tmdoc/Lexer')
@@ -28,35 +25,42 @@ Vue.prototype.$markdown = (content) => {
   return new Lexer().lex(content)
 }
 
+global.VueCompile = (template) => {
+  return VueCompiler.compileToFunctions(template).render
+}
 global.remote = require('electron').remote
 global.user = new Vuex.Store(require('./user'))
+const i18n = new VueI18n({
+
+})
+const router = new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'HomePage',
+      component: require('./components/homepage/entry')
+    },
+    {
+      path: '/editor',
+      name: 'TmEditor',
+      component: require('./components/Editor/editor')
+    },
+    {
+      path: '/docs',
+      name: 'TmDocument',
+      component: require('./components/document/document')
+    },
+    {
+      path: '/settings',
+      name: 'Settings',
+      component: require('./components/Settings/settings')
+    }
+  ]
+})
 
 new Vue({
   el: '#app',
-  router: new Router({
-    routes: [
-      {
-        path: '/',
-        name: 'HomePage',
-        component: require('./components/homepage/entry')
-      },
-      {
-        path: '/editor',
-        name: 'TmEditor',
-        component: require('./components/Editor/editor')
-      },
-      {
-        path: '/docs',
-        name: 'TmDocument',
-        component: require('./components/document/document')
-      },
-      {
-        path: '/settings',
-        name: 'Settings',
-        component: require('./components/Settings/settings')
-      }
-    ]
-  }),
+  router,
 
   watch: {
     sidebar(value) {
