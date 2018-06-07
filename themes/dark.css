@@ -3,9 +3,8 @@
 .dark .navbar { background-color: #001122; color: #FFFFFF }
 .dark .navbar button { background-color: inherit; color: #dddddd }
 .dark .navbar button:hover { background-color: #252525 }
-.dark .navbar button.active { background-color: #2c3e50 }
 .dark .navbar button path { fill: #FFFFFF }
-.dark.show-sidebar button.sidebar-toggler { background-color: #545c64 }
+.dark .show-sidebar button.sidebar-toggler { background-color: #545c64 }
 
 /* sidebar */
 .dark .sidebar { background-color: #545c64 }
@@ -22,7 +21,6 @@
 .dark .tm-tabs button { background-color: inherit; color: #dddddd }
 .dark .tm-tabs button:hover { background-color: #252525 }
 .dark .tm-tabs button.active { background-color: #2c3e50 }
-.dark .monaco-editor .decorationsOverviewRuler { display: none }
 .dark .monaco-editor .monaco-editor-background { background-color: #1e1e1e }
 .dark .monaco-editor .margin { background-color: #1e1e1e; color: #d4d4d4 }
 

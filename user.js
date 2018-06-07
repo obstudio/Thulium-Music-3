@@ -3,11 +3,6 @@ const path = require('path')
 const process = require('process')
 const defaultSettings = require('./default.json')
 
-global.library = {}
-global.library.Languages = require('./languages/index.json')
-global.library.Themes = require('./themes/index.json')
-global.library.LineEndings = [ 'LF', 'CRLF' ]
-
 class TmUser {
   constructor() {
     if (!fs.existsSync(TmUser.UserPath + 'settings.json')) {
@@ -18,6 +13,7 @@ class TmUser {
       this.Settings = require(TmUser.UserPath + 'settings.json')
     }
     this.Captions = require('./languages/' + this.Settings.language + '/general.json')
+    // this.Styles = require('./')
   }
 
   saveSettings() {

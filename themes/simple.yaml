@@ -1,5 +1,8 @@
 
-basetheme: vs-dark
+sidebar:
+  background: 2f353a
+
+basetheme: vs
 
 tokenizer:
   - token: default

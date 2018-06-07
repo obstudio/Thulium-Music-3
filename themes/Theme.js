@@ -14,12 +14,6 @@ class TmTheme {
           fs.writeFileSync(path + '.buffer.json', JSON.stringify(this[name]), { encoding: 'utf8' })
         }
       }
-      window.monaco.editor.defineTheme(name, {
-        base: this[name].basetheme,
-        inherit: true,
-        rules: this[name].tokenizer,
-        colors: {}
-      })
       const link = document.createElement('link')
       link.setAttribute('rel', 'stylesheet')
       link.setAttribute('type', 'text/css')
@@ -31,4 +25,6 @@ class TmTheme {
 
 TmTheme.$ = require('./index.json')
   
-module.exports = new TmTheme()
+const themes = new TmTheme()
+
+module.exports = themes
