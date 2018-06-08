@@ -30,10 +30,10 @@ module.exports = {
 
   watch: {
     width() {
-      this.layout(0.3)
+      this.layout(300)
     },
     toolbar() {
-      this.layout(0.3)
+      this.layout(300)
     },
     settings() {
       if (this.editor) {
@@ -83,16 +83,14 @@ module.exports = {
     },
 
     layout(time = 0) {
-      // this.move = true
-      // this.$nextTick(() => {
-      //   this.editor.layout()
-      // })
-      setTimeout(() => {
-        // this.move = false
-        this.$nextTick(() => {
-          this.editor.layout()
-        })
-      }, 1000 * time)
+      const now = performance.now(), self = this
+      window.requestAnimationFrame(function layout(newTime) {
+        self.editor._configuration.observeReferenceElement()
+        self.editor._view._actualRender()
+        if (newTime - now < time) {
+          window.requestAnimationFrame(layout)
+        }
+      })
     },
 
     showEditor() {
@@ -175,7 +173,7 @@ module.exports = {
         this.column = e.position.column
       })
       addEventListener('resize', e => {
-        this.layout()
+        this.layout(300)
       }, {passive: true})
       addEventListener('beforeunload', e => {
         Tab.save(this.tabs)
