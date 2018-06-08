@@ -15,8 +15,17 @@
   -webkit-font-smoothing: antialiased;
 }
 
-.icon-editor:before {
+.icon-play:before {
   content: "\e900";
+}
+.icon-stop:before {
+  content: "\e906";
+}
+.icon-pause:before {
+  content: "\e907";
+}
+.icon-editor:before {
+  content: "\e908";
 }
 .icon-home:before {
   content: "\e902";
@@ -62,4 +71,7 @@
 }
 .icon-arrow-left:before {
   content: "\ea40";
+}
+.icon-control:before {
+  content: "\e992";
 }

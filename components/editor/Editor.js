@@ -10,13 +10,14 @@ module.exports = {
       tabs: Tab.load(true),
       activeIndex: 0,
       row: 1,
-      column: 1
+      column: 1,
+      toolbar: false
     }
   },
 
   computed: {
-    remainHeight() {
-      return `${this.height - 40 - 24}px`
+    contentHeight() {
+      return this.height - 40 - 24 - (this.toolbar ? 40 : 0)
     },
     settings: () => global.user.state.Settings,
     captions: () => global.user.state.Captions.editor
@@ -24,7 +25,8 @@ module.exports = {
 
   watch: {
     width() {
-      this.layout()
+      this.editor.layout()
+      // this.layout()
     },
     settings() {
       if (this.editor) {
@@ -42,6 +44,7 @@ module.exports = {
       window.monaco.editor.setTheme(global.user.state.Settings.theme)
     }
     this.switchTab(0)
+    global.user.state.TitlePrefix = this.tabs[0].title + ' - '
   },
 
   methods: {
@@ -52,6 +55,7 @@ module.exports = {
       const position = this.editor.getPosition()
       this.row = position.lineNumber
       this.column = position.column
+      global.user.state.Prefix.editor = tab.title + ' - '
       this.layout()
     },
 
@@ -65,7 +69,7 @@ module.exports = {
       if (this.tabs.length === 0) {
         this.addTab()
       } else if (index === this.activeIndex) {
-        this.switchTab(0)
+        this.switchTab(index - 1)
       } else if (index <= this.activeIndex) {
         this.activeIndex -= 1
       }
@@ -78,7 +82,7 @@ module.exports = {
     },
 
     showEditor() {
-      const editor = window.monaco.editor.create(this.$el.children[1], {
+      const editor = window.monaco.editor.create(this.$el.children[2], {
         model: null,
         language: 'tm',
         theme: 'tm',
@@ -194,9 +198,14 @@ module.exports = {
   },
   
   props: ['width', 'height'],
-  render: VueCompile(`<div class="tm-editor">
+  render: VueCompile(`<div class="tm-editor" :class="{'show-toolbar': toolbar}">
+    <div class="toolbar">
+    <div class="volume-slider">
+      <i class="icon-volume-mute"/>
+      <el-slider class="icon-volume-mute" v-model="tabs[activeIndex].volume" :show-tooltip="false"/>
+      </div></div>
     <div class="header">
-      <button class="toolbar-toggler" @click="addTab">+</button>
+      <button class="toolbar-toggler" @click="toolbar = !toolbar"><i class="icon-control"/></button>
       <div class="tm-tabs">
         <button v-for="(tab, index) in tabs" @click="switchTab(index)"
           :key="index" :class="{ active: index === activeIndex }">
@@ -208,7 +217,7 @@ module.exports = {
         <button class="add-tag" @click="addTab"><i class="icon-add"/></button>
       </div>
     </div>
-    <div class="content" :style="{height: remainHeight, width: width + 'px'}"/>
+    <div class="content" :style="{height: contentHeight + 'px', width: '100%'}"/>
     <div class="status">
       {{ captions.line }} {{ row }}, {{ captions.column }} {{ column }}
     </div>

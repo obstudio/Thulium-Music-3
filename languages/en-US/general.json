@@ -12,8 +12,15 @@
     "editor": {
         "column": "Column",
         "line": "Line",
+        "title": "Editor",
         "section": "Section",
         "track": "Track"
+    },
+    "homepage": {
+        "title": "Thulium Music"
+    },
+    "documents": {
+        "title": "Documents"
     },
     "settings": {
         "basic": "Basic Settings",

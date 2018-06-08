@@ -83,7 +83,8 @@ new Vue({
   computed: {
     settings: () => global.user.state.Settings,
     captions: () => global.user.state.Captions.window,
-    styles: () => global.user.state.Styles
+    styles: () => global.user.state.Styles,
+    title: () => global.user.state.Title()
   },
 
   methods: {
@@ -93,17 +94,18 @@ new Vue({
       } else {
         this.browser.maximize()
       }
-    }
+    },
+    switchRoute: (route) => global.user.state.Route = route
   },
 
   render: VueCompile(`<div :class="settings.theme">
     <div :class="{'show-sidebar': sidebar}">
     <div class="navbar">
       <button class="sidebar-toggler" @click="sidebar = !sidebar">
-        <div v-if="sidebar"><i class="icon-arrow-right"/></div>
-        <div v-else><i class="icon-arrow-left"/></div>
+        <div v-if="sidebar"><i class="icon-arrow-left"/></div>
+        <div v-else><i class="icon-arrow-right"/></div>
       </button>
-      <div class="title">{{ captions.title }}</div>
+      <div class="title">{{ title }}</div>
       <div class="top-right">
         <button @click="browser.minimize()" class="minimize"><i class="icon-window-minimize"/></button>
         <button @click="toggleMaximize()" class="maximize"><i class="icon-window-maximize"/></button>
@@ -115,19 +117,19 @@ new Vue({
       <div class="sidebar">
         <el-menu default-active="/" :collapse="true" :router="true"
           :backgroundColor="'#' + styles.sidebar.background">
-          <el-menu-item index="/">
+          <el-menu-item index="/" @click="switchRoute('homepage')">
             <i class="icon-home"></i>
             <span slot="title">{{ captions.homepage }}</span>
           </el-menu-item>
-          <el-menu-item index="/editor">
+          <el-menu-item index="/editor" @click="switchRoute('editor')">
             <i class="icon-editor"></i>
             <span slot="title">{{ captions.editor }}</span>
           </el-menu-item>
-          <el-menu-item index="/docs">
+          <el-menu-item index="/docs" @click="switchRoute('documents')">
             <i class="icon-document"></i>
             <span slot="title">{{ captions.documents }}</span>
           </el-menu-item>
-          <el-menu-item index="/settings">
+          <el-menu-item index="/settings" @click="switchRoute('settings')">
             <i class="icon-settings"></i>
             <span slot="title">{{ captions.settings }}</span>
           </el-menu-item>

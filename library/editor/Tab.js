@@ -7,6 +7,7 @@ module.exports = class Tab {
     this.title = title
     this.type = type
     this.value = value
+    this.volume = 1
     Object.defineProperty(this, 'model', {
       configurable: false,
       value: window.monaco.editor.createModel(value, type)

@@ -7,13 +7,20 @@
         "homepage": "主页",
         "player": "播放器",
         "settings": "设置",
-        "title": "铥铥播放器"
+        "title": "铥铥音乐"
     },
     "editor": {
         "column": "列",
         "line": "行",
+        "title": "编辑器",
         "section": "乐章",
         "track": "音轨"
+    },
+    "homepage": {
+        "title": "铥铥音乐"
+    },
+    "documents": {
+        "title": "文档"
     },
     "settings": {
         "basic": "基本设置",
