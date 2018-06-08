@@ -12,14 +12,19 @@ module.exports = {
       row: 1,
       column: 1,
       toolbar: false,
-      move: false
+      move: false,
+      extensionHeight: 100,
+      extension: null
     }
   },
 
   computed: {
     contentHeight() {
       return this.move ? '1000000px' :
-        String(this.height - 40 - 24 - (this.toolbar ? 40 : 0)) + 'px'
+        String(this.height - 40 - 24
+          - (this.extension ? this.extensionHeight : 0)
+          - (this.toolbar ? 40 : 0)
+        ) + 'px'
     },
     contentWidth() {
       return this.move ? '1000000px' : '100%'
@@ -33,6 +38,9 @@ module.exports = {
       this.layout(0.3)
     },
     toolbar() {
+      this.layout(0.3)
+    },
+    extension() {
       this.layout(0.3)
     },
     settings() {
@@ -214,26 +222,34 @@ module.exports = {
   props: ['width', 'height'],
   render: VueCompile(`<div class="tm-editor" :class="{'show-toolbar': toolbar}">
     <div class="toolbar">
-    <i class="icon-volume-mute"/>
-    <div class="volume-slider">
-      <el-slider class="icon-volume-mute" v-model="tabs[activeIndex].volume" :show-tooltip="false"/>
-      </div></div>
+      <i class="icon-volume-mute"/>
+      <div class="volume-slider">
+        <el-slider class="icon-volume-mute" v-model="tabs[activeIndex].volume" :show-tooltip="false"/>
+      </div>
+    </div>
     <div class="header">
       <button class="toolbar-toggler" @click="toolbar = !toolbar"><i class="icon-control"/></button>
       <div class="tm-tabs">
         <button v-for="(tab, index) in tabs" @click="switchTab(index)"
           :key="index" :class="{ active: index === activeIndex }">
-          <transition name="el-fade-in-linear">
-            <i class="icon-close" @click.stop="closeTab(index)"/>
-          </transition>
+          <i class="icon-close" @click.stop="closeTab(index)"/>
           <div class="title">{{ tab.title }}</div>
         </button>
         <button class="add-tag" @click="addTab"><i class="icon-add"/></button>
       </div>
     </div>
     <div class="content" :style="{ height: contentHeight, width: contentWidth }"/>
+    <div class="extension" :style="{
+      height: extensionHeight + 'px',
+      bottom: (extension ? 24 : 24 - extensionHeight) + 'px'
+    }"/>
     <div class="status">
-      {{ captions.line }} {{ row }}, {{ captions.column }} {{ column }}
+      <div class="left">
+        <div class="text">{{ captions.line }} {{ row }}, {{ captions.column }} {{ column }}</div>
+      </div>
+      <div class="right">
+        <button @click="extension = !extension"><i class="el-icon-menu"/></button>
+      </div>
     </div>
   </div>`)
 }

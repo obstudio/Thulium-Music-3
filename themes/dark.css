@@ -25,7 +25,10 @@
 .dark .tm-tabs button:hover > i.icon-close { color: #cccccc }
 .dark .tm-tabs button > i.icon-close:hover { color: #fafaf5 }
 .dark .tm-editor > .toolbar { background-color: #474842 }
+.dark .tm-editor > .extension { background-color: #181915; color: #dddddd }
 .dark .tm-editor > .status { background-color: #181915; color: #fafaf5 }
+.dark .tm-editor > .status button { background-color: #181915; color: #f6f8fa }
+.dark .tm-editor > .status button:hover { background-color: #252525; color: #ffffff }
 
 /* document */
 .dark .tm-doc { color: #24292e }

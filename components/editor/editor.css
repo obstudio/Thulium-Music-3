@@ -77,6 +77,8 @@
 
 .tm-editor.show-toolbar > .toolbar { top: 40px }
 
+.toolbar .el-slider__button-wrapper { z-index: auto }
+
 .toolbar .volume-slider {
     top: 0px;
     width: 100px;
@@ -101,17 +103,53 @@
 
 .tm-editor.show-toolbar > .content { top: 80px }
 
-.status {
+.monaco-editor .decorationsOverviewRuler { display: none }
+
+.tm-editor > .extension {
+    width: 100%;
+    transition: 0.3s;
+    position: absolute;
+}
+
+.tm-editor > .status {
     width: 100%;
     bottom: 0px;
-    height: 18px;
+    height: 24px;
     margin: 0px;
-    padding: 3px 8px;
+    padding: 0px;
     position: absolute;
-    text-align: left;
-    font-size: 12px;
     -webkit-user-select: none;
     cursor: default;
 }
 
-.monaco-editor .decorationsOverviewRuler { display: none }
+.tm-editor > .status > div {
+    top: 0px;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    position: absolute;
+}
+
+.tm-editor > .status > div.left { left: 4px }
+.tm-editor > .status > div.left > * { float: left }
+.tm-editor > .status > div.right { right: 4px }
+.tm-editor > .status > div.right > * { float: right }
+
+.tm-editor > .status .text {
+    padding: 3px 3px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.tm-editor > .status button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+    padding: 0px;
+}
+
+.tm-editor > .status button > i {
+    font-size: 16px;
+    padding: 4px;
+}
