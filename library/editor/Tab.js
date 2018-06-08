@@ -2,12 +2,18 @@ module.exports = class Tab {
   constructor({
     title = 'New',
     type = 'tm',
-    value = ''
+    value = '',
+    start = null,
+    end = null,
+    volume = 1
   } = {}) {
     this.title = title
     this.type = type
     this.value = value
-    this.volume = 1
+    this.volume = volume
+    this.start = start
+    this.end = end
+    this.tm = null
     Object.defineProperty(this, 'model', {
       configurable: false,
       value: window.monaco.editor.createModel(value, type)
@@ -18,7 +24,10 @@ module.exports = class Tab {
     return {
       title: this.title,
       type: this.type,
-      value: this.model.getValue(1, false)
+      value: this.model.getValue(1, false),
+      volume: this.volume,
+      start: this.start,
+      end: this.end
     }
   }
 
@@ -43,7 +52,7 @@ module.exports = class Tab {
         return tabs.map((tab) => new Tab(tab))
       } catch (e) {
         console.warn('The tabs information is malformed.')
-        return []
+        return newIfNone ? [new Tab()] : []
       }
     }
   }

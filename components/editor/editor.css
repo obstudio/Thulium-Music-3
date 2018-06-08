@@ -81,12 +81,14 @@
     top: 0px;
     width: 100px;
     height: 40px;
+    left: 40px;
     position: absolute;
 }
 
 .toolbar i {
     padding: 12px;
     font-size: 16px;
+    vertical-align: -webkit-baseline-middle;
 }
 
 .tm-editor > .content {
