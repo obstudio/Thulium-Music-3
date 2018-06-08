@@ -11,13 +11,18 @@ module.exports = {
       activeIndex: 0,
       row: 1,
       column: 1,
-      toolbar: false
+      toolbar: false,
+      move: false
     }
   },
 
   computed: {
     contentHeight() {
-      return this.height - 40 - 24 - (this.toolbar ? 40 : 0)
+      return this.move ? '1000000px' :
+        String(this.height - 40 - 24 - (this.toolbar ? 40 : 0)) + 'px'
+    },
+    contentWidth() {
+      return this.move ? '1000000px' : '100%'
     },
     settings: () => global.user.state.Settings,
     captions: () => global.user.state.Captions.editor
@@ -25,8 +30,10 @@ module.exports = {
 
   watch: {
     width() {
-      this.editor.layout()
-      // this.layout()
+      this.layout(0.3)
+    },
+    toolbar() {
+      this.layout(0.3)
     },
     settings() {
       if (this.editor) {
@@ -75,10 +82,17 @@ module.exports = {
       }
     },
 
-    layout() {
-      this.$nextTick(() => {
-        this.editor.layout()
-      })
+    layout(time = 0) {
+      // this.move = true
+      // this.$nextTick(() => {
+      //   this.editor.layout()
+      // })
+      setTimeout(() => {
+        // this.move = false
+        this.$nextTick(() => {
+          this.editor.layout()
+        })
+      }, 1000 * time)
     },
 
     showEditor() {
@@ -217,7 +231,7 @@ module.exports = {
         <button class="add-tag" @click="addTab"><i class="icon-add"/></button>
       </div>
     </div>
-    <div class="content" :style="{height: contentHeight + 'px', width: '100%'}"/>
+    <div class="content" :style="{ height: contentHeight, width: contentWidth }"/>
     <div class="status">
       {{ captions.line }} {{ row }}, {{ captions.column }} {{ column }}
     </div>
