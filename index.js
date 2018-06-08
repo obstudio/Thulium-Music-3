@@ -101,7 +101,7 @@ new Vue({
 
   computed: {
     settings: () => global.user.state.Settings,
-    styles: () => global.user.state.Styles
+    styles: () => global.user.state.Styles,
     title: () => global.user.state.Title()
   },
 
