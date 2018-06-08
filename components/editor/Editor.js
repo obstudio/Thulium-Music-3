@@ -10,20 +10,30 @@ module.exports = {
       tabs: Tab.load(true),
       activeIndex: 0,
       row: 1,
-      column: 1
+      column: 1,
+      toolbar: false
     }
   },
 
   computed: {
-    remainHeight() {
-      return `${this.height - 40 - 24}px`
+    contentHeight() {
+      return this.height - 40 - 24 - (this.toolbar ? 40 : 0)
     },
-    settings: () => global.user.state.Settings
+    settings: () => global.user.state.Settings,
+    captions: () => global.user.state.Captions.editor
   },
 
   watch: {
     width() {
-      this.layout()
+      this.editor.layout()
+      // this.layout()
+    },
+    settings() {
+      if (this.editor) {
+        this.editor.updateOptions({
+          minimap: { enabled: this.settings.minimap }
+        })
+      }
     }
   },
 
@@ -34,6 +44,7 @@ module.exports = {
       window.monaco.editor.setTheme(global.user.state.Settings.theme)
     }
     this.switchTab(0)
+    global.user.state.TitlePrefix = this.tabs[0].title + ' - '
   },
 
   methods: {
@@ -44,6 +55,7 @@ module.exports = {
       const position = this.editor.getPosition()
       this.row = position.lineNumber
       this.column = position.column
+      global.user.state.Prefix.editor = tab.title + ' - '
       this.layout()
     },
 
@@ -57,7 +69,7 @@ module.exports = {
       if (this.tabs.length === 0) {
         this.addTab()
       } else if (index === this.activeIndex) {
-        this.switchTab(0)
+        this.switchTab(index - 1)
       } else if (index <= this.activeIndex) {
         this.activeIndex -= 1
       }
@@ -70,24 +82,20 @@ module.exports = {
     },
 
     showEditor() {
-      // const model = window.monaco.editor.createModel(
-      //   localStorage.getItem('lastText'),
-      //   'tm'
-      // )
-      const editor = window.monaco.editor.create(this.$el.children[1], {
+      const editor = window.monaco.editor.create(this.$el.children[2], {
         model: null,
         language: 'tm',
         theme: 'tm',
-        folding: false
+        folding: false,
+        minimap: { enabled: this.settings.minimap }
       })
       this.editor = editor
       registerPlayCommand(editor)
+
       editor.addAction({
         id: 'tm-save',
         label: 'Save File',
-        keybindings: [
-          window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_S
-        ],
+        keybindings: [ window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_S ],
         precondition: null,
         keybindingContext: null,
         contextMenuGroupId: 'navigation',
@@ -106,12 +114,11 @@ module.exports = {
           FileSaver.saveAs(blob, `${name}.sml`)
         }
       })
+
       editor.addAction({
         id: 'tm-play',
         label: 'Play/Pause',
-        keybindings: [
-          window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_P
-        ],
+        keybindings: [ window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_P],
         precondition: null,
         keybindingContext: null,
         contextMenuGroupId: 'navigation',
@@ -191,21 +198,28 @@ module.exports = {
   },
   
   props: ['width', 'height'],
-  render: VueCompile(`<div class="tm-editor">
+  render: VueCompile(`<div class="tm-editor" :class="{'show-toolbar': toolbar}">
+    <div class="toolbar">
+    <div class="volume-slider">
+      <i class="icon-volume-mute"/>
+      <el-slider class="icon-volume-mute" v-model="tabs[activeIndex].volume" :show-tooltip="false"/>
+      </div></div>
     <div class="header">
-      <button class="toolbar-toggler" @click="addTab">+</button>
+      <button class="toolbar-toggler" @click="toolbar = !toolbar"><i class="icon-control"/></button>
       <div class="tm-tabs">
-        <button v-for="(tab, index) in tabs" :key="index" @click="switchTab(index)" :class="{active: index === activeIndex}">
-          {{tab.title}}
-          <span @click.stop="closeTab(index)">&nbsp;X</span>
+        <button v-for="(tab, index) in tabs" @click="switchTab(index)"
+          :key="index" :class="{ active: index === activeIndex }">
+          <transition name="el-fade-in-linear">
+            <i class="icon-close" @click.stop="closeTab(index)"/>
+          </transition>
+          <div class="title">{{ tab.title }}</div>
         </button>
+        <button class="add-tag" @click="addTab"><i class="icon-add"/></button>
       </div>
     </div>
-    <div class="content"
-      :class="{'hide-minimap': !settings.minimap}"
-      :style="{height: remainHeight, width: width + 'px'}"/>
+    <div class="content" :style="{height: contentHeight + 'px', width: '100%'}"/>
     <div class="status">
-      行 {{row}}，列 {{column}}
+      {{ captions.line }} {{ row }}, {{ captions.column }} {{ column }}
     </div>
   </div>`)
 }

@@ -1,0 +1,77 @@
+@font-face {
+  font-family: 'tm-icon';
+  src: url('icons.ttf?6udbwl') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  font-family: 'tm-icon' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.icon-play:before {
+  content: "\e900";
+}
+.icon-stop:before {
+  content: "\e906";
+}
+.icon-pause:before {
+  content: "\e907";
+}
+.icon-editor:before {
+  content: "\e908";
+}
+.icon-home:before {
+  content: "\e902";
+}
+.icon-document:before {
+  content: "\e926";
+}
+.icon-window-close:before {
+  content: "\e903";
+}
+.icon-window-maximize:before {
+  content: "\e904";
+}
+.icon-window-minimize:before {
+  content: "\e905";
+}
+.icon-settings:before {
+  content: "\e994";
+}
+.icon-add:before {
+  content: "\ea0a";
+}
+.icon-delete:before {
+  content: "\ea0b";
+}
+.icon-close:before {
+  content: "\ea0f";
+}
+.icon-volume-high:before {
+  content: "\ea26";
+}
+.icon-volume-medium:before {
+  content: "\ea27";
+}
+.icon-volume-low:before {
+  content: "\ea28";
+}
+.icon-volume-mute:before {
+  content: "\ea29";
+}
+.icon-arrow-right:before {
+  content: "\ea3c";
+}
+.icon-arrow-left:before {
+  content: "\ea40";
+}
+.icon-control:before {
+  content: "\e992";
+}

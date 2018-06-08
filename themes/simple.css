@@ -1,29 +1,30 @@
 
+.simple .main > div { background-color: #f7f7f7 }
+
 /* navbar */
 .simple .navbar { background-color: #ffffff; color: #333333 }
-.simple .navbar button { background-color: inherit; color: inherit }
+.simple .navbar button { background-color: #ffffff; color: #333333 }
 .simple .navbar button:hover { background-color: #ededed }
-.simple .navbar button path { fill: #333333 }
-.simple .show-sidebar button.sidebar-toggler { background-color: #545c64 }
+.simple .show-sidebar button.sidebar-toggler { background-color: #2f353a; color: #909399 }
+.simple .show-sidebar button.sidebar-toggler:hover { background-color: #545c64; color: #a6a6a6 }
 
 /* sidebar */
 .simple .sidebar { background-color: #2f353a }
 
-/* homepage */
-.simple div.home { background-color: #f7f7f7 }
-
 /* editor */
-.simple .tm-editor { background-color: #1e1e1e }
-.simple .tm-editor .editor-scrollable { border-left: 1px solid #2c3e50 }
-.simple .tm-editor > .header { border-bottom: 1px solid #2c3e50 }
-.simple .tm-editor > .status { background-color: #2c3e50; color: #ffffff }
-.simple .tm-editor button.toolbar-toggler { background-color: inherit; color: #dddddd }
-.simple .tm-tabs button { background-color: inherit; color: #dddddd }
+.simple .tm-editor .editor-scrollable { border-left: 1px solid #e1e1e1 }
+.simple .tm-editor > .header { background-color: #f7f7f7; border-bottom: 1px solid #e1e1e1 }
+.simple .tm-editor > .status { background-color: #cdcdcd; color: #525252 }
+.simple .tm-editor button.toolbar-toggler { background-color: #f7f7f7; color: #dddddd }
+.simple .tm-tabs button { background-color: #cdcdcd; color: #dddddd }
 .simple .tm-tabs button:hover { background-color: #252525 }
 .simple .tm-tabs button.active { background-color: #2c3e50 }
-.simple .monaco-editor .decorationsOverviewRuler { display: none }
-.simple .monaco-editor .monaco-editor-background { background-color: #1e1e1e }
-.simple .monaco-editor .margin { background-color: #1e1e1e; color: #d4d4d4 }
+/*.simple .monaco-editor .monaco-editor-background { background-color: #f7f7f7 }*/
+/*.simple .monaco-editor .margin { background-color: #f7f7f7; color: #525252 }*/
+/*.simple .monaco-editor .minimap div.minimap-slider { background-color: #e0e0e0 }*/
+/*.simple .monaco-editor .selectionHighlight { background-color: #e0e0e0 }*/
+/*.simple .monaco-editor .view-overlays .current-line { background-color: #ebeeef; border: none }*/
+/*.simple .monaco-editor .scrollbar > .slider { border-radius: 4px }*/
 
 /* document */
 .simple .tm-doc { color: #24292e }
@@ -40,8 +41,3 @@
 .simple .tm-doc code {  background-color: rgba(27, 31, 35, 0.05) }
 .simple .tm-grey { color: grey }
 
-/* documents */
-.simple div.tm-document { background-color: #f7f7f7 }
-
-/* settings */
-.simple div.tm-settings { background-color: #f7f7f7 }

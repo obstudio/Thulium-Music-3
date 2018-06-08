@@ -14,6 +14,9 @@ class TmUser {
     }
     this.Captions = require('./languages/' + this.Settings.language + '/general.json')
     this.Styles = global.themes[this.Settings.theme]
+    this.Route = 'homepage'
+    this.Prefix = { homepage: '', editor: '', settings: '', documents: '' }
+    this.Title = () => this.Prefix[this.Route] + this.Captions[this.Route].title
   }
 
   saveSettings() {

@@ -12,6 +12,9 @@ div.tm-settings {
     font-size: 20px;
 }
 
-.tm-settings .control {
-}
+.tm-settings .control [class*=el-col-] { text-align: center }
 
+.tm-settings div, .tm-settings h1, .tm-settings h2 {
+    user-select: none;
+    cursor: default;
+}

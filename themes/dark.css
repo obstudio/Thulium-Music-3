@@ -1,28 +1,31 @@
 
+.dark .main > div { background-color: #272822; color: #f8f8f2 }
+
 /* navbar */
-.dark .navbar { background-color: #001122; color: #FFFFFF }
-.dark .navbar button { background-color: inherit; color: #dddddd }
-.dark .navbar button:hover { background-color: #252525 }
-.dark .navbar button path { fill: #FFFFFF }
-.dark .show-sidebar button.sidebar-toggler { background-color: #545c64 }
+.dark .navbar { background-color: #42433f; color: #fafaf5 }
+.dark .navbar button { background-color: #42433f; color: #a5a5a5 }
+.dark .navbar button:hover { background-color: #252525; color: #fafaf5 }
+.dark .show-sidebar button.sidebar-toggler { background-color: #1e1f1c; color: #a5a5a5 }
+.dark .show-sidebar button.sidebar-toggler:hover { background-color: #222222; color: #fafaf5 }
 
 /* sidebar */
-.dark .sidebar { background-color: #545c64 }
-
-/* homepage */
-.dark div.home { background-color: #FFFFF0 }
+.dark .sidebar { background-color: #1e1f1c }
 
 /* editor */
 .dark .tm-editor { background-color: #1e1e1e }
-.dark .tm-editor .editor-scrollable { border-left: 1px solid #2c3e50 }
-.dark .tm-editor > .header { border-bottom: 1px solid #2c3e50 }
-.dark .tm-editor > .status { background-color: #2c3e50; color: #ffffff }
-.dark .tm-editor button.toolbar-toggler { background-color: inherit; color: #dddddd }
-.dark .tm-tabs button { background-color: inherit; color: #dddddd }
-.dark .tm-tabs button:hover { background-color: #252525 }
-.dark .tm-tabs button.active { background-color: #2c3e50 }
-.dark .monaco-editor .monaco-editor-background { background-color: #1e1e1e }
-.dark .monaco-editor .margin { background-color: #1e1e1e; color: #d4d4d4 }
+.dark .tm-editor > .header { background-color: #181915; border-bottom: 1px solid #474842 }
+.dark .tm-editor > .header button { background-color: #181915; color: #dddddd }
+.dark .tm-editor > .header button:hover { background-color: #252525 }
+.dark .tm-editor > .header button.active { background-color: #474842 }
+.dark .tm-editor > .header button > i { color: #cccccc }
+.dark .tm-editor > .header button:hover > i { color: #fafaf5 }
+.dark .tm-tabs button > div.title { color: #bbbbb7 }
+.dark .tm-tabs button.active > div.title { color: #fafaf5 }
+.dark .tm-tabs button > i.icon-close { color: #cccccc }
+.dark .tm-tabs button:hover > i.icon-close { color: #cccccc }
+.dark .tm-tabs button > i.icon-close:hover { color: #fafaf5 }
+.dark .tm-editor > .toolbar { background-color: #474842 }
+.dark .tm-editor > .status { background-color: #181915; color: #fafaf5 }
 
 /* document */
 .dark .tm-doc { color: #24292e }
@@ -39,8 +42,3 @@
 .dark .tm-doc code {  background-color: rgba(27, 31, 35, 0.05) }
 .dark .tm-grey { color: grey }
 
-/* documents */
-.dark div.tm-document { background-color: #FFFFF0 }
-
-/* settings */
-.dark div.tm-settings { background-color: #FFFFF0 }
