@@ -4,9 +4,6 @@ const VueI18n = require('vue-i18n')
 const Router = require('vue-router')
 const Vuex = require('vuex')
 const VueCompiler = require('vue-template-compiler/browser')
-global.VueCompile = (template) => {
-  return VueCompiler.compileToFunctions(template).render
-}
 
 const Player = require('./library/player')
 const Lexer = require('./library/tmdoc/Lexer')
@@ -28,35 +25,57 @@ Vue.prototype.$markdown = (content) => {
   return new Lexer().lex(content)
 }
 
+global.VueCompile = (template) => {
+  return VueCompiler.compileToFunctions(template).render
+}
 global.remote = require('electron').remote
 global.user = new Vuex.Store(require('./user'))
 
+const i18n = new VueI18n({
+  locale: global.user.state.Settings.language,
+  fallbackLocale: 'zh-CN',
+  messages: new Proxy({}, {
+    get(target, key) {
+      if (key in target || !global.library.LanguageSet.has(key)) {
+        return target[key]
+      } else {
+          const locale = require(`./languages/${key}/general.json`)
+          target[key] = locale
+          return locale
+      }
+    }
+  })
+})
+
+const router = new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'HomePage',
+      component: require('./components/homepage/entry')
+    },
+    {
+      path: '/editor',
+      name: 'TmEditor',
+      component: require('./components/Editor/editor')
+    },
+    {
+      path: '/docs',
+      name: 'TmDocument',
+      component: require('./components/document/document')
+    },
+    {
+      path: '/settings',
+      name: 'Settings',
+      component: require('./components/Settings/settings')
+    }
+  ]
+})
+
 new Vue({
   el: '#app',
-  router: new Router({
-    routes: [
-      {
-        path: '/',
-        name: 'HomePage',
-        component: require('./components/homepage/entry')
-      },
-      {
-        path: '/editor',
-        name: 'TmEditor',
-        component: require('./components/Editor/editor')
-      },
-      {
-        path: '/docs',
-        name: 'TmDocument',
-        component: require('./components/document/document')
-      },
-      {
-        path: '/settings',
-        name: 'Settings',
-        component: require('./components/Settings/settings')
-      }
-    ]
-  }),
+  router,
+  i18n,
 
   watch: {
     sidebar(value) {
@@ -82,7 +101,6 @@ new Vue({
 
   computed: {
     settings: () => global.user.state.Settings,
-    captions: () => global.user.state.Captions.window,
     styles: () => global.user.state.Styles,
     title: () => global.user.state.Title()
   },
@@ -119,19 +137,19 @@ new Vue({
           :backgroundColor="'#' + styles.sidebar.background">
           <el-menu-item index="/" @click="switchRoute('homepage')">
             <i class="icon-home"></i>
-            <span slot="title">{{ captions.homepage }}</span>
+            <span slot="title">{{ $t('window.homepage') }}</span>
           </el-menu-item>
           <el-menu-item index="/editor" @click="switchRoute('editor')">
             <i class="icon-editor"></i>
-            <span slot="title">{{ captions.editor }}</span>
+            <span slot="title">{{ $t('window.editor') }}</span>
           </el-menu-item>
           <el-menu-item index="/docs" @click="switchRoute('documents')">
             <i class="icon-document"></i>
-            <span slot="title">{{ captions.documents }}</span>
+            <span slot="title">{{ $t('window.documents') }}</span>
           </el-menu-item>
           <el-menu-item index="/settings" @click="switchRoute('settings')">
             <i class="icon-settings"></i>
-            <span slot="title">{{ captions.settings }}</span>
+            <span slot="title">{{ $t('window.settings') }}</span>
           </el-menu-item>
         </el-menu>
         <div class="left-border"/>
