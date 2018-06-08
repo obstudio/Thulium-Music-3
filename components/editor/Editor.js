@@ -25,6 +25,13 @@ module.exports = {
   watch: {
     width() {
       this.layout()
+    },
+    settings() {
+      if (this.editor) {
+        this.editor.updateOptions({
+          minimap: { enabled: this.settings.minimap }
+        })
+      }
     }
   },
 
@@ -67,31 +74,24 @@ module.exports = {
     layout() {
       this.$nextTick(() => {
         this.editor.layout()
-        // const minimap = document.getElementsByClassName('minimap')[0]
-        // const canvas = minimap.getElementsByTagName('canvas')[0]
-        // canvas.style.background = ''
       })
     },
 
     showEditor() {
-      // const model = window.monaco.editor.createModel(
-      //   localStorage.getItem('lastText'),
-      //   'tm'
-      // )
       const editor = window.monaco.editor.create(this.$el.children[1], {
         model: null,
         language: 'tm',
         theme: 'tm',
-        folding: false
+        folding: false,
+        minimap: { enabled: this.settings.minimap }
       })
       this.editor = editor
       registerPlayCommand(editor)
+
       editor.addAction({
         id: 'tm-save',
         label: 'Save File',
-        keybindings: [
-          window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_S
-        ],
+        keybindings: [ window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_S ],
         precondition: null,
         keybindingContext: null,
         contextMenuGroupId: 'navigation',
@@ -110,12 +110,11 @@ module.exports = {
           FileSaver.saveAs(blob, `${name}.sml`)
         }
       })
+
       editor.addAction({
         id: 'tm-play',
         label: 'Play/Pause',
-        keybindings: [
-          window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_P
-        ],
+        keybindings: [ window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_P],
         precondition: null,
         keybindingContext: null,
         contextMenuGroupId: 'navigation',
@@ -201,14 +200,15 @@ module.exports = {
       <div class="tm-tabs">
         <button v-for="(tab, index) in tabs" @click="switchTab(index)"
           :key="index" :class="{ active: index === activeIndex }">
-          {{ tab.title }}
-          <span @click.stop="closeTab(index)">&nbsp;X</span>
+          <transition name="el-fade-in-linear">
+            <i class="icon-close" @click.stop="closeTab(index)"/>
+          </transition>
+          <div class="title">{{ tab.title }}</div>
         </button>
+        <button class="add-tag" @click="addTab"><i class="icon-add"/></button>
       </div>
     </div>
-    <div class="content"
-      :class="{'hide-minimap': !settings.minimap}"
-      :style="{height: remainHeight, width: width + 'px'}"/>
+    <div class="content" :style="{height: remainHeight, width: width + 'px'}"/>
     <div class="status">
       {{ captions.line }} {{ row }}, {{ captions.column }} {{ column }}
     </div>

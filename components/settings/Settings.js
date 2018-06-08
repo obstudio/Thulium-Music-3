@@ -50,6 +50,7 @@ module.exports = {
         }).key
         global.user.state.Styles = global.themes[key]
         global.user.state.Settings.theme = key
+        if (window.monaco.editor) window.monaco.editor.setTheme(key)
       }
     }
   },
