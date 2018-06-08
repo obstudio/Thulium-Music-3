@@ -23,10 +23,10 @@ module.exports = {
           return lang.key === global.user.state.Settings.language
         }).description
       },
-      set: label => {
+      set(label) {
         const key = global.library.Languages.find(lang => lang.description === label).key
         global.user.state.Settings.language = key
-        global.user.state.Captions = require('../../languages/' + key + '/general.json')
+        this.$i18n.locale = key
       }
     },
     theme: {
@@ -54,12 +54,12 @@ module.exports = {
   },
 
   render: VueCompile(`<div class="tm-settings">
-    <h1>{{ captions.title }}</h1>
-    <h2>{{ captions.basic }}</h2>
-    <tm-radio model="language" :caption="captions.language" :library="library.Languages"/>
-    <tm-radio model="theme" :caption="captions.theme" :library="library.Themes"/>
-    <h2>{{ captions.editor }}</h2>
-    <tm-radio model=".line-ending" :caption="captions['line-ending']" :library="library.LineEndings"/>
-    <tm-switch model=".minimap" :caption="captions.minimap"/>
+    <h1>{{ $t('settings.title') }}</h1>
+    <h2>{{ $t('settings.basic') }}</h2>
+    <tm-radio model="language" :caption="$t('settings.language')" :library="library.Languages"/>
+    <tm-radio model="theme" :caption="$t('settings.theme')" :library="library.Themes"/>
+    <h2>{{ $t('settings.editor') }}</h2>
+    <tm-radio model=".line-ending" :caption="$t('settings.line-ending')" :library="library.LineEndings"/>
+    <tm-switch model=".minimap" :caption="$t('settings.minimap')"/>
   </div>`)
 }

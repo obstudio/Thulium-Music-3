@@ -30,9 +30,23 @@ global.VueCompile = (template) => {
 }
 global.remote = require('electron').remote
 global.user = new Vuex.Store(require('./user'))
-const i18n = new VueI18n({
 
+const i18n = new VueI18n({
+  locale: global.user.state.Settings.language,
+  fallbackLocale: 'zh-CN',
+  messages: new Proxy({}, {
+    get(target, key) {
+      if (key in target || !global.library.LanguageSet.has(key)) {
+        return target[key]
+      } else {
+          const locale = require(`./languages/${key}/general.json`)
+          target[key] = locale
+          return locale
+      }
+    }
+  })
 })
+
 const router = new Router({
   routes: [
     {
@@ -61,6 +75,7 @@ const router = new Router({
 new Vue({
   el: '#app',
   router,
+  i18n,
 
   watch: {
     sidebar(value) {
@@ -86,7 +101,6 @@ new Vue({
 
   computed: {
     settings: () => global.user.state.Settings,
-    captions: () => global.user.state.Captions.window,
     styles: () => global.user.state.Styles
   },
 
@@ -123,7 +137,7 @@ new Vue({
           </svg>
         </div>
       </button>
-      <div class="title">{{ captions.title }}</div>
+      <div class="title">{{ $t('window.title') }}</div>
       <div class="top-right">
         <button @click="browser.minimize()" class="minimize">
           <svg viewBox="0 0 1024 1024" width="12" height="12">
@@ -165,19 +179,19 @@ new Vue({
           :backgroundColor="'#' + styles.sidebar.background">
           <el-menu-item index="/">
             <i class="el-icon-menu"></i>
-            <span slot="title">{{ captions.homepage }}</span>
+            <span slot="title">{{ $t('window.homepage') }}</span>
           </el-menu-item>
           <el-menu-item index="/editor">
             <i class="el-icon-edit"></i>
-            <span slot="title">{{ captions.editor }}</span>
+            <span slot="title">{{ $t('window.editor') }}</span>
           </el-menu-item>
           <el-menu-item index="/docs">
             <i class="el-icon-document"></i>
-            <span slot="title">{{ captions.documents }}</span>
+            <span slot="title">{{ $t('window.documents') }}</span>
           </el-menu-item>
           <el-menu-item index="/settings">
             <i class="el-icon-setting"></i>
-            <span slot="title">{{ captions.settings }}</span>
+            <span slot="title">{{ $t('window.settings') }}</span>
           </el-menu-item>
         </el-menu>
         <div class="left-border"></div>
