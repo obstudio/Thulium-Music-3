@@ -13,8 +13,9 @@ module.exports = {
       column: 1,
       toolbar: false,
       move: false,
-      extensionHeight: 100,
-      extension: null
+      extensionHeight: 200,
+      extension: null,
+      activeExtension: '1'
     }
   },
 
@@ -41,7 +42,7 @@ module.exports = {
       this.layout(300)
     },
     extension() {
-      this.layout(0.3)
+      this.layout(300)
     },
     settings() {
       if (this.editor) {
@@ -59,7 +60,15 @@ module.exports = {
       window.monaco.editor.setTheme(global.user.state.Settings.theme)
     }
     this.switchTab(0)
-    global.user.state.TitlePrefix = this.tabs[0].title + ' - '
+    const navRight = document.createElement('div')
+    navRight.setAttribute('class', 'nav-right')
+    const closeButton = document.createElement('button')
+    const closeIcon = document.createElement('i')
+    closeIcon.setAttribute('class', 'icon-close')
+    closeButton.appendChild(closeIcon)
+    closeButton.onclick = () => this.extension = false
+    navRight.appendChild(closeButton)
+    this.$el.children[3].children[1].children[0].appendChild(navRight)
   },
 
   methods: {
@@ -159,6 +168,7 @@ module.exports = {
           }
         }
       })
+
       editor.addAction({
         id: 'tm-stop',
         label: 'Stop Playing',
@@ -240,7 +250,13 @@ module.exports = {
     <div class="extension" :style="{
       height: extensionHeight + 'px',
       bottom: (extension ? 24 : 24 - extensionHeight) + 'px'
-    }"/>
+    }">
+      <div class="top-border"/>
+      <el-tabs v-model="activeExtension" @tab-click="">
+        <el-tab-pane label="Linter">Linter</el-tab-pane>
+        <el-tab-pane label="Renderer">Renderer</el-tab-pane>
+      </el-tabs>
+    </div>
     <div class="status">
       <div class="left">
         <div class="text">{{ captions.line }} {{ row }}, {{ captions.column }} {{ column }}</div>

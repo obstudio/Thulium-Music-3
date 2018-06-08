@@ -39,9 +39,9 @@ const i18n = new VueI18n({
       if (key in target || !global.library.LanguageSet.has(key)) {
         return target[key]
       } else {
-          const locale = require(`./languages/${key}/general.json`)
-          target[key] = locale
-          return locale
+        const locale = require(`./languages/${key}/general.json`)
+        target[key] = locale
+        return locale
       }
     }
   })
@@ -102,7 +102,10 @@ new Vue({
   computed: {
     settings: () => global.user.state.Settings,
     styles: () => global.user.state.Styles,
-    title: () => global.user.state.Title()
+    title() {
+      return global.user.state.Prefix[global.user.state.Route]
+        + this.$t(`${global.user.state.Route}.title`)
+    }
   },
 
   methods: {

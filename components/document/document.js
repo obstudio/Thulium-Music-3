@@ -22,7 +22,7 @@ module.exports = {
         }
       },
       render: VueCompile(`<div class="tm-doc">
-        <component v-for="(comp, index) in content" :is="comp.type" :node="comp" :key="index"></component>
+        <component v-for="(comp, index) in content" :is="comp.type" :node="comp" :key="index"/>
       </div>`)
     },
     TmDocVariant: {
@@ -33,13 +33,14 @@ module.exports = {
           return `${this.base}/${this.item.name || this.item}`
         }
       },
-      render: VueCompile(`<el-submenu v-if="typeof item === 'object'" :index="index">
-  <template slot="title">{{item.name}}</template>
-  <tm-doc-variant v-for="sub in item.content" :item="sub" :base="index"></tm-doc-variant>
-</el-submenu>
-<el-menu-item v-else :index="index">
-  <span slot="title">{{item}}</span>
-</el-menu-item>`)
+      render: VueCompile(`
+      <el-submenu v-if="typeof item === 'object'" :index="index">
+        <template slot="title">{{item.name}}</template>
+        <tm-doc-variant v-for="sub in item.content" :item="sub" :base="index"></tm-doc-variant>
+      </el-submenu>
+      <el-menu-item v-else :index="index">
+        <span slot="title">{{item}}</span>
+      </el-menu-item>`)
     }
   },
   data() {
@@ -73,6 +74,7 @@ module.exports = {
         const doc = await fetch(`./documents${this.doc}.tmd`)
         const text = await doc.text()
         this.root = this.$markdown(text)
+        global.user.state.Prefix.documents = this.root[0].text + ' - '
       })()
     },
     switchDoc(index) {
@@ -81,13 +83,13 @@ module.exports = {
     }
   },
   render: VueCompile(`<el-row class="tm-document" style="background-color: white;">
-  <el-col :span="7" :style="{height: docHeight}">
-    <el-menu style="height: 100%" @select="switchDoc" :unique-opened="true">
-      <tm-doc-variant v-for="item in items" :item="item" base=""></tm-doc-variant>
-    </el-menu>
-  </el-col>
-  <el-col :span="16" :offset="1" style="overflow: auto;" :style="{height: docHeight}">
-    <Document :content="root"></Document>
-  </el-col>
-</el-row>`)
+    <el-col :span="7" :style="{height: docHeight}">
+      <el-menu style="height: 100%" @select="switchDoc" :unique-opened="true">
+        <tm-doc-variant v-for="item in items" :item="item" base=""></tm-doc-variant>
+      </el-menu>
+    </el-col>
+    <el-col :span="16" :offset="1" style="overflow: auto;" :style="{height: docHeight}">
+      <Document :content="root"></Document>
+    </el-col>
+  </el-row>`)
 }

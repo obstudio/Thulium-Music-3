@@ -88,8 +88,8 @@
 }
 
 .toolbar i {
+    font-size: 12px;
     padding: 12px;
-    font-size: 16px;
     vertical-align: -webkit-baseline-middle;
 }
 
@@ -109,6 +109,49 @@
     width: 100%;
     transition: 0.3s;
     position: absolute;
+}
+
+.tm-editor > .extension > div.top-border {
+    top: 0px;
+    height: 2px;
+    width: 100%;
+    position: absolute;
+    cursor: ns-resize;
+}
+
+.tm-editor > .extension .el-tabs__nav-wrap { left: 16px }
+.tm-editor > .extension .nav-right {
+    position: absolute;
+    right: 0px;
+    height: 36px;
+    top: 0px;
+}
+
+.tm-editor > .extension .nav-right {
+    float: right;
+    right: 0px;
+}
+
+.tm-editor > .extension .nav-right button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+    padding: 0px;
+}
+
+.tm-editor > .extension .nav-right button > i {
+    font-size: 16px;
+    padding: 10px;
+}
+
+.tm-editor > .extension .el-tabs__header { margin-bottom: 0px }
+.tm-editor > .extension .el-tabs__nav-wrap::after { z-index: -1 }
+.tm-editor > .extension .el-tabs__nav { z-index: 0 }
+.tm-editor > .extension .el-tabs__item {
+    padding: 10px 16px 6px;
+    user-select: none;
+    line-height: 20px;
 }
 
 .tm-editor > .status {
