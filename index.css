@@ -2,6 +2,7 @@
 @import "./components/editor/editor.css";
 @import "./components/document/document.css";
 @import "./components/settings/settings.css";
+@import "./assets/icons.css";
 
 body {
     margin: 0;
@@ -37,11 +38,13 @@ body {
 .navbar > div.title {
     top: 0px;
     height: 28px;
-    padding: 10px 0px;
-    text-align: -webkit-center;
+    padding: 10px 120px 10px 60px;
+    text-align: -webkit-left;
     font-size: 20px;
     transition: 0.3s;
 }
+
+.show-sidebar .navbar > div.title { padding-left: 80px }
 
 .navbar > div.top-right {
     position: absolute;
@@ -55,6 +58,7 @@ body {
     top: 0px;
     height: 100%;
     position: absolute;
+    text-align: center;
     -webkit-app-region: no-drag;
     border: none;
     outline: none;
@@ -65,7 +69,6 @@ body {
 .navbar > div.top-right button {
     width: 40px;
     padding: 8px 0px;
-    text-align: -webkit-center;
 }
 
 .navbar > div.top-right button.minimize { right: 80px }
@@ -77,7 +80,7 @@ body {
     width: 48px;
     font-size: 20px;
     float: left;
-    padding: 12px 12px;
+    padding: 14px 12px;
 }
 
 .show-sidebar .navbar button.sidebar-toggler {
@@ -120,9 +123,12 @@ body {
 
 .sidebar .el-menu { border-right: 0px }
 .sidebar .el-menu-item {
+    font-size: 20px;
+    text-align: center;
     -webkit-app-region: no-drag;
     transition: background-color 0.3s;
 }
+.sidebar .el-menu-item .icon-editor { font-size: 22px }
 
 div.main {
     vertical-align: top;

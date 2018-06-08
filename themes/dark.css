@@ -4,10 +4,8 @@
 /* navbar */
 .dark .navbar { background-color: #001122; color: #FFFFFF }
 .dark .navbar button { background-color: #001122; color: #dddddd }
-.dark .navbar button path { fill: #FFFFFF }
 .dark .navbar button:hover { background-color: #252525 }
 .dark .show-sidebar button.sidebar-toggler { background-color: #545c64 }
-.dark .show-sidebar button.sidebar-toggler path { background-color: #dedede }
 .dark .show-sidebar button.sidebar-toggler:hover { background-color: #545c64 }
 
 /* sidebar */

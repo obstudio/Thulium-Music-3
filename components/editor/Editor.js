@@ -210,7 +210,7 @@ module.exports = {
       :class="{'hide-minimap': !settings.minimap}"
       :style="{height: remainHeight, width: width + 'px'}"/>
     <div class="status">
-      {{ captions.line }} {{ row }}, {{ captions.column }} {{column}}
+      {{ captions.line }} {{ row }}, {{ captions.column }} {{ column }}
     </div>
   </div>`)
 }

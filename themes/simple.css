@@ -4,11 +4,9 @@
 /* navbar */
 .simple .navbar { background-color: #ffffff; color: #333333 }
 .simple .navbar button { background-color: #ffffff; color: #333333 }
-.simple .navbar button path { fill: #333333 }
 .simple .navbar button:hover { background-color: #ededed }
-.simple .show-sidebar button.sidebar-toggler { background-color: #2f353a }
-.simple .show-sidebar button.sidebar-toggler path { fill: #efefef }
-.simple .show-sidebar button.sidebar-toggler:hover { background-color: #545c64 }
+.simple .show-sidebar button.sidebar-toggler { background-color: #2f353a; color: #909399 }
+.simple .show-sidebar button.sidebar-toggler:hover { background-color: #545c64; color: #f7f7f7 }
 
 /* sidebar */
 .simple .sidebar { background-color: #2f353a }
