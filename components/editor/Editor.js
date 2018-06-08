@@ -200,8 +200,8 @@ module.exports = {
   props: ['width', 'height'],
   render: VueCompile(`<div class="tm-editor" :class="{'show-toolbar': toolbar}">
     <div class="toolbar">
+    <i class="icon-volume-mute"/>
     <div class="volume-slider">
-      <i class="icon-volume-mute"/>
       <el-slider class="icon-volume-mute" v-model="tabs[activeIndex].volume" :show-tooltip="false"/>
       </div></div>
     <div class="header">
