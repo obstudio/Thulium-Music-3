@@ -141,8 +141,9 @@
 }
 
 .tm-editor > .extension .nav-right button > i {
-    font-size: 16px;
-    padding: 10px;
+    font-size: 12px;
+    padding: 12px;
+    vertical-align: -webkit-baseline-middle;
 }
 
 .tm-editor > .extension .el-tabs__header { margin-bottom: 0px }
@@ -156,11 +157,11 @@
 
 .tm-editor > .status {
     width: 100%;
-    bottom: 0px;
     height: 24px;
     margin: 0px;
     padding: 0px;
     position: absolute;
+    transition: 0.3s;
     -webkit-user-select: none;
     cursor: default;
 }

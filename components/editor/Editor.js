@@ -1,6 +1,7 @@
 const FileSaver = require('file-saver')
 const {registerPlayCommand} = require('../../library/editor/Editor')
 const Tab = require('../../library/editor/Tab')
+const extensions = require('../../extensions/extension')
 
 module.exports = {
   name: 'TmEditor',
@@ -12,23 +13,23 @@ module.exports = {
       row: 1,
       column: 1,
       toolbar: false,
-      move: false,
+      extensions: extensions,
       extensionHeight: 200,
-      extension: null,
-      activeExtension: '1'
+      extensionShowed: false,
+      extensionFull: false,
+      activeExtension: extensions[0]
     }
   },
 
   computed: {
     contentHeight() {
-      return this.move ? '1000000px' :
-        String(this.height - 40 - 24
-          - (this.extension ? this.extensionHeight : 0)
-          - (this.toolbar ? 40 : 0)
-        ) + 'px'
+      return String(this.height - 40 - 24
+        - (this.extensionShowed ? this.extensionHeight : 0)
+        - (this.toolbar ? 40 : 0)
+      ) + 'px'
     },
     contentWidth() {
-      return this.move ? '1000000px' : '100%'
+      return '100%'
     },
     settings: () => global.user.state.Settings,
     captions: () => global.user.state.Captions.editor
@@ -41,7 +42,7 @@ module.exports = {
     toolbar() {
       this.layout(300)
     },
-    extension() {
+    extensionShowed() {
       this.layout(300)
     },
     settings() {
@@ -60,15 +61,6 @@ module.exports = {
       window.monaco.editor.setTheme(global.user.state.Settings.theme)
     }
     this.switchTab(0)
-    const navRight = document.createElement('div')
-    navRight.setAttribute('class', 'nav-right')
-    const closeButton = document.createElement('button')
-    const closeIcon = document.createElement('i')
-    closeIcon.setAttribute('class', 'icon-close')
-    closeButton.appendChild(closeIcon)
-    closeButton.onclick = () => this.extension = false
-    navRight.appendChild(closeButton)
-    this.$el.children[3].children[1].children[0].appendChild(navRight)
   },
 
   methods: {
@@ -248,21 +240,30 @@ module.exports = {
     </div>
     <div class="content" :style="{ height: contentHeight, width: contentWidth }"/>
     <div class="extension" :style="{
-      height: extensionHeight + 'px',
-      bottom: (extension ? 24 : 24 - extensionHeight) + 'px'
+      height: (extensionFull ? '100%' : extensionHeight + 'px'),
+      bottom: (extensionShowed ? extensionFull ? 0 : 24 : 24 - extensionHeight) + 'px'
     }">
       <div class="top-border"/>
       <el-tabs v-model="activeExtension" @tab-click="">
-        <el-tab-pane label="Linter">Linter</el-tab-pane>
-        <el-tab-pane label="Renderer">Renderer</el-tab-pane>
+        <el-tab-pane v-for="ext in extensions" :label="ext" :key="ext" :name="ext">
+          <component :is="'tm-ext-' + ext" :prop1="ext"/>
+        </el-tab-pane>
       </el-tabs>
+      <div class="nav-right">
+        <button @click="extensionFull = !extensionFull">
+          <i :class="extensionFull ? 'icon-down' : 'icon-up'"/>
+        </button>
+        <button @click="extensionShowed = false">
+          <i class="icon-close"/>
+        </button>
+      </div>
     </div>
-    <div class="status">
+    <div class="status" :style="{ bottom: extensionFull ? '-24px' : '0px' }">
       <div class="left">
         <div class="text">{{ captions.line }} {{ row }}, {{ captions.column }} {{ column }}</div>
       </div>
       <div class="right">
-        <button @click="extension = !extension"><i class="el-icon-menu"/></button>
+        <button @click="extensionShowed = !extensionShowed"><i class="el-icon-menu"/></button>
       </div>
     </div>
   </div>`)
