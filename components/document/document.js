@@ -15,32 +15,62 @@ module.exports = {
   components: {
     Document: {
       name: 'Document',
+      functional: true,
       props: {
         content: {
           type: Array,
           required: true
         }
       },
-      render: VueCompile(`<div class="tm-doc">
-        <component v-for="(comp, index) in content" :is="comp.type" :node="comp" :key="index"/>
-      </div>`)
+      render: (createElement, context) => {
+        return createElement('div', {
+            class: {
+              'tm-doc': true
+            }
+          },
+          context.props.content.map((comp, index) => createElement(comp.type, {
+            props: {
+              node: comp
+            },
+            key: index
+          }))
+        )
+      }
     },
     TmDocVariant: {
       name: 'TmDocVariant',
+      functional: true,
       props: ['item', 'base'],
       computed: {
         index() {
           return `${this.base}/${this.item.name || this.item}`
         }
       },
-      render: VueCompile(`
-      <el-submenu v-if="typeof item === 'object'" :index="index">
-        <template slot="title">{{item.name}}</template>
-        <tm-doc-variant v-for="sub in item.content" :item="sub" :base="index"></tm-doc-variant>
-      </el-submenu>
-      <el-menu-item v-else :index="index">
-        <span slot="title">{{item}}</span>
-      </el-menu-item>`)
+      render: (createElement, context) => {
+        const item = context.props.item
+        const base = context.props.base
+        const index = `${base}/${item.name || item}`
+        return typeof item === 'object' ? createElement('el-submenu', {
+            props: {
+              index
+            }
+          }, [createElement('template', {
+            slot: 'title'
+          }, item.name
+          ), ...item.content.map((sub) => createElement('tm-doc-variant', {
+            props: {
+              item: sub,
+              base: index
+            }
+          }))]
+        ) : createElement('el-menu-item', {
+          props: {
+            index
+          }
+        }, [createElement('span', {
+          slot: 'title'
+        }, item)])
+      }
     }
   },
   data() {
