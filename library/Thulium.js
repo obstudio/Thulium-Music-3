@@ -13,7 +13,12 @@ class Thulium {
   constructor(input, { useFile = true, loadBuffer = false, saveBuffer = false } = {}) {
     if (useFile) {
       var directory = path.dirname(input);
-      input = fs.readFileSync(input, 'utf8');
+      if (fs.existsSync(input)) {
+        input = fs.readFileSync(input, 'utf8');
+      } else {
+        input = '';
+        throw new Error()
+      }
     }
 
     function loadFile(filename) {

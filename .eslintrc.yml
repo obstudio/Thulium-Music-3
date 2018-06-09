@@ -23,3 +23,5 @@ rules:
     - warn
   no-useless-escape:
     - off
+  no-console:
+    - warn

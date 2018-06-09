@@ -23,6 +23,7 @@ body {
     width: 100%;
     position: absolute;
     overflow: hidden;
+    transition: 0.3s;
     -webkit-app-region: drag;
     -webkit-user-select: none;
 }
@@ -142,6 +143,8 @@ div.main {
 .show-sidebar div.main {
     left: 64px;
 }
+
+div.main > div { transition: 0.3s }
 
 @font-face {
     font-family: source-san-sans-CN;

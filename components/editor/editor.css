@@ -7,12 +7,12 @@
     overflow: hidden;
 }
 
-.tm-editor > .header .div { font-family: source-san-sans-CN }
-
 .tm-tabs {
     height: 100%;
     margin-bottom: -1px;
 }
+
+.tm-tabs div.title { font-family: source-san-sans-CN }
 
 .tm-editor .header button {
     float: left;
@@ -23,28 +23,31 @@
     padding: 0px;
 }
 
-.tm-tabs button > div.title {
+button.tm-tab > div.title {
     padding: 12px 25px 12px 25px;
     font-size: 14px;
-    text-align: center;
+    text-align: -webkit-baseline-middle;
     transition: 0.3s;
 }
 
-.tm-tabs button.active > div.title,
-.tm-tabs button:hover > div.title {
+button.tm-tab.changed > div.title,
+button.tm-tab.active > div.title,
+button.tm-tab:hover > div.title {
     padding:  12px 36px 12px 14px
 }
 
-.tm-tabs button > i.icon-close {
+button.tm-tab > i {
     display: none;
     float: right;
-    padding: 15px 14px 15px 0px;
-    font-size: 10px;
+    padding: 16px 14px 16px 0px;
+    text-align: -webkit-baseline-middle;
+    font-size: 8px;
     transition: 0.3s;
 }
 
-.tm-tabs button.active > i.icon-close,
-.tm-tabs button:hover > i.icon-close {
+button.tm-tab.changed > i,
+button.tm-tab.active > i,
+button.tm-tab:hover > i {
     display: initial;
 }
 

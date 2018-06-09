@@ -6,7 +6,7 @@ const draggable = require('vuedraggable')
 global.define.amd = tempAmd
 
 const extensions = require('../../extensions/extension')
-const Tab = require('./Tab')
+const TmTab = require('./Tab')
 const fs = require('fs')
 const path = require('path')
 
@@ -18,7 +18,7 @@ module.exports = {
   },
   data() {
     return {
-      tabs: Tab.load(true),
+      tabs: TmTab.load(),
       activeIndex: 0,
       row: 1,
       column: 1,
@@ -64,6 +64,7 @@ module.exports = {
   mounted() {
     this.commands = require('./command')
     this.player = undefined
+    this.tabs.forEach(tab => tab.changed = tab.hasChanged())
     this.showEditor()
     if (global.user) {
       window.monaco.editor.setTheme(global.user.state.Settings.theme)
@@ -88,7 +89,7 @@ module.exports = {
 
     addTab(content = {}, insert = false) {
       const index = insert ? this.activeIndex + 1 : this.tabs.length
-      this.tabs.splice(index, 0, new Tab(content))
+      this.tabs.splice(index, 0, new TmTab(content))
       this.switchTab(index)
     },
 
@@ -97,7 +98,7 @@ module.exports = {
       if (this.tabs.length === 0) {
         this.addTab()
       } else if (index === this.activeIndex) {
-        this.switchTab(index - 1)
+        this.switchTab(index === 0 ? 0 : index - 1)
       } else if (index <= this.activeIndex) {
         this.activeIndex -= 1
       }
@@ -126,37 +127,45 @@ module.exports = {
       registerPlayCommand(editor)
 
       this.commands.forEach(command => editor.addAction(command))
-      editor.onDidChangeCursorPosition(e => {
-        this.row = e.position.lineNumber
-        this.column = e.position.column
+
+      editor.onDidChangeCursorPosition(event => {
+        this.row = event.position.lineNumber
+        this.column = event.position.column
+        this.tabs[this.activeIndex].changed = this.tabs[this.activeIndex].hasChanged()
       })
-      addEventListener('resize', e => {
+
+      addEventListener('resize', () => {
+        const remainHeight = this.height - 40 - 24 - (this.toolbar ? 40 : 0)
+        if (this.extensionShowed && this.extensionHeight > remainHeight) {
+          this.extensionHeight = remainHeight
+        }
         this.layout(300)
-      }, {passive: true})
+      }, { passive: true })
+
       addEventListener('beforeunload', e => {
-        Tab.save(this.tabs)
+        TmTab.save(this.tabs)
       })
+
       this.$el.addEventListener('dragover', e => {
         e.preventDefault()
         e.stopPropagation()
       })
+
       this.$el.addEventListener('drop', e => {
         e.preventDefault()
         e.stopPropagation()
         for (const file of e.dataTransfer.files) {
           if (!['.tm', '.tml'].includes(path.extname(file.path))) continue
           fs.readFile(file.path, { encoding: 'utf8' }, (_, data) => {
-            this.addTab({ title: path.basename(file.path).replace(/\.tml?$/, '') }, true)
-            editor.executeEdits('new file', [{
-              identifier: 'drag & drop',
-              range: new window.monaco.Range(
-                1,
-                1,
-                editor.getModel().getLineCount(),
-                editor.getModel().getLineMaxColumn(editor.getModel().getLineCount())
-              ),
-              text: data
-            }])
+            this.addTab({
+              title: path.basename(file.path).replace(/\.tml?$/, ''),
+              path: file.path,
+              value: data,
+              old: data
+            }, true)
+            if (this.tabs[this.activeIndex - 1].isEmpty()) {
+              this.closeTab(this.activeIndex - 1)
+            }
           })
         }
       })
@@ -166,53 +175,54 @@ module.exports = {
   
   props: ['width', 'height'],
   render: VueCompile(`<div class="tm-editor" :class="{'show-toolbar': toolbar}">
-  <div class="toolbar">
-    <i class="icon-volume-mute"/>
-    <div class="volume-slider">
-      <el-slider class="icon-volume-mute" v-model="tabs[activeIndex].volume" :show-tooltip="false"/>
+    <div class="toolbar">
+      <i class="icon-volume-mute"/>
+      <div class="volume-slider">
+        <el-slider class="icon-volume-mute" v-model="tabs[activeIndex].volume" :show-tooltip="false"/>
+      </div>
     </div>
-  </div>
-  <div class="header">
-    <button class="toolbar-toggler" @click="toolbar = !toolbar"><i class="icon-control"/></button>
-    <div class="tm-tabs">
-      <draggable :list="tabs" @end="dragEnd">
-        <button v-for="(tab, index) in tabs" @mousedown="switchTab(index)"
-                :key="index" :class="{ active: index === activeIndex }">
-          <i class="icon-close" @click.stop="closeTab(index)"/>
-          <div class="title">{{ tab.title }}</div>
-        </button>
-      </draggable>
-      <button class="add-tag" @click="addTab()"><i class="icon-add"/></button>
+    <div class="header">
+      <button class="toolbar-toggler" @click="toolbar = !toolbar"><i class="icon-control"/></button>
+      <div class="tm-tabs">
+        <draggable :list="tabs" @end="dragEnd">
+          <button v-for="(tab, index) in tabs" @mousedown="switchTab(index)" class="tm-tab"
+            :key="index" :class="{ active: index === activeIndex, changed: tab.changed }">
+            <i v-if="tab.changed" class="icon-circle" @click.stop="closeTab(index)"/>
+            <i v-else class="icon-close" @click.stop="closeTab(index)"/>
+            <div class="title">{{ tab.title }}</div>
+          </button>
+        </draggable>
+        <button class="add-tag" @click="addTab()"><i class="icon-add"/></button>
+      </div>
     </div>
-  </div>
-  <div class="content" :style="{ height: contentHeight, width: '100%' }"/>
-  <div class="extension" :style="{
-      height: (extensionFull ? '100%' : extensionHeight + 'px'),
+    <div class="content" :style="{ height: contentHeight, width: '100%' }"/>
+    <div class="extension" :style="{
+      height: (extensionShowed && extensionFull ? '100%' : extensionHeight + 'px'),
       bottom: (extensionShowed ? extensionFull ? 0 : 24 : 24 - extensionHeight) + 'px'
     }">
-    <div class="top-border"/>
-    <el-tabs v-model="activeExtension" @tab-click="">
-      <el-tab-pane v-for="ext in extensions" :label="ext" :key="ext" :name="ext">
-        <component :is="'tm-ext-' + ext" :full="extensionFull"
-                   :height="extensionFull ? height : extensionHeight"/>
-      </el-tab-pane>
-    </el-tabs>
-    <div class="nav-right">
-      <button @click="extensionFull = !extensionFull">
-        <i :class="extensionFull ? 'icon-down' : 'icon-up'"/>
-      </button>
-      <button @click="extensionShowed = false">
-        <i class="icon-close"/>
-      </button>
+      <div class="top-border"/>
+      <el-tabs v-model="activeExtension" @tab-click="">
+        <el-tab-pane v-for="ext in extensions" :label="ext" :key="ext" :name="ext">
+          <component :is="'tm-ext-' + ext" :full="extensionFull"
+            :height="extensionFull ? height : extensionHeight"/>
+        </el-tab-pane>
+      </el-tabs>
+      <div class="nav-right">
+        <button @click="extensionFull = !extensionFull">
+          <i :class="extensionFull ? 'icon-down' : 'icon-up'"/>
+        </button>
+        <button @click="extensionShowed = false">
+          <i class="icon-close"/>
+        </button>
+      </div>
     </div>
-  </div>
-  <div class="status" :style="{ bottom: extensionFull ? '-24px' : '0px' }">
-    <div class="left">
-      <div class="text">{{ $t('editor.line') }} {{ row }}, {{ $t('editor.column') }} {{ column }}</div>
+    <div class="status" :style="{ bottom: extensionShowed && extensionFull ? '-24px' : '0px' }">
+      <div class="left">
+        <div class="text">{{ $t('editor.line') }} {{ row }}, {{ $t('editor.column') }} {{ column }}</div>
+      </div>
+      <div class="right">
+        <button @click="extensionShowed = !extensionShowed"><i class="el-icon-menu"/></button>
+      </div>
     </div>
-    <div class="right">
-      <button @click="extensionShowed = !extensionShowed"><i class="el-icon-menu"/></button>
-    </div>
-  </div>
-</div>`)
+  </div>`)
 }
