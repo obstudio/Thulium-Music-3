@@ -11,8 +11,7 @@
     },
     "editor": {
         "all-files": "所有文件",
-        "column": "列",
-        "line": "行",
+        "line-col": "行 {line}，列 {col}",
         "new-file": "新文件",
         "save-as": "另存为 ...",
         "section": "乐章",

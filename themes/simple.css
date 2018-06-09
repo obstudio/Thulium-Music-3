@@ -13,7 +13,7 @@
 
 /* editor */
 .simple .tm-editor .editor-scrollable { border-left: 1px solid #e1e1e1 }
-.simple .tm-editor > .header { background-color: #f7f7f7; border-bottom: 1px solid #e1e1e1 }
+.simple .tm-editor > .header { background-color: #f7f7f7 }
 .simple .tm-editor > .status { background-color: #cdcdcd; color: #525252 }
 .simple .tm-editor button.toolbar-toggler { background-color: #f7f7f7; color: #dddddd }
 .simple .tm-tabs button { background-color: #cdcdcd; color: #dddddd }

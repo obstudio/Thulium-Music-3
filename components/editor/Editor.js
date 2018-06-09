@@ -37,9 +37,9 @@ module.exports = {
 
   computed: {
     contentHeight() {
-      return String(this.height - 40 - 24
+      return String(this.height - 34 - 24
         - (this.extensionShowed ? this.extensionHeight : 0)
-        - (this.toolbar ? 40 : 0)
+        - (this.toolbar ? 34 : 0)
       ) + 'px'
     },
     settings: () => global.user.state.Settings,
@@ -146,7 +146,7 @@ module.exports = {
       })
 
       addEventListener('resize', () => {
-        const remainHeight = this.height - 40 - 24 - (this.toolbar ? 40 : 0)
+        const remainHeight = this.height - 34 - 24 - (this.toolbar ? 34 : 0)
         if (this.extensionShowed && this.extensionHeight > remainHeight) {
           this.extensionHeight = remainHeight
         }
@@ -195,12 +195,17 @@ module.exports = {
     <button class="toolbar-toggler" @click="toolbar = !toolbar"><i class="icon-control"/></button>
     <div class="tm-tabs">
       <draggable :list="tabs" @end="dragEnd" :options="dragOptions">
-        <button v-for="(tab, index) in tabs" @mousedown="switchTab(index)" class="tm-tab"
-                :key="index" :class="{ active: index === activeIndex, changed: tab.changed }">
-          <i v-if="tab.changed" class="icon-circle" @click.stop="closeTab(index)"/>
-          <i v-else class="icon-close" @click.stop="closeTab(index)"/>
-          <div class="title">{{ tab.title }}</div>
-        </button>
+        <transition-group name="tm-tabs">
+          <button v-for="(tab, index) in tabs" @mousedown="switchTab(index)" :key="index">
+            <div class="tm-tab" :class="{ active: index === activeIndex, changed: tab.changed }">
+              <i v-if="tab.changed" class="icon-circle" @click.stop="closeTab(index)"/>
+              <i v-else class="icon-close" @click.stop="closeTab(index)"/>
+              <div class="title">{{ tab.title }}</div>
+              <div class="left-border"/>
+              <div class="right-border"/>
+            </div>
+          </button>
+        </transition-group>
       </draggable>
       <button class="add-tag" @click="addTab()"><i class="icon-add"/></button>
     </div>
@@ -228,7 +233,7 @@ module.exports = {
   </div>
   <div class="status" :style="{ bottom: extensionShowed && extensionFull ? '-24px' : '0px' }">
     <div class="left">
-      <div class="text">{{ $t('editor.line') }} {{ row }}, {{ $t('editor.column') }} {{ column }}</div>
+      <div class="text">{{ $t('editor.line-col', { line: row, col: column }) }}</div>
     </div>
     <div class="right">
       <button @click="extensionShowed = !extensionShowed"><i class="el-icon-menu"/></button>

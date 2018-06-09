@@ -62,7 +62,7 @@ module.exports = class TmTab {
     return {
       title: this.title,
       type: this.type,
-      value: this.model.getValue(global.user.state.Settings['line-ending'] === 'LF' ? 1 : 2),
+      value: this.value,
       volume: this.volume,
       start: this.start,
       end: this.end,

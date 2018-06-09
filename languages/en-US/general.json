@@ -11,8 +11,7 @@
     },
     "editor": {
         "all-files": "All Files",
-        "column": "Column",
-        "line": "Line",
+        "line-col": "Line {line}, Col {col}",
         "new-file": "new file",
         "save-as": "Save As ...",
         "section": "Section",

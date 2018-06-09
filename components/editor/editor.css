@@ -1,18 +1,11 @@
 .tm-editor > .header {
-    height: 40px;
+    height: 34px;
     top: 0px;
     left: 0px;
     width: 100%;
     position: absolute;
     overflow: hidden;
 }
-
-.tm-tabs {
-    height: 100%;
-    margin-bottom: -1px;
-}
-
-.tm-tabs div.title { font-family: source-san-sans-CN }
 
 .tm-editor .header button {
     float: left;
@@ -23,45 +16,85 @@
     padding: 0px;
 }
 
-button.tm-tab > div.title {
-    padding: 12px 25px 12px 25px;
-    font-size: 14px;
-    text-align: -webkit-baseline-middle;
+.tm-tabs { height: 100% }
+.tm-tabs div.title { font-family: source-san-sans-CN }
+
+.tm-tabs-enter, .tm-tabs-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+}
+.tm-tabs-leave-active {
+    position: absolute;
+}
+
+.tm-tab {
+    height: 34px;
+    top: 0px;
+    padding: 0px;
+    margin: 0px -4px;
+    float: left;
+    transition: all 1s;
+    position: relative;
+}
+
+.tm-tab.active { z-index: 2 }
+.tm-tab:hover { z-index: 1 }
+
+.tm-tab > div.title {
+    padding: 6px 32px 6px 32px;
+    font-size: 12px;
+    text-align: center;
     transition: 0.3s;
+    margin-top: 4px;
 }
 
-button.tm-tab.changed > div.title,
-button.tm-tab.active > div.title,
-button.tm-tab:hover > div.title {
-    padding:  12px 36px 12px 14px
+.tm-tab.changed > div.title,
+.tm-tab.active > div.title,
+.tm-tab:hover > div.title {
+    padding-left: 22px;
+    padding-right: 42px;
 }
 
-button.tm-tab > i {
+.tm-tab > i {
     display: none;
     float: right;
-    padding: 16px 14px 16px 0px;
-    text-align: -webkit-baseline-middle;
+    padding: 15px 22px 11px 0px;
+    text-align: center;
     font-size: 8px;
     transition: 0.3s;
 }
 
-button.tm-tab.changed > i,
-button.tm-tab.active > i,
-button.tm-tab:hover > i {
+.tm-tab.changed > i,
+.tm-tab.active > i,
+.tm-tab:hover > i {
     display: initial;
 }
 
+.tm-tab > div[class$=-border] {
+    position: absolute;
+    bottom: 0px;
+    height: 0px;
+    width: 0px;
+    transition: 0.3s;
+    border-style: solid;
+    border-width: 30px 0px 0px 0px;
+}
+
+.tm-tab > div.left-border { left: 0px; border-right-width: 15px }
+.tm-tab > div.right-border { right: 0px; border-left-width: 15px }
+
 .tm-editor button.add-tag {
-    padding: 15px 12px;
+    padding: 14px 12px 10px 12px;
     font-size: 10px;
     transition: 0.3s;
+    height: 34px;
 }
 
 .tm-editor button.toolbar-toggler {
-    padding: 11px 12px;
-    font-size: 18px;
+    padding: 9px 9px;
+    font-size: 16px;
     top: 0px;
-    height: 40px;
+    height: 34px;
     transition: 0.3s;
     float: right;
     position: relative;
@@ -70,7 +103,7 @@ button.tm-tab:hover > i {
 .tm-editor > .toolbar {
     overflow: hidden;
     top: 0px;
-    height: 40px;
+    height: 34px;
     left: 0px;
     width: 100%;
     position: absolute;
@@ -78,14 +111,14 @@ button.tm-tab:hover > i {
     float: left;
 }
 
-.tm-editor.show-toolbar > .toolbar { top: 40px }
+.tm-editor.show-toolbar > .toolbar { top: 34px }
 
 .toolbar .el-slider__button-wrapper { z-index: auto }
 
 .toolbar .volume-slider {
     top: 0px;
     width: 100px;
-    height: 40px;
+    height: 34px;
     left: 40px;
     position: absolute;
 }
@@ -98,13 +131,13 @@ button.tm-tab:hover > i {
 
 .tm-editor > .content {
     overflow: hidden;
-    top: 40px;
+    top: 34px;
     left: 0px;
     position: absolute;
     transition: 0.3s;
 }
 
-.tm-editor.show-toolbar > .content { top: 80px }
+.tm-editor.show-toolbar > .content { top: 68px }
 
 .monaco-editor .decorationsOverviewRuler { display: none }
 
@@ -126,7 +159,7 @@ button.tm-tab:hover > i {
 .tm-editor > .extension .nav-right {
     position: absolute;
     right: 0px;
-    height: 36px;
+    height: 34px;
     top: 0px;
 }
 

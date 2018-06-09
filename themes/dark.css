@@ -13,14 +13,23 @@
 
 /* editor */
 .dark .tm-editor { background-color: #1e1e1e }
-.dark .tm-editor > .header { background-color: #181915; border-bottom: 1px solid #474842 }
-.dark .tm-editor > .header button { background-color: #181915; color: #dddddd }
+.dark .tm-editor > .header { background-color: #181915 }
+.dark .tm-editor > .header button { background-color: transparent; color: #181915 }
 .dark .tm-editor > .header button:hover { background-color: #252525 }
 .dark .tm-editor > .header button.active { background-color: #474842 }
 .dark .tm-editor > .header button > i { color: #cccccc }
 .dark .tm-editor > .header button:hover > i { color: #fafaf5 }
-.dark .tm-tab > div.title { color: #bbbbb7 }
-.dark .tm-tab.active > div.title { color: #fafaf5 }
+
+.dark .tm-tabs button { background-color: transparent !important }
+.dark .tm-tab > .title { background-color: #181915; color: #bbbbb7 }
+.dark .tm-tab > .left-border { border-right-color: #181915 }
+.dark .tm-tab > .right-border { border-left-color: #181915 }
+.dark .tm-tab:hover > .title { background-color: #252525; color: #dfe2e5 }
+.dark .tm-tab:hover > .left-border { border-right-color: #252525 }
+.dark .tm-tab:hover > .right-border { border-left-color: #252525 }
+.dark .tm-tab.active > .title { background-color: #474842; color: #fafaf5 }
+.dark .tm-tab.active > .left-border { border-right-color: #474842 }
+.dark .tm-tab.active > .right-border { border-left-color: #474842 }
 .dark .tm-tab > i { color: #a5a6a4 !important }
 .dark .tm-tab > i:hover { color: #fafaf5 !important }
 
