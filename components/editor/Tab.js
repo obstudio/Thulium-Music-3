@@ -1,13 +1,16 @@
+const Thulium = require('../../library/Thulium')
+let count = 0
+
 module.exports = class Tab {
   constructor({
-    title = 'New',
+    title,
     type = 'tm',
     value = '',
     start = null,
     end = null,
     volume = 1
   } = {}) {
-    this.title = title
+    this.title = title === undefined ? `Untitled ${++count}` : title
     this.type = type
     this.value = value
     this.volume = volume
@@ -30,14 +33,6 @@ module.exports = class Tab {
       end: this.end
     }
   }
-
-  // update(newTitle) {
-  //   return new Tab({
-  //     title: newTitle,
-  //     type: this.type,
-  //     value: this.value
-  //   })
-  // }
 
   static load(newIfNone = false) {
     const tabString = localStorage.getItem('tabs')
