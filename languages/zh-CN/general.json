@@ -10,10 +10,14 @@
         "title": "铥铥音乐"
     },
     "editor": {
+        "all-files": "所有文件",
         "column": "列",
         "line": "行",
-        "title": "编辑器",
+        "new-file": "新文件",
+        "save-as": "另存为 ...",
         "section": "乐章",
+        "thulium": "铥铥音乐",
+        "title": "编辑器",
         "track": "音轨"
     },
     "homepage": {

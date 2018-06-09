@@ -30,7 +30,9 @@ module.exports = {
       ) + 'px'
     },
     settings: () => global.user.state.Settings,
-    captions: () => global.user.state.Captions.editor
+    tab() {
+      return this.tabs[this.activeIndex]
+    }
   },
 
   watch: {
@@ -55,7 +57,7 @@ module.exports = {
   mounted() {
     this.commands = require('./command')
     this.player = undefined
-    this.tabs.forEach(tab => tab.changed = tab.hasChanged())
+    this.tabs.forEach(tab => tab.checkChange())
     this.showEditor()
     if (global.user) {
       window.monaco.editor.setTheme(global.user.state.Settings.theme)
@@ -109,9 +111,11 @@ module.exports = {
         language: 'tm',
         theme: 'tm',
         folding: false,
+        mouseWheelZoom: true,
         minimap: { enabled: this.settings.minimap }
       })
       this.editor = editor
+      editor.vue = this
       registerPlayCommand(editor)
 
       this.commands.forEach(command => editor.addAction(command))
@@ -119,7 +123,10 @@ module.exports = {
       editor.onDidChangeCursorPosition(event => {
         this.row = event.position.lineNumber
         this.column = event.position.column
-        this.tabs[this.activeIndex].changed = this.tabs[this.activeIndex].hasChanged()
+        this.tab.value = this.tab.model.getValue(
+          global.user.state.Settings['line-ending'] === 'LF' ? 1 : 2
+        )
+        this.tab.checkChange()
       })
 
       addEventListener('resize', () => {
@@ -157,7 +164,6 @@ module.exports = {
           })
         }
       })
-      editor.updateOptions({mouseWheelZoom: true})
     }
   },
   

@@ -1,5 +1,3 @@
-const { adapt } = require('./value')
-
 module.exports = {
   name: 'TmSettings',
   components: {

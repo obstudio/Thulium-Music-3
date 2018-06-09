@@ -1,4 +1,5 @@
-const FileSaver = require('file-saver')
+const fs = require('fs')
+const { dialog } = require('electron').remote
 
 module.exports = [
   {
@@ -10,17 +11,27 @@ module.exports = [
     contextMenuGroupId: 'navigation',
     contextMenuOrder: 1.5,
     run(editor) {
-      const value = editor.getValue()
-      localStorage.setItem('lastText', value)
-      const firstLine = value.slice(0, value.indexOf('\n'))
+      const tab = editor.vue.tab
+      if (!tab.changed) return
+      if (tab.path) {
+        tab.save()
+        return
+      }
+      const firstLine = editor.getModel().getLineContent(1)
       let name
       if (firstLine !== '' && firstLine.startsWith('//')) {
         name = firstLine.slice(2).trim()
       } else {
-        name = 'new_file'
+        name = editor.vue.$t('editor.new-file')
       }
-      const blob = new Blob([value], {type: 'text/plain;charset=utf-8'})
-      FileSaver.saveAs(blob, `${name}.sml`)
+      dialog.showSaveDialog(null, {
+        title: editor.vue.$t('editor.save-as'),
+        defaultPath: name,
+        filters: [
+          { name: editor.vue.$t('editor.thulium'), extensions: ['tm', 'tml'] },
+          { name: editor.vue.$t('editor.all-files'), extensions: ['*'] }
+        ]
+      }, path => tab.save(path))
     }
   },
 

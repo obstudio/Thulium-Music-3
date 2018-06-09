@@ -1,4 +1,5 @@
 const Thulium = require('../../library/Thulium')
+const fs = require('fs')
 
 module.exports = class TmTab {
   constructor({
@@ -21,6 +22,9 @@ module.exports = class TmTab {
     this.path = path
     this.old = old
     this.origin = origin
+    if (path && old === '' && fs.existsSync(path)) {
+      fs.readFile(path, { encoding: 'utf8' }, (_, data) => this.checkChange(data))
+    }
     Object.defineProperty(this, 'model', {
       configurable: false,
       value: window.monaco.editor.createModel(value, type)
@@ -32,25 +36,36 @@ module.exports = class TmTab {
     this.model.tm = this.thulium
   }
 
-  hasChanged() {
-    return this.old !== 
-      this.model.getValue(global.user.state.Settings['line-ending'] === 'LF' ? 1 : 2)
+  checkChange(data) {
+    if (data !== undefined) this.old = data
+    this.changed = this.old !== this.value
   }
 
   isEmpty() {
-    return this.old === '' && this.model.getValue(1) === ''
+    return this.path === null && this.old === '' && this.model.getValue(1) === ''
+  }
+
+  save(path) {
+    if (!path) {
+      path = this.path
+    } else {
+      this.path = path
+    }
+    fs.writeFile(path, this.value, { encoding: 'utf8' }, () => {
+      this.old = this.value
+      this.changed = false
+    })
   }
 
   toJSON() {
     return {
       title: this.title,
       type: this.type,
-      value: this.model.getValue(1, false),
+      value: this.model.getValue(global.user.state.Settings['line-ending'] === 'LF' ? 1 : 2),
       volume: this.volume,
       start: this.start,
       end: this.end,
-      path: this.path,
-      old: this.old
+      path: this.path
     }
   }
 

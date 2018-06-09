@@ -10,10 +10,14 @@
         "title": "Thulium Music"
     },
     "editor": {
+        "all-files": "All Files",
         "column": "Column",
         "line": "Line",
-        "title": "Editor",
+        "new-file": "new file",
+        "save-as": "Save As ...",
         "section": "Section",
+        "thulium": "Thulium Music",
+        "title": "Editor",
         "track": "Track"
     },
     "homepage": {
