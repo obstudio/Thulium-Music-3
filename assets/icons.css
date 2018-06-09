@@ -15,12 +15,14 @@
   -webkit-font-smoothing: antialiased;
 }
 
-.icon-volume-medium:before { content: "\e901" }
-.icon-volume-high:before { content: "\e909" }
-.icon-volume-low:before { content: "\e90a" }
-.icon-volume-mute:before { content: "\e90b" }
-.icon-up:before { content: "\e90c" }
-.icon-down:before { content: "\e90d" }
+.icon-circle:before { content: "\e901" }
+.icon-circle:hover::before { content: "\ea0f" }
+.icon-volume-medium:before { content: "\e909" }
+.icon-volume-high:before { content: "\e90a" }
+.icon-volume-low:before { content: "\e90b" }
+.icon-volume-mute:before { content: "\e90c" }
+.icon-up:before { content: "\e90d" }
+.icon-down:before { content: "\e90e" }
 .icon-play:before { content: "\e900" }
 .icon-stop:before { content: "\e906" }
 .icon-pause:before { content: "\e907" }
