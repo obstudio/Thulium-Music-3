@@ -1,7 +1,8 @@
-const FileSaver = require('file-saver')
 const {registerPlayCommand} = require('../../library/editor/Editor')
-const Tab = require('../../library/editor/Tab')
 const extensions = require('../../extensions/extension')
+const Tab = require('./Tab')
+const fs = require('fs')
+const path = require('path')
 
 module.exports = {
   name: 'TmEditor',
@@ -28,9 +29,6 @@ module.exports = {
         - (this.toolbar ? 40 : 0)
       ) + 'px'
     },
-    contentWidth() {
-      return '100%'
-    },
     settings: () => global.user.state.Settings,
     captions: () => global.user.state.Captions.editor
   },
@@ -55,6 +53,7 @@ module.exports = {
   },
 
   mounted() {
+    this.commands = require('./command')
     this.player = undefined
     this.showEditor()
     if (global.user) {
@@ -75,9 +74,10 @@ module.exports = {
       this.layout()
     },
 
-    addTab() {
-      this.tabs.push(new Tab())
-      this.switchTab(this.tabs.length - 1)
+    addTab(content = {}, insert = false) {
+      const index = insert ? this.activeIndex + 1 : this.tabs.length
+      this.tabs.splice(index, 0, new Tab(content))
+      this.switchTab(index)
     },
 
     closeTab(index) {
@@ -113,72 +113,8 @@ module.exports = {
       this.editor = editor
       registerPlayCommand(editor)
 
-      editor.addAction({
-        id: 'tm-save',
-        label: 'Save File',
-        keybindings: [ window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_S ],
-        precondition: null,
-        keybindingContext: null,
-        contextMenuGroupId: 'navigation',
-        contextMenuOrder: 1.5,
-        run(editor) {
-          const value = editor.getValue()
-          localStorage.setItem('lastText', value)
-          const firstLine = value.slice(0, value.indexOf('\n'))
-          let name
-          if (firstLine !== '' && firstLine.startsWith('//')) {
-            name = firstLine.slice(2).trim()
-          } else {
-            name = 'new_file'
-          }
-          const blob = new Blob([value], {type: 'text/plain;charset=utf-8'})
-          FileSaver.saveAs(blob, `${name}.sml`)
-        }
-      })
-
-      editor.addAction({
-        id: 'tm-play',
-        label: 'Play/Pause',
-        keybindings: [ window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_P],
-        precondition: null,
-        keybindingContext: null,
-        contextMenuGroupId: 'navigation',
-        contextMenuOrder: 1.5,
-        run: (editor) => {
-          const value = editor.getValue()
-          if (this.player) {
-            if (this.player.value === value) {
-              this.player.toggle()
-            } else {
-              this.player.close()
-              this.player = this.$createPlayer(value)
-              this.player.play()
-            }
-          } else {
-            this.player = this.$createPlayer(value)
-            this.player.play()
-          }
-        }
-      })
-
-      editor.addAction({
-        id: 'tm-stop',
-        label: 'Stop Playing',
-        keybindings: [
-          window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_T
-        ],
-        precondition: null,
-        keybindingContext: null,
-        contextMenuGroupId: 'navigation',
-        contextMenuOrder: 1.5,
-        run(editor) {
-          if (this.player) {
-            this.player.close()
-            this.player = undefined
-          }
-        }
-      })
-      editor.onDidChangeCursorPosition((e) => {
+      this.commands.forEach(command => editor.addAction(command))
+      editor.onDidChangeCursorPosition(e => {
         this.row = e.position.lineNumber
         this.column = e.position.column
       })
@@ -188,33 +124,30 @@ module.exports = {
       addEventListener('beforeunload', e => {
         Tab.save(this.tabs)
       })
+      this.$el.addEventListener('dragover', e => {
+        e.preventDefault()
+        e.stopPropagation()
+      })
       this.$el.addEventListener('drop', e => {
         e.preventDefault()
-        const dt = e.dataTransfer
-        if (dt.items) {
-          if (dt.items[0].kind === 'file') {
-            const f = dt.items[0].getAsFile()
-            const fr = new FileReader()
-            fr.readAsText(f)
-            fr.onload = () =>
-              editor.executeEdits('dnd', [
-                {
-                  identifier: 'drag & drop',
-                  range: new window.monaco.Range(
-                    1,
-                    1,
-                    editor.getModel().getLineCount(),
-                    editor
-                      .getModel()
-                      .getLineMaxColumn(editor.getModel().getLineCount())
-                  ),
-                  text: fr.result
-                }
-              ])
-          }
+        e.stopPropagation()
+        for (const file of e.dataTransfer.files) {
+          if (!['.tm', '.tml'].includes(path.extname(file.path))) continue
+          fs.readFile(file.path, { encoding: 'utf8' }, (_, data) => {
+            this.addTab({ title: path.basename(file.path).replace(/\.tml?$/, '') }, true)
+            editor.executeEdits('new file', [{
+              identifier: 'drag & drop',
+              range: new window.monaco.Range(
+                1,
+                1,
+                editor.getModel().getLineCount(),
+                editor.getModel().getLineMaxColumn(editor.getModel().getLineCount())
+              ),
+              text: data
+            }])
+          })
         }
       })
-      this.$el.addEventListener('dragover', e => e.preventDefault())
       editor.updateOptions({mouseWheelZoom: true})
     }
   },
@@ -235,10 +168,10 @@ module.exports = {
           <i class="icon-close" @click.stop="closeTab(index)"/>
           <div class="title">{{ tab.title }}</div>
         </button>
-        <button class="add-tag" @click="addTab"><i class="icon-add"/></button>
+        <button class="add-tag" @click="addTab()"><i class="icon-add"/></button>
       </div>
     </div>
-    <div class="content" :style="{ height: contentHeight, width: contentWidth }"/>
+    <div class="content" :style="{ height: contentHeight, width: '100%' }"/>
     <div class="extension" :style="{
       height: (extensionFull ? '100%' : extensionHeight + 'px'),
       bottom: (extensionShowed ? extensionFull ? 0 : 24 : 24 - extensionHeight) + 'px'
@@ -246,7 +179,8 @@ module.exports = {
       <div class="top-border"/>
       <el-tabs v-model="activeExtension" @tab-click="">
         <el-tab-pane v-for="ext in extensions" :label="ext" :key="ext" :name="ext">
-          <component :is="'tm-ext-' + ext" :prop1="ext"/>
+          <component :is="'tm-ext-' + ext" :full="extensionFull"
+            :height="extensionFull ? height : extensionHeight"/>
         </el-tab-pane>
       </el-tabs>
       <div class="nav-right">
@@ -260,7 +194,7 @@ module.exports = {
     </div>
     <div class="status" :style="{ bottom: extensionFull ? '-24px' : '0px' }">
       <div class="left">
-        <div class="text">{{ captions.line }} {{ row }}, {{ captions.column }} {{ column }}</div>
+        <div class="text">{{ $t('editor.line') }} {{ row }}, {{ $t('editor.column') }} {{ column }}</div>
       </div>
       <div class="right">
         <button @click="extensionShowed = !extensionShowed"><i class="el-icon-menu"/></button>
