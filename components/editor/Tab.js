@@ -1,9 +1,10 @@
 const Thulium = require('../../library/Thulium')
 const fs = require('fs')
+let count = 0
 
 module.exports = class TmTab {
   constructor({
-    title = 'New',
+    title,
     type = 'tm',
     value = '',
     start = null,
@@ -13,7 +14,7 @@ module.exports = class TmTab {
     old = '',
     origin = null
   } = {}) {
-    this.title = title
+    this.title = title === undefined ? `Untitled ${++count}` : title
     this.type = type
     this.value = value
     this.volume = volume

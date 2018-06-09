@@ -200,3 +200,7 @@ button.tm-tab:hover > i {
     font-size: 16px;
     padding: 4px;
 }
+
+.drag-ghost {
+    visibility: hidden;
+}
