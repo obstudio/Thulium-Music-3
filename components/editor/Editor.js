@@ -34,6 +34,7 @@ module.exports = {
       extensionShowed: false,
       extensionFull: false,
       activeExtension: extensions[0],
+      draggingTab: false,
       draggingExtension: false,
       draggingLastY: 0,
       dragOptions: {
@@ -80,18 +81,45 @@ module.exports = {
     this.player = undefined
     this.tabs.forEach(tab => tab.checkChange())
     this.showEditor()
+
     addEventListener('mouseup', (e) => {
       this.layout()
       this.stopDrag(e)
-    }, {passive: true})
-    addEventListener('mousemove', (e) => {
-      this.layout()
-      this.doDrag(e)
-    }, {passive: true})
+    }, { passive: true })
+
+    addEventListener('mousemove', (event) => {
+      if (this.draggingExtension) {
+        this.layout()
+        event.stopPropagation()
+        const remainHeight = this.height - 34 - 24 - (this.toolbar ? 34 : 0)
+        if (this.extensionHeight <= remainHeight || this.draggingLastY < event.clientY) {
+          this.extensionHeight += this.draggingLastY - event.clientY
+          this.draggingLastY = event.clientY
+        }
+      }
+    }, { passive: true })
+
+    this.$el.children[2].addEventListener('contextmenu', event => {
+      const menu$ = this.$el.children[5].children[0]
+      if(event.clientX + 242 > screen.availWidth) {
+        menu$.style.left = event.clientX - 242 + 'px'
+      } else {
+        menu$.style.left = event.clientX + 'px'
+      }
+      if (event.clentY + 122 > screen.availHeight) {
+        menu$.style.top = event.clientY - 122 + 'px'
+      } else {
+        menu$.style.top = event.clientY + 'px'
+      }
+      menu$.style.visibility = 'visible'
+      return false
+    })
+
     addEventListener('dragend', (e) => {
       this.layout()
       this.stopDrag(e)
     })
+
     if (global.user) {
       window.monaco.editor.setTheme(global.user.state.Settings.theme)
     }
@@ -110,16 +138,25 @@ module.exports = {
       this.draggingExtension = true
       this.draggingLastY = event.clientY
     },
+    
     stopDrag(event) {
       this.draggingExtension = false
     },
-    doDrag(event) {
-      if (this.draggingExtension) {
-        this.extensionHeight += this.draggingLastY - event.clientY
-        this.draggingLastY = event.clientY
+
+    toggleToolbar() {
+      if (this.toolbar) {
+        this.toolbar = false
+      } else {
+        this.toolbar = true
+        const remainHeight = this.height - 34 - 24 - 34
+        if (this.extensionHeight > remainHeight) {
+          this.extensionHeight = remainHeight
+        }
       }
     },
-    switchTabById(id) {
+
+    switchTabById(id, event) {
+      if (event.buttons !== 1) return
       this.current = this.tabs.find(tab => tab.id === id)
       this.activate()
     },
@@ -215,7 +252,7 @@ module.exports = {
               title: path.basename(file.path).replace(/\.tml?$/, ''),
               path: file.path,
               value: data,
-              old: data
+              origin: data
             }, true)
             if (previous.isEmpty()) this.closeTab(previous.id)
           })
@@ -233,11 +270,11 @@ module.exports = {
     </div>
   </div>
   <div class="header">
-    <button class="toolbar-toggler" @click="toolbar = !toolbar"><i class="icon-control"/></button>
+    <button class="toolbar-toggler" @click="toggleToolbar()"><i class="icon-control"/></button>
     <div class="tm-tabs">
-      <draggable :list="tabs" :options="dragOptions">
+      <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
         <transition-group name="tm-tabs">
-          <button v-for="tab in tabs" @mousedown="switchTabById(tab.id)" :key="tab.id">
+          <button v-for="tab in tabs" @mousedown="switchTabById(tab.id, $event)" :key="tab.id">
             <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
               <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
               <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
@@ -251,8 +288,8 @@ module.exports = {
       <button class="add-tag" @click="addTab()"><i class="icon-add"/></button>
     </div>
   </div>
-  <div class="content" :style="{ height: contentHeight, width: '100%' }"/>
-  <div class="extension" :style="{
+  <div class="content" :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
+  <div class="extension" :class="{ dragged: draggingExtension }" :style="{
       height: (extensionShowed && extensionFull ? '100%' : extensionHeight + 'px'),
       bottom: (extensionShowed ? extensionFull ? 0 : 24 : 24 - extensionHeight) + 'px'
     }">
@@ -279,6 +316,12 @@ module.exports = {
     <div class="right">
       <button @click="extensionShowed = !extensionShowed"><i class="el-icon-menu"/></button>
     </div>
+  </div>
+  <div class="tm-editor-menu">
+    <ul class="window-menu">
+      <li>Menu Item 1</li>
+      <li>Menu Item 2</li>
+    </ul>
   </div>
 </div>`)
 }

@@ -1,3 +1,5 @@
+.dragged { transition: none !important }
+
 .tm-editor > .header {
     height: 34px;
     top: 0px;
@@ -135,6 +137,7 @@ button:last-child .tm-tab { margin-right: 0px }
     overflow: hidden;
     top: 34px;
     left: 0px;
+    width: 100%;
     position: absolute;
     transition: 0.3s;
 }
@@ -239,6 +242,25 @@ button:last-child .tm-tab { margin-right: 0px }
     padding: 4px;
 }
 
-.drag-ghost {
-    visibility: hidden;
+.drag-ghost { visibility: hidden }
+
+.tm-editor-menu {
+    width: 0;
+    height: 0;
+}
+
+.tm-editor-menu ul {
+	position: absolute;
+	width: 200px;
+	height: 80px;
+	list-style-type: none;
+	border: 2px solid #d0d0d0;
+	border-radius: 5px;
+	padding: 20px;
+	visibility: hidden; 
+	background-color:#fff;
+}
+
+.tm-editor-menu ul > li{
+	font-size: 20px;
 }

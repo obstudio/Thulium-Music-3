@@ -37,7 +37,8 @@ module.exports = class TmTab {
       configurable: false,
       value: new Thulium(value, { useFile: false })
     })
-    this.model.tm = this.thulium
+    this.model.tab = this
+    this.thulium.tab = this
   }
 
   checkChange(data) {
