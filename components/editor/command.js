@@ -11,7 +11,7 @@ module.exports = [
     contextMenuGroupId: 'navigation',
     contextMenuOrder: 1.5,
     run(editor) {
-      const tab = editor.vue.tab
+      const tab = editor.vue.current
       if (!tab.changed) return
       if (tab.path) {
         tab.save()

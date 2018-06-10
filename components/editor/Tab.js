@@ -12,7 +12,8 @@ module.exports = class TmTab {
     volume = 1,
     path = null,
     old = '',
-    origin = null
+    id = null,
+    changed = false
   } = {}) {
     this.title = title === undefined ? `Untitled ${++count}` : title
     this.type = type
@@ -22,7 +23,12 @@ module.exports = class TmTab {
     this.end = end
     this.path = path
     this.old = old
-    this.origin = origin
+    this.changed = changed
+    if (id) {
+      this.id = id
+    } else {
+      this.id = Math.floor(Math.random() * 1e10)
+    }
     if (path && old === '' && fs.existsSync(path)) {
       fs.readFile(path, { encoding: 'utf8' }, (_, data) => this.checkChange(data))
     }
@@ -66,7 +72,8 @@ module.exports = class TmTab {
       volume: this.volume,
       start: this.start,
       end: this.end,
-      path: this.path
+      path: this.path,
+      id: this.id
     }
   }
 
