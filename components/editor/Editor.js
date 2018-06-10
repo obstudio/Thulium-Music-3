@@ -215,7 +215,7 @@ module.exports = {
       height: (extensionShowed && extensionFull ? '100%' : extensionHeight + 'px'),
       bottom: (extensionShowed ? extensionFull ? 0 : 24 : 24 - extensionHeight) + 'px'
     }">
-    <div class="top-border"/>
+    <div class="top-border" @mousedown=""/>
     <el-tabs v-model="activeExtension" @tab-click="">
       <el-tab-pane v-for="ext in extensions" :label="ext" :key="ext" :name="ext">
         <component :is="'tm-ext-' + ext" :full="extensionFull"

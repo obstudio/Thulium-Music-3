@@ -153,6 +153,7 @@
     width: 100%;
     position: absolute;
     cursor: ns-resize;
+    z-index: 1000;
 }
 
 .tm-editor > .extension .el-tabs__nav-wrap { left: 16px }
