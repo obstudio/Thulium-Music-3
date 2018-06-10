@@ -263,16 +263,14 @@ button:last-child .tm-tab { margin-right: 0px }
 	list-style-type: none;
 }
 
-.tm-editor-menu ul > li {
-    margin: 0px;
-    padding: 0px;
-}
-
 .tm-editor-menu .menu-item {
     padding: 0px;
     -webkit-user-select: none;
-	display: -webkit-flex;
+    display: -webkit-flex;
+    cursor: pointer;
 }
+
+.tm-editor-menu .menu-item.disabled { cursor: default }
 
 .tm-editor-menu .menu-item .label {
 	flex: 1 1 auto;
@@ -281,6 +279,9 @@ button:last-child .tm-tab { margin-right: 0px }
 	line-height: 1.1em;
     background: none;
     font-size: 12px;
+	display: inline-block;
+	-webkit-box-sizing:	border-box;
+	margin: 0px;
 }
 
 .tm-editor-menu .menu-item .binding {
@@ -292,15 +293,10 @@ button:last-child .tm-tab { margin-right: 0px }
 	text-align: right;
 }
 
-.tm-editor-menu .menu-item .label:not(.separator) {
-	display: inline-block;
-	-webkit-box-sizing:	border-box;
-	margin: 0;
-}
-
-.tm-editor-menu .menu-item .label.separator {
+.tm-editor-menu .menu-item .separator {
+	flex: 1 1 auto;
     display: block;
-    margin: 0.8em 0.5em;
+    margin: 0.3em 0.5em;
 	padding: 1px 0 0 0;
 	border-bottom: 1px solid;
 	width: 100%;

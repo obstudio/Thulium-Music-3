@@ -294,15 +294,17 @@ module.exports = {
     <button class="toolbar-toggler" @click="toggleToolbar()"><i class="icon-control"/></button>
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions">
+        <transition-group name="tm-tabs">
         <button v-for="tab in tabs" @mousedown="switchTabById(tab.id, $event)" :key="tab.id">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
             <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
-            <div class="title">{{ tab.title }}</div>
+            <div class="title" @contextmenu.stop="toggleTabMenu(tab.id, $event)">{{ tab.title }}</div>
             <div class="left-border"/>
             <div class="right-border"/>
           </div>
         </button>
+        </transition-group>
       </draggable>
       <button class="add-tag" @click="addTab()"><i class="icon-add"/></button>
     </div>
@@ -338,12 +340,12 @@ module.exports = {
   </div>
   <div class="tm-editor-menu">
     <transition name="el-zoom-in-top">
-      <ul v-show="menuShowed.tabs" @click.stop>
+      <ul v-show="menuShowed.tabs">
         <div class="menu-item" @click="addTab()">
           <a class="label">New File</a>
           <span class="binding">Ctrl+N</span>
         </div>
-        <div class="menu-item disabled"><a class="label separator"/></div>
+        <div class="menu-item disabled" @click.stop><a class="label separator"/></div>
         <li v-for="tab in tabs">
           <div class="menu-item" @click="switchTabById(tab.id, $event)">
             <a class="label">{{ tab.title }}</a>
@@ -352,7 +354,7 @@ module.exports = {
       </ul>
     </transition>
     <transition name="el-zoom-in-top">
-      <ul v-show="menuShowed.tab" @click.stop>
+      <ul v-show="menuShowed.tab">
         <div class="menu-item" @click="closeTab(menuTabId)">
           <a class="label">Close</a>
           <span class="binding">Ctrl+F4</span>
