@@ -40,6 +40,10 @@ module.exports = {
       dragOptions: {
         animation: 150,
         ghostClass: 'drag-ghost'
+      },
+      menuShowed: {
+        tabs: false,
+        tab: false
       }
     }
   },
@@ -71,12 +75,16 @@ module.exports = {
         })
       }
     },
-    'settings.line-ending': function() {
+    'settings.lineEnding': function() {
       this.tabs.map(tab => this.refresh(tab))
     }
   },
 
   mounted() {
+    this.menu = {
+      tabs: this.$el.children[5].children[0],
+      tab: this.$el.children[5].children[1]
+    }
     this.commands = require('./command')
     this.player = undefined
     this.tabs.forEach(tab => tab.checkChange())
@@ -99,19 +107,17 @@ module.exports = {
       }
     }, { passive: true })
 
-    this.$el.children[2].addEventListener('contextmenu', event => {
-      const menu$ = this.$el.children[5].children[0]
-      if(event.clientX + 242 > screen.availWidth) {
-        menu$.style.left = event.clientX - 242 + 'px'
-      } else {
-        menu$.style.left = event.clientX + 'px'
-      }
-      if (event.clentY + 122 > screen.availHeight) {
-        menu$.style.top = event.clientY - 122 + 'px'
-      } else {
-        menu$.style.top = event.clientY + 'px'
-      }
-      menu$.style.visibility = 'visible'
+    this.$el.addEventListener('click', () => {
+      this.hideContextMenus()
+    })
+
+    this.$el.addEventListener('contextmenu', () => {
+      this.hideContextMenus()
+    })
+
+    this.$el.children[1].addEventListener('contextmenu', event => {
+      event.stopPropagation()
+      this.showTopContextMenu('tabs', event)
       return false
     })
 
@@ -129,7 +135,7 @@ module.exports = {
   methods: {
     refresh(tab = this.current) {
       tab.value = tab.model.getValue(
-        global.user.state.Settings['line-ending'] === 'LF' ? 1 : 2
+        global.user.state.Settings.lineEnding === 'LF' ? 1 : 2
       )
       tab.checkChange()
     },
@@ -155,8 +161,32 @@ module.exports = {
       }
     },
 
+    hideContextMenus() {
+      for (const key in this.menuShowed) {
+        this.menuShowed[key] = false
+      }
+    },
+
+    showTopContextMenu(key, event) {
+      const style = this.menu[key].style
+      this.hideContextMenus()
+      if (event.clientX + 200 > this.width) {
+        style.left = event.clientX - 200 - this.left + 'px'
+      } else {
+        style.left = event.clientX - this.left + 'px'
+      }
+      style.top = event.clientY - this.top + 'px'
+      this.menuShowed[key] = true
+    },
+
+    toggleTabMenu(id, event) {
+      event.stopPropagation()
+      this.menuTabId = id
+      this.showTopContextMenu('tab', event)
+    },
+
     switchTabById(id, event) {
-      if (event.buttons !== 1) return
+      if (event.buttons !== 1 && event.buttons !== 0) return
       this.current = this.tabs.find(tab => tab.id === id)
       this.activate()
     },
@@ -261,7 +291,7 @@ module.exports = {
     }
   },
   
-  props: ['width', 'height'],
+  props: ['width', 'height', 'left', 'top'],
   render: VueCompile(`<div class="tm-editor" :class="{'show-toolbar': toolbar}">
   <div class="toolbar">
     <i class="icon-volume-mute"/>
@@ -272,13 +302,13 @@ module.exports = {
   <div class="header">
     <button class="toolbar-toggler" @click="toggleToolbar()"><i class="icon-control"/></button>
     <div class="tm-tabs">
-      <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
+      <draggable :list="tabs" :options="dragOptions">
         <transition-group name="tm-tabs">
-          <button v-for="tab in tabs" @mousedown="switchTabById(tab.id, $event)" :key="tab.id">
+          <button v-for="tab in tabs" :key="tab.id" @mousedown="switchTabById(tab.id, $event)">
             <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
               <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
               <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
-              <div class="title">{{ tab.title }}</div>
+              <div class="title" @contextmenu="toggleTabMenu(tab.id, $event)">{{ tab.title }}</div>
               <div class="left-border"/>
               <div class="right-border"/>
             </div>
@@ -318,10 +348,28 @@ module.exports = {
     </div>
   </div>
   <div class="tm-editor-menu">
-    <ul class="window-menu">
-      <li>Menu Item 1</li>
-      <li>Menu Item 2</li>
-    </ul>
+    <transition name="el-zoom-in-top">
+      <ul v-show="menuShowed.tabs" @click.stop>
+        <div class="menu-item" @click="addTab()">
+          <a class="label">New File</a>
+          <span class="binding">Ctrl+N</span>
+        </div>
+        <div class="menu-item disabled"><a class="label separator"/></div>
+        <li v-for="tab in tabs">
+          <div class="menu-item" @click="switchTabById(tab.id, $event)">
+            <a class="label">{{ tab.title }}</a>
+          </div>
+        </li>
+      </ul>
+    </transition>
+    <transition name="el-zoom-in-top">
+      <ul v-show="menuShowed.tab" @click.stop>
+        <div class="menu-item" @click="closeTab(menuTabId)">
+          <a class="label">Close</a>
+          <span class="binding">Ctrl+F4</span>
+        </div>
+      </ul>
+    </transition>
   </div>
 </div>`)
 }

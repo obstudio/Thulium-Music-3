@@ -159,7 +159,7 @@ new Vue({
       </div>
       <div class="main">
         <keep-alive>
-          <router-view :height="height" :width="width"/>
+          <router-view :height="height" :width="width" :left="this.sidebar ? 64 : 0" :top="48"/>
         </keep-alive>
       </div>
     </div>

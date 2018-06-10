@@ -49,6 +49,12 @@
 .dark .tm-editor > .status button { background-color: #181915; color: #f6f8fa }
 .dark .tm-editor > .status button:hover { background-color: #252525; color: #ffffff }
 
+.dark .tm-editor-menu ul { box-shadow: 0 2px 8px #000000; color: #bbbbbb; background-color: #2D2F31 }
+.dark .tm-editor-menu .menu-item:hover { background-color: #2D2F31 }
+.dark .tm-editor-menu .menu-item .label.separator { border-bottom-color: #bbbbbb }
+.dark .tm-editor-menu .menu-item:hover:not(.disabled) { background-color: #3A3A3A }
+.dark .tm-editor-menu .menu-item.active .label { color: #ACDDFF; text-shadow: 0px 0px 0.15px #ACDDFF }
+
 /* document */
 .dark .tm-doc { color: #24292e }
 .dark .tm-doc blockquote { color: #6a737d; border-left: 0.25em solid #dfe2e5 }

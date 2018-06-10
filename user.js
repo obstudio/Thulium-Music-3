@@ -51,7 +51,7 @@ default:
 }
 
 const user = new TmUser()
-user.Settings['line-ending'] = TmUser.LineEnding
+user.Settings.lineEnding = TmUser.LineEnding
 global.saveSettings = function() {
   fs.writeFile(
     TmUser.UserPath + 'settings.json',

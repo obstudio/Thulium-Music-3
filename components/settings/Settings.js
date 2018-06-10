@@ -59,7 +59,7 @@ module.exports = {
     <tm-radio model="language" :caption="$t('settings.language')" :library="library.Languages"/>
     <tm-radio model="theme" :caption="$t('settings.theme')" :library="library.Themes"/>
     <h2>{{ $t('settings.editor') }}</h2>
-    <tm-radio model=".line-ending" :caption="$t('settings.line-ending')" :library="library.LineEndings"/>
+    <tm-radio model=".lineEnding" :caption="$t('settings.line-ending')" :library="library.LineEndings"/>
     <tm-switch model=".minimap" :caption="$t('settings.minimap')"/>
   </div>`)
 }
