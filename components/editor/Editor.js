@@ -34,6 +34,8 @@ module.exports = {
       extensionShowed: false,
       extensionFull: false,
       activeExtension: extensions[0],
+      draggingExtension: false,
+      draggingLastY: 0,
       dragOptions: {
         animation: 150,
         ghostClass: 'drag-ghost'
@@ -78,6 +80,18 @@ module.exports = {
     this.player = undefined
     this.tabs.forEach(tab => tab.checkChange())
     this.showEditor()
+    addEventListener('mouseup', (e) => {
+      this.layout()
+      this.stopDrag(e)
+    }, {passive: true})
+    addEventListener('mousemove', (e) => {
+      this.layout()
+      this.doDrag(e)
+    }, {passive: true})
+    addEventListener('dragend', (e) => {
+      this.layout()
+      this.stopDrag(e)
+    })
     if (global.user) {
       window.monaco.editor.setTheme(global.user.state.Settings.theme)
     }
@@ -88,7 +102,19 @@ module.exports = {
     dragEnd(event) {
       this.switchTabByIndex(event.newIndex)
     },
-
+    startDrag(event) {
+      this.draggingExtension = true
+      this.draggingLastY = event.clientY
+    },
+    stopDrag(event) {
+      this.draggingExtension = false
+    },
+    doDrag(event) {
+      if (this.draggingExtension) {
+        this.extensionHeight += this.draggingLastY - event.clientY
+        this.draggingLastY = event.clientY
+      }
+    },
     switchTabById(id) {
       this.current = this.tabs.find(tab => tab.id === id)
       this.activate()
@@ -228,10 +254,10 @@ module.exports = {
       height: (extensionShowed && extensionFull ? '100%' : extensionHeight + 'px'),
       bottom: (extensionShowed ? extensionFull ? 0 : 24 : 24 - extensionHeight) + 'px'
     }">
-    <div class="top-border" @mousedown=""/>
+    <div class="top-border" @mousedown="startDrag"/>
     <el-tabs v-model="activeExtension" @tab-click="">
       <el-tab-pane v-for="ext in extensions" :label="ext" :key="ext" :name="ext">
-        <component :is="'tm-ext-' + ext" :full="extensionFull" :line="row" :col="rolumn"
+        <component :is="'tm-ext-' + ext" :full="extensionFull" :line="row" :col="column"
                    :height="extensionFull ? height : extensionHeight"/>
       </el-tab-pane>
     </el-tabs>
