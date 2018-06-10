@@ -20,7 +20,7 @@
 .dark .tm-editor > .header button > i { color: #cccccc }
 .dark .tm-editor > .header button:hover > i { color: #fafaf5 }
 
-.dark .tm-tabs button { background-color: transparent !important }
+.dark .tm-tabs span button { background-color: transparent !important }
 .dark .tm-tab > .title { background-color: #181915; color: #bbbbb7 }
 .dark .tm-tab > .left-border { border-right-color: #181915 }
 .dark .tm-tab > .right-border { border-left-color: #181915 }

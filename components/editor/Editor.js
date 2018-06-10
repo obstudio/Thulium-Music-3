@@ -17,9 +17,15 @@ module.exports = {
     draggable
   },
   data() {
+    const tabs = TmTab.load()
+    let current = null
+    for (const tab of tabs) {
+      if (tab.active) current = tab
+    }
+    if (!current) current = tabs[0]
     return {
-      tabs: TmTab.load(),
-      activeIndex: 0,
+      current: current,
+      tabs: tabs,
       row: 1,
       column: 1,
       toolbar: false,
@@ -42,10 +48,10 @@ module.exports = {
         - (this.toolbar ? 34 : 0)
       ) + 'px'
     },
-    settings: () => global.user.state.Settings,
-    tab() {
-      return this.tabs[this.activeIndex]
-    }
+    activeIndex() {
+      return this.tabs.findIndex(tab => tab.id === this.current.id)
+    },
+    settings: () => global.user.state.Settings
   },
 
   watch: {
@@ -75,38 +81,46 @@ module.exports = {
     if (global.user) {
       window.monaco.editor.setTheme(global.user.state.Settings.theme)
     }
-    this.switchTab(0)
+    this.activate()
   },
 
   methods: {
-    dragEnd(e) {
-      this.switchTab(e.newIndex)
+    dragEnd(event) {
+      this.switchTabByIndex(event.newIndex)
     },
-    switchTab(index) {
-      const tab = this.tabs[index]
-      this.activeIndex = index
-      this.editor.setModel(tab.model)
+
+    switchTabById(id) {
+      this.current = this.tabs.find(tab => tab.id === id)
+      this.activate()
+    },
+
+    switchTabByIndex(index) {
+      this.current = this.tabs[index]
+      this.activate()
+    },
+
+    activate() {
+      this.editor.setModel(this.current.model)
       const position = this.editor.getPosition()
       this.row = position.lineNumber
       this.column = position.column
-      global.user.state.Prefix.editor = tab.title + ' - '
+      global.user.state.Prefix.editor = this.current.title + ' - '
       this.layout()
     },
 
-    addTab(content = {}, insert = false) {
-      const index = insert ? this.activeIndex + 1 : this.tabs.length
-      this.tabs.splice(index, 0, new TmTab(content))
-      this.switchTab(index)
+    addTab(data = {}, insert = false) {
+      const index = insert ? this.activeIndex() + 1 : this.tabs.length
+      this.tabs.splice(index, 0, new TmTab(data))
+      this.switchTabByIndex(index)
     },
 
-    closeTab(index) {
+    closeTab(id) {
+      const index = this.tabs.findIndex(tab => tab.id === id)
       this.tabs.splice(index, 1)
       if (this.tabs.length === 0) {
         this.addTab()
-      } else if (index === this.activeIndex) {
-        this.switchTab(index === 0 ? 0 : index - 1)
-      } else if (index <= this.activeIndex) {
-        this.activeIndex -= 1
+      } else if (this.current.id === id) {
+        this.switchTabByIndex(index === 0 ? 0 : index - 1)
       }
     },
 
@@ -139,10 +153,10 @@ module.exports = {
       editor.onDidChangeCursorPosition(event => {
         this.row = event.position.lineNumber
         this.column = event.position.column
-        this.tab.value = this.tab.model.getValue(
+        this.current.value = this.current.model.getValue(
           global.user.state.Settings['line-ending'] === 'LF' ? 1 : 2
         )
-        this.tab.checkChange()
+        this.current.checkChange()
       })
 
       addEventListener('resize', () => {
@@ -168,15 +182,14 @@ module.exports = {
         for (const file of e.dataTransfer.files) {
           if (!['.tm', '.tml'].includes(path.extname(file.path))) continue
           fs.readFile(file.path, { encoding: 'utf8' }, (_, data) => {
+            const previous = this.current
             this.addTab({
               title: path.basename(file.path).replace(/\.tml?$/, ''),
               path: file.path,
               value: data,
               old: data
             }, true)
-            if (this.tabs[this.activeIndex - 1].isEmpty()) {
-              this.closeTab(this.activeIndex - 1)
-            }
+            if (previous.isEmpty()) this.closeTab(previous.id)
           })
         }
       })
@@ -188,7 +201,7 @@ module.exports = {
   <div class="toolbar">
     <i class="icon-volume-mute"/>
     <div class="volume-slider">
-      <el-slider class="icon-volume-mute" v-model="tabs[activeIndex].volume" :show-tooltip="false"/>
+      <el-slider class="icon-volume-mute" v-model="current.volume" :show-tooltip="false"/>
     </div>
   </div>
   <div class="header">
@@ -196,10 +209,10 @@ module.exports = {
     <div class="tm-tabs">
       <draggable :list="tabs" @end="dragEnd" :options="dragOptions">
         <transition-group name="tm-tabs">
-          <button v-for="(tab, index) in tabs" @mousedown="switchTab(index)" :key="index">
-            <div class="tm-tab" :class="{ active: index === activeIndex, changed: tab.changed }">
-              <i v-if="tab.changed" class="icon-circle" @click.stop="closeTab(index)"/>
-              <i v-else class="icon-close" @click.stop="closeTab(index)"/>
+          <button v-for="tab in tabs" @mousedown="switchTabById(tab.id)" :key="tab.id">
+            <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
+              <i v-if="tab.changed" class="icon-circle" @click.stop="closeTab(tab.id)"/>
+              <i v-else class="icon-close" @click.stop="closeTab(tab.id)"/>
               <div class="title">{{ tab.title }}</div>
               <div class="left-border"/>
               <div class="right-border"/>
@@ -218,7 +231,7 @@ module.exports = {
     <div class="top-border" @mousedown=""/>
     <el-tabs v-model="activeExtension" @tab-click="">
       <el-tab-pane v-for="ext in extensions" :label="ext" :key="ext" :name="ext">
-        <component :is="'tm-ext-' + ext" :full="extensionFull"
+        <component :is="'tm-ext-' + ext" :full="extensionFull" :line="row" :col="rolumn"
                    :height="extensionFull ? height : extensionHeight"/>
       </el-tab-pane>
     </el-tabs>
