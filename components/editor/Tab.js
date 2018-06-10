@@ -1,5 +1,6 @@
 const Thulium = require('../../library/Thulium')
 const fs = require('fs')
+const path = require('path')
 let count = 0
 
 module.exports = class TmTab {
@@ -11,25 +12,21 @@ module.exports = class TmTab {
     end = null,
     volume = 1,
     path = null,
-    old = '',
+    origin = '',
     id = null,
     changed = false
   } = {}) {
-    this.title = title === undefined ? `Untitled ${++count}` : title
     this.type = type
     this.value = value
     this.volume = volume
     this.start = start
     this.end = end
     this.path = path
-    this.old = old
+    this.origin = origin
     this.changed = changed
-    if (id) {
-      this.id = id
-    } else {
-      this.id = Math.floor(Math.random() * 1e10)
-    }
-    if (path && old === '' && fs.existsSync(path)) {
+    this.title = title === undefined ? `Untitled ${++count}` : title
+    this.id = id ? id : Math.floor(Math.random() * 1e10)
+    if (path && origin === '' && fs.existsSync(path)) {
       fs.readFile(path, { encoding: 'utf8' }, (_, data) => this.checkChange(data))
     }
     Object.defineProperty(this, 'model', {
@@ -44,22 +41,23 @@ module.exports = class TmTab {
   }
 
   checkChange(data) {
-    if (data !== undefined) this.old = data
-    this.changed = this.old !== this.value
+    if (data !== undefined) this.origin = data
+    this.changed = this.origin !== this.value
   }
 
   isEmpty() {
-    return this.path === null && this.old === '' && this.model.getValue(1) === ''
+    return this.path === null && this.origin === '' && this.model.getValue(1) === ''
   }
 
-  save(path) {
-    if (!path) {
-      path = this.path
+  save(filepath) {
+    if (!filepath) {
+      filepath = this.path
     } else {
-      this.path = path
+      this.path = filepath
+      this.title = path.basename(filepath).replace(/\.tml?$/, '')
     }
-    fs.writeFile(path, this.value, { encoding: 'utf8' }, () => {
-      this.old = this.value
+    fs.writeFile(filepath, this.value, { encoding: 'utf8' }, () => {
+      this.origin = this.value
       this.changed = false
     })
   }

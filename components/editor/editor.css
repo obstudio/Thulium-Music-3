@@ -37,6 +37,8 @@
     position: relative;
 }
 
+button:first-child .tm-tab { margin-left: 0px }
+button:last-child .tm-tab { margin-right: 0px }
 .tm-tab.active { z-index: 2 }
 .tm-tab:hover { z-index: 1 }
 
@@ -192,9 +194,6 @@
     user-select: none;
     line-height: 20px;
 }
-
-.tm-exts-enter-active, .tm-exts-leave-active { transition: all .5s ease }
-.tm-exts-enter, .tm-exts-leave-to { opacity: 0 }
 
 .tm-editor > .status {
     width: 100%;

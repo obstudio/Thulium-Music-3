@@ -50,9 +50,6 @@ module.exports = {
         - (this.toolbar ? 34 : 0)
       ) + 'px'
     },
-    activeIndex() {
-      return this.tabs.findIndex(tab => tab.id === this.current.id)
-    },
     settings: () => global.user.state.Settings
   },
 
@@ -66,12 +63,15 @@ module.exports = {
     extensionShowed() {
       this.layout(300)
     },
-    settings() {
+    'settings.minimap': function() {
       if (this.editor) {
         this.editor.updateOptions({
           minimap: { enabled: this.settings.minimap }
         })
       }
+    },
+    'settings.line-ending': function() {
+      this.tabs.map(tab => this.refresh(tab))
     }
   },
 
@@ -99,9 +99,13 @@ module.exports = {
   },
 
   methods: {
-    dragEnd(event) {
-      this.switchTabByIndex(event.newIndex)
+    refresh(tab = this.current) {
+      tab.value = tab.model.getValue(
+        global.user.state.Settings['line-ending'] === 'LF' ? 1 : 2
+      )
+      tab.checkChange()
     },
+
     startDrag(event) {
       this.draggingExtension = true
       this.draggingLastY = event.clientY
@@ -135,7 +139,8 @@ module.exports = {
     },
 
     addTab(data = {}, insert = false) {
-      const index = insert ? this.activeIndex() + 1 : this.tabs.length
+      const index = !insert ? this.tabs.length
+        : this.tabs.findIndex(tab => tab.id === this.current.id) + 1
       this.tabs.splice(index, 0, new TmTab(data))
       this.switchTabByIndex(index)
     },
@@ -179,10 +184,7 @@ module.exports = {
       editor.onDidChangeCursorPosition(event => {
         this.row = event.position.lineNumber
         this.column = event.position.column
-        this.current.value = this.current.model.getValue(
-          global.user.state.Settings['line-ending'] === 'LF' ? 1 : 2
-        )
-        this.current.checkChange()
+        this.refresh()
       })
 
       addEventListener('resize', () => {
@@ -233,12 +235,12 @@ module.exports = {
   <div class="header">
     <button class="toolbar-toggler" @click="toolbar = !toolbar"><i class="icon-control"/></button>
     <div class="tm-tabs">
-      <draggable :list="tabs" @end="dragEnd" :options="dragOptions">
+      <draggable :list="tabs" :options="dragOptions">
         <transition-group name="tm-tabs">
           <button v-for="tab in tabs" @mousedown="switchTabById(tab.id)" :key="tab.id">
             <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
-              <i v-if="tab.changed" class="icon-circle" @click.stop="closeTab(tab.id)"/>
-              <i v-else class="icon-close" @click.stop="closeTab(tab.id)"/>
+              <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
+              <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
               <div class="title">{{ tab.title }}</div>
               <div class="left-border"/>
               <div class="right-border"/>
