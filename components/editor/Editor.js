@@ -24,17 +24,16 @@ module.exports = {
     }
     if (!current) current = tabs[0]
     return {
-      current: current,
-      tabs: tabs,
+      current,
+      tabs,
       row: 1,
       column: 1,
       toolbar: false,
-      extensions: extensions,
+      extensions,
       extensionHeight: 200,
       extensionShowed: false,
       extensionFull: false,
       activeExtension: extensions[0],
-      draggingTab: false,
       draggingExtension: false,
       draggingLastY: 0,
       dragOptions: {
@@ -265,34 +264,26 @@ module.exports = {
       addEventListener('beforeunload', e => {
         TmTab.save(this.tabs)
       })
-
-      this.$el.addEventListener('dragover', e => {
-        e.preventDefault()
-        e.stopPropagation()
-      })
-
-      this.$el.addEventListener('drop', e => {
-        e.preventDefault()
-        e.stopPropagation()
-        for (const file of e.dataTransfer.files) {
-          if (!['.tm', '.tml'].includes(path.extname(file.path))) continue
-          fs.readFile(file.path, { encoding: 'utf8' }, (_, data) => {
-            const previous = this.current
-            this.addTab({
-              title: path.basename(file.path).replace(/\.tml?$/, ''),
-              path: file.path,
-              value: data,
-              origin: data
-            }, true)
-            if (previous.isEmpty()) this.closeTab(previous.id)
-          })
-        }
-      })
+    },
+    loadTmFile(e) {
+      for (const file of e.dataTransfer.files) {
+        if (!['.tm', '.tml'].includes(path.extname(file.path))) continue
+        fs.readFile(file.path, { encoding: 'utf8' }, (_, data) => {
+          const previous = this.current
+          this.addTab({
+            title: path.basename(file.path).replace(/\.tml?$/, ''),
+            path: file.path,
+            value: data,
+            origin: data
+          }, true)
+          if (previous.isEmpty()) this.closeTab(previous.id)
+        })
+      }
     }
   },
   
   props: ['width', 'height', 'left', 'top'],
-  render: VueCompile(`<div class="tm-editor" :class="{'show-toolbar': toolbar}">
+  render: VueCompile(`<div class="tm-editor" :class="{'show-toolbar': toolbar}" @dragover.stop.prevent @drop.stop.prevent="loadTmFile">
   <div class="toolbar">
     <i class="icon-volume-mute"/>
     <div class="volume-slider">
@@ -303,17 +294,15 @@ module.exports = {
     <button class="toolbar-toggler" @click="toggleToolbar()"><i class="icon-control"/></button>
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions">
-        <transition-group name="tm-tabs">
-          <button v-for="tab in tabs" :key="tab.id" @mousedown="switchTabById(tab.id, $event)">
-            <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
-              <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
-              <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
-              <div class="title" @contextmenu="toggleTabMenu(tab.id, $event)">{{ tab.title }}</div>
-              <div class="left-border"/>
-              <div class="right-border"/>
-            </div>
-          </button>
-        </transition-group>
+        <button v-for="tab in tabs" @mousedown="switchTabById(tab.id, $event)" :key="tab.id">
+          <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
+            <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
+            <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
+            <div class="title">{{ tab.title }}</div>
+            <div class="left-border"/>
+            <div class="right-border"/>
+          </div>
+        </button>
       </draggable>
       <button class="add-tag" @click="addTab()"><i class="icon-add"/></button>
     </div>
