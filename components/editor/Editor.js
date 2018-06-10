@@ -6,9 +6,12 @@ const draggable = require('vuedraggable')
 global.define.amd = tempAmd
 
 const extensions = require('../../extensions/extension')
+const commands = require('./command')
+const keymap = require('./keymap.json')
 const TmTab = require('./Tab')
 const fs = require('fs')
 const path = require('path')
+const Mousetrap = require('Mousetrap')
 
 module.exports = {
   name: 'TmEditor',
@@ -84,7 +87,17 @@ module.exports = {
       tabs: this.$el.children[5].children[0],
       tab: this.$el.children[5].children[1]
     }
-    this.commands = require('./command')
+    this.actions = require('./action')
+    for (const cmd in commands) {
+      this[cmd] = commands[cmd]
+    }
+    keymap.forEach(command => {
+      Mousetrap.bind(command.bind, () => {
+        this[command.name]()
+        return false
+      })
+    })
+
     this.player = undefined
     this.tabs.forEach(tab => tab.checkChange())
     this.showEditor()
@@ -148,18 +161,6 @@ module.exports = {
       this.draggingExtension = false
     },
 
-    toggleToolbar() {
-      if (this.toolbar) {
-        this.toolbar = false
-      } else {
-        this.toolbar = true
-        const remainHeight = this.height - 34 - 24 - 34
-        if (this.extensionHeight > remainHeight) {
-          this.extensionHeight = remainHeight
-        }
-      }
-    },
-
     hideContextMenus() {
       for (const key in this.menuShowed) {
         this.menuShowed[key] = false
@@ -184,17 +185,6 @@ module.exports = {
       this.showTopContextMenu('tab', event)
     },
 
-    switchTabById(id, event) {
-      if (event.buttons !== 1 && event.buttons !== 0) return
-      this.current = this.tabs.find(tab => tab.id === id)
-      this.activate()
-    },
-
-    switchTabByIndex(index) {
-      this.current = this.tabs[index]
-      this.activate()
-    },
-
     activate() {
       this.editor.setModel(this.current.model)
       const position = this.editor.getPosition()
@@ -202,23 +192,6 @@ module.exports = {
       this.column = position.column
       global.user.state.Prefix.editor = this.current.title + ' - '
       this.layout()
-    },
-
-    addTab(data = {}, insert = false) {
-      const index = !insert ? this.tabs.length
-        : this.tabs.findIndex(tab => tab.id === this.current.id) + 1
-      this.tabs.splice(index, 0, new TmTab(data))
-      this.switchTabByIndex(index)
-    },
-
-    closeTab(id) {
-      const index = this.tabs.findIndex(tab => tab.id === id)
-      this.tabs.splice(index, 1)
-      if (this.tabs.length === 0) {
-        this.addTab()
-      } else if (this.current.id === id) {
-        this.switchTabByIndex(index === 0 ? 0 : index - 1)
-      }
     },
 
     layout(time = 0) {
@@ -245,7 +218,7 @@ module.exports = {
       editor.vue = this
       registerPlayCommand(editor)
 
-      this.commands.forEach(command => editor.addAction(command))
+      this.actions.forEach(action => editor.addAction(action))
 
       editor.onDidChangeCursorPosition(event => {
         this.row = event.position.lineNumber
@@ -265,25 +238,17 @@ module.exports = {
         TmTab.save(this.tabs)
       })
     },
-    loadTmFile(e) {
-      for (const file of e.dataTransfer.files) {
-        if (!['.tm', '.tml'].includes(path.extname(file.path))) continue
-        fs.readFile(file.path, { encoding: 'utf8' }, (_, data) => {
-          const previous = this.current
-          this.addTab({
-            title: path.basename(file.path).replace(/\.tml?$/, ''),
-            path: file.path,
-            value: data,
-            origin: data
-          }, true)
-          if (previous.isEmpty()) this.closeTab(previous.id)
-        })
+
+    loadFileDropped(event) {
+      for (const file of event.dataTransfer.files) {
+        this.loadFile(file.path)
       }
     }
   },
   
   props: ['width', 'height', 'left', 'top'],
-  render: VueCompile(`<div class="tm-editor" :class="{'show-toolbar': toolbar}" @dragover.stop.prevent @drop.stop.prevent="loadTmFile">
+  render: VueCompile(`<div class="tm-editor" :class="{'show-toolbar': toolbar}"
+  @dragover.stop.prevent @drop.stop.prevent="loadFileDropped">
   <div class="toolbar">
     <i class="icon-volume-mute"/>
     <div class="volume-slider">
@@ -306,7 +271,7 @@ module.exports = {
         </button>
         </transition-group>
       </draggable>
-      <button class="add-tag" @click="addTab()"><i class="icon-add"/></button>
+      <button class="add-tag" @click="addTab(false)"><i class="icon-add"/></button>
     </div>
   </div>
   <div class="content" :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
@@ -341,9 +306,13 @@ module.exports = {
   <div class="tm-editor-menu">
     <transition name="el-zoom-in-top">
       <ul v-show="menuShowed.tabs">
-        <div class="menu-item" @click="addTab()">
+        <div class="menu-item" @click="addTab(false)">
           <a class="label">New File</a>
           <span class="binding">Ctrl+N</span>
+        </div>
+        <div class="menu-item" @click="openFile()">
+          <a class="label">Open File</a>
+          <span class="binding">Ctrl+O</span>
         </div>
         <div class="menu-item disabled" @click.stop><a class="label separator"/></div>
         <li v-for="tab in tabs">
@@ -358,6 +327,14 @@ module.exports = {
         <div class="menu-item" @click="closeTab(menuTabId)">
           <a class="label">Close</a>
           <span class="binding">Ctrl+F4</span>
+        </div>
+        <div class="menu-item" @click="save(menuTabId)">
+          <a class="label">Save</a>
+          <span class="binding">Ctrl+S</span>
+        </div>
+        <div class="menu-item" @click="saveAs(menuTabId)">
+          <a class="label">Save As</a>
+          <span class="binding">Ctrl+Shift+S</span>
         </div>
       </ul>
     </transition>

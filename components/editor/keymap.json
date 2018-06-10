@@ -1,0 +1,26 @@
+[
+    {
+        "name": "openFile",
+        "bind": "Ctrl+O"
+    },
+    {
+        "name": "addTab",
+        "bind": "Ctrl+N"
+    },
+    {
+        "name": "closeTab",
+        "bind": "Ctrl+F4"
+    },
+    {
+        "name": "save",
+        "bind": "Ctrl+S"
+    },
+    {
+        "name": "saveAs",
+        "bind": "Ctrl+Shift+S"
+    },
+    {
+        "name": "toggleToolbar",
+        "bind": "Ctrl+M"
+    }
+]
