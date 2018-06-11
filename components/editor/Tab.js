@@ -75,26 +75,4 @@ module.exports = class TmTab {
       id: this.id
     }
   }
-
-  static load() {
-    const tabString = localStorage.getItem('tabs')
-    if (tabString === null) {
-      return [ new TmTab() ]
-    } else {
-      try {
-        const tabs = JSON.parse(tabString)
-        if (tabs.length === 0) {
-          return [ new TmTab() ]
-        }
-        return tabs.map(tab => new TmTab(tab))
-      } catch (e) {
-        console.warn('The tabs information is malformed.')
-        return [ new TmTab() ]
-      }
-    }
-  }
-
-  static save(tabs) {
-    localStorage.setItem('tabs', JSON.stringify(tabs))
-  }
 }

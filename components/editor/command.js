@@ -1,80 +1,131 @@
-const fs = require('fs')
 const { dialog } = require('electron').remote
+const TmTab = require('./Tab')
+const path = require('path')
+const fs = require('fs')
 
-module.exports = [
-  {
-    id: 'tm-save',
-    label: 'Save File',
-    keybindings: [ window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_S ],
-    precondition: null,
-    keybindingContext: null,
-    contextMenuGroupId: 'navigation',
-    contextMenuOrder: 1.5,
-    run(editor) {
-      const tab = editor.vue.current
-      if (!tab.changed) return
-      if (tab.path) {
-        tab.save()
-        return
+module.exports = {
+  toggleToolbar() {
+    if (this.toolbar) {
+      this.toolbar = false
+    } else {
+      this.toolbar = true
+      const remainHeight = this.height - 34 - 24 - 34
+      if (this.extensionHeight > remainHeight) {
+        this.extensionHeight = remainHeight
       }
-      const firstLine = editor.getModel().getLineContent(1)
-      let name
-      if (firstLine !== '' && firstLine.startsWith('//')) {
-        name = firstLine.slice(2).trim()
-      } else {
-        name = editor.vue.$t('editor.new-file')
-      }
-      dialog.showSaveDialog(null, {
-        title: editor.vue.$t('editor.save-as'),
-        defaultPath: name,
-        filters: [
-          { name: editor.vue.$t('editor.thulium'), extensions: ['tm', 'tml'] },
-          { name: editor.vue.$t('editor.all-files'), extensions: ['*'] }
-        ]
-      }, path => tab.save(path))
     }
   },
 
-  {
-    id: 'tm-play',
-    label: 'Play/Pause',
-    keybindings: [ window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_P],
-    precondition: null,
-    keybindingContext: null,
-    contextMenuGroupId: 'navigation',
-    contextMenuOrder: 1.5,
-    run: (editor) => {
-      const value = editor.getValue()
-      if (this.player) {
-        if (this.player.value === value) {
-          this.player.toggle()
-        } else {
-          this.player.close()
-          this.player = this.$createPlayer(value)
-          this.player.play()
+  closeTab(id) {
+    if (!id) id = this.current.id
+    const index = this.tabs.findIndex(tab => tab.id === id)
+    this.tabs.splice(index, 1)
+    if (this.tabs.length === 0) {
+      this.addTab()
+    } else if (this.current.id === id) {
+      this.switchTabByIndex(index === 0 ? 0 : index - 1)
+    }
+  },
+
+  closeOtherTabs(id) {
+    if (!id) id = this.current.id
+    this.current = this.tabs.find(tab => tab.id === id)
+    this.tabs = [ this.current ]
+  },
+
+  closeTabsToRight(id) {
+    if (!id) id = this.current.id
+    const index = this.tabs.findIndex(tab => tab.id === id)
+    this.tabs.splice(index + 1, Infinity)
+    if (this.tabs.findIndex(tab => tab.id === this.current.id) > index) {
+      this.switchTabByIndex(index)
+    }
+  },
+
+  switchTabById(id, event) {
+    if (event.buttons !== 1 && event.buttons !== 0) return
+    this.current = this.tabs.find(tab => tab.id === id)
+    this.activate()
+  },
+
+  switchTabByIndex(index) {
+    this.current = this.tabs[index]
+    this.activate()
+  },
+
+  addTab(insert = true, data = {}) {
+    const index = !insert ? this.tabs.length
+      : this.tabs.findIndex(tab => tab.id === this.current.id) + 1
+    this.tabs.splice(index, 0, new TmTab(data))
+    this.switchTabByIndex(index)
+  },
+
+  loadFile(filepath) {
+    if (!['.tm', '.tml'].includes(path.extname(filepath))) return
+    fs.readFile(filepath, { encoding: 'utf8' }, (_, data) => {
+      const previous = this.current
+      this.addTab(true, {
+        title: path.basename(filepath).replace(/\.tml?$/, ''),
+        path: filepath,
+        value: data,
+        origin: data
+      })
+      if (previous.isEmpty()) {
+        this.closeTab(previous.id)
+      } else {
+        const prevIndex = this.tabs.findIndex(tab => tab.id === previous.id)
+        if (prevIndex + 2 < this.tabs.length && this.tabs[prevIndex + 2].isEmpty) {
+          this.closeTab(this.tabs[prevIndex + 2].id)
         }
-      } else {
-        this.player = this.$createPlayer(value)
-        this.player.play()
       }
+    })
+  },
+
+  openFile() {
+    dialog.showOpenDialog(null, {
+      title: this.$t('editor.open-file'),
+      openFile: true,
+      openDirectory: false,
+      multiSelections: true,
+      filters: [
+        { name: this.$t('editor.thulium'), extensions: ['tm', 'tml'] },
+        { name: this.$t('editor.all-files'), extensions: ['*'] }
+      ]
+    }, (filepaths) => {
+      filepaths.forEach(filepath => this.loadFile(filepath))
+    })
+  },
+
+  save(id) {
+    const tab = id ? this.tabs.find(tab => tab.id === id) : this.current
+    if (!tab.changed) return
+    if (tab.path) {
+      tab.save()
+    } else {
+      this.saveAs(id)
     }
   },
-  
-  {
-    id: 'tm-stop',
-    label: 'Stop Playing',
-    keybindings: [
-      window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_T
-    ],
-    precondition: null,
-    keybindingContext: null,
-    contextMenuGroupId: 'navigation',
-    contextMenuOrder: 1.5,
-    run() {
-      if (this.player) {
-        this.player.close()
-        this.player = undefined
-      }
+
+  saveAll() {
+    this.tabs.forEach(tab => this.save(tab.id))
+  },
+
+  saveAs(id) {
+    const tab = id ? this.tabs.find(tab => tab.id === id) : this.current
+    const firstLine = tab.model.getLineContent(1)
+    let name
+    if (firstLine !== '' && firstLine.startsWith('//')) {
+      name = firstLine.slice(2).trim()
+    } else {
+      name = this.$t('editor.new-file')
     }
+    dialog.showSaveDialog(null, {
+      title: this.$t('editor.save-as'),
+      defaultPath: name,
+      filters: [
+        { name: this.$t('editor.thulium'), extensions: ['tm', 'tml'] },
+        { name: this.$t('editor.all-files'), extensions: ['*'] }
+      ]
+    }, (filepath) => tab.save(filepath))
   }
-]
+}
