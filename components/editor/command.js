@@ -83,7 +83,7 @@ module.exports = {
 
   openFile() {
     dialog.showOpenDialog(null, {
-      title: this.$t('editor.save-as'),
+      title: this.$t('editor.open-file'),
       openFile: true,
       openDirectory: false,
       multiSelections: true,
