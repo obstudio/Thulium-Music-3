@@ -28,11 +28,7 @@ module.exports = {
       extensions,
       activeExtension: extensions[0],
       draggingExtension: false,
-<<<<<<< HEAD
-      draggingLastY: 0,
       draggingTab: false,
-=======
->>>>>>> mousetrap
       dragOptions: {
         animation: 150,
         ghostClass: 'drag-ghost'
@@ -48,7 +44,7 @@ module.exports = {
     contentHeight() {
       return String(this.height - 34 - 24
         - (this.extensionShowed ? this.extensionHeight : 0)
-        - (this.toolbar ? 34 : 0)
+        - (this.menubar ? 34 : 0)
       ) + 'px'
     },
     settings: () => global.user.state.Settings
@@ -58,7 +54,7 @@ module.exports = {
     width() {
       this.layout(300)
     },
-    toolbar() {
+    menubar() {
       this.layout(300)
     },
     extensionShowed() {
@@ -78,8 +74,8 @@ module.exports = {
 
   mounted() {
     this.menu = {
-      tabs: this.$el.children[5].children[0],
-      tab: this.$el.children[5].children[1]
+      tabs: this.$el.children[4].children[0],
+      tab: this.$el.children[4].children[1]
     }
     this.actions = require('./action')
     for (const cmd in commands) {
@@ -105,7 +101,7 @@ module.exports = {
       if (this.draggingExtension) {
         this.layout()
         event.stopPropagation()
-        const remainHeight = this.height - 34 - 24 - (this.toolbar ? 34 : 0)
+        const remainHeight = this.height - 34 - 24 - (this.menubar ? 34 : 0)
         if (this.extensionHeight <= remainHeight || this.draggingLastY < event.clientY) {
           this.extensionHeight += this.draggingLastY - event.clientY
           this.draggingLastY = event.clientY
@@ -121,7 +117,7 @@ module.exports = {
       this.hideContextMenus()
     })
 
-    this.$el.children[1].addEventListener('contextmenu', event => {
+    this.$el.children[0].addEventListener('contextmenu', event => {
       event.stopPropagation()
       this.showTopContextMenu('tabs', event)
       return false
@@ -200,7 +196,7 @@ module.exports = {
     },
 
     showEditor() {
-      const editor = window.monaco.editor.create(this.$el.children[2], {
+      const editor = window.monaco.editor.create(this.$el.children[1], {
         model: null,
         language: 'tm',
         theme: 'tm',
@@ -221,7 +217,7 @@ module.exports = {
       })
 
       addEventListener('resize', () => {
-        const remainHeight = this.height - 34 - 24 - (this.toolbar ? 34 : 0)
+        const remainHeight = this.height - 34 - 24 - (this.menubar ? 34 : 0)
         if (this.extensionShowed && this.extensionHeight > remainHeight) {
           this.extensionHeight = remainHeight
         }
@@ -241,19 +237,19 @@ module.exports = {
   },
   
   props: ['width', 'height', 'left', 'top'],
-  render: VueCompile(`<div class="tm-editor" :class="{'show-toolbar': toolbar}"
+  render: VueCompile(`<div class="tm-editor" :class="{'show-menubar': menubar}"
   @dragover.stop.prevent @drop.stop.prevent="loadFileDropped">
-  <div class="toolbar">
-    <i class="icon-volume-mute"/>
-    <div class="volume-slider">
-      <el-slider class="icon-volume-mute" v-model="current.volume" :show-tooltip="false"/>
-    </div>
-  </div>
   <div class="header">
-    <button class="toolbar-toggler" @click="toggleToolbar()"><i class="icon-control"/></button>
+    <div class="menubar">
+      <i class="icon-volume-mute"/>
+      <div class="volume-slider">
+        <el-slider class="icon-volume-mute" v-model="current.volume" :show-tooltip="false"/>
+      </div>
+    </div>
+    <button class="menubar-toggler" @click="toggleMenubar()"><i class="icon-control"/></button>
     <div class="tm-tabs">
-      <draggable :list="tabs" :options="dragOptions" @start="draggingTab=true" @end="draggingTab=false">
-        <transition-group name="tm-tabs" :move-class="draggingTab?'dragged':''">
+      <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
+        <transition-group name="tm-tabs" :move-class="draggingTab ? 'dragged' : ''">
         <button v-for="tab in tabs" @mousedown="switchTabById(tab.id, $event)" :key="tab.id">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>

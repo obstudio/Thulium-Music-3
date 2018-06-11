@@ -1,12 +1,53 @@
 .dragged { transition: none !important }
 
 .tm-editor > .header {
+    height: 68px;
+    top: -34px;
+    left: 0px;
+    width: 100%;
+    transition: 0.3s;
+    position: absolute;
+    overflow: hidden;
+}
+
+.tm-editor.show-menubar > .header { top: 0px }
+
+.tm-editor > .header .menubar-toggler {
+    padding: 9px 9px;
+    font-size: 16px;
+    top: 34px;
     height: 34px;
+    transition: 0.3s;
+    right: 0px;
+    float: right;
+    position: absolute;
+}
+
+.tm-editor > .header > .menubar {
+    overflow: hidden;
     top: 0px;
+    height: 34px;
     left: 0px;
     width: 100%;
     position: absolute;
-    overflow: hidden;
+    transition: 0.3s;
+    float: left;
+}
+
+.menubar .el-slider__button-wrapper { z-index: auto }
+
+.menubar .volume-slider {
+    top: 0px;
+    width: 100px;
+    height: 34px;
+    left: 40px;
+    position: absolute;
+}
+
+.menubar i {
+    font-size: 12px;
+    padding: 12px;
+    vertical-align: -webkit-baseline-middle;
 }
 
 .tm-editor .header button {
@@ -18,7 +59,12 @@
     padding: 0px;
 }
 
-.tm-tabs { height: 100% }
+.tm-tabs {
+    top: 34px;
+    height: 34px;
+    position: absolute;
+}
+
 .tm-tabs div.title { font-family: source-san-sans-CN }
 
 .tm-tabs-enter, .tm-tabs-leave-to {
@@ -94,45 +140,6 @@ button:last-child .tm-tab { margin-right: 0px }
     height: 34px;
 }
 
-.tm-editor button.toolbar-toggler {
-    padding: 9px 9px;
-    font-size: 16px;
-    top: 0px;
-    height: 34px;
-    transition: 0.3s;
-    float: right;
-    position: relative;
-}
-
-.tm-editor > .toolbar {
-    overflow: hidden;
-    top: 0px;
-    height: 34px;
-    left: 0px;
-    width: 100%;
-    position: absolute;
-    transition: 0.3s;
-    float: left;
-}
-
-.tm-editor.show-toolbar > .toolbar { top: 34px }
-
-.toolbar .el-slider__button-wrapper { z-index: auto }
-
-.toolbar .volume-slider {
-    top: 0px;
-    width: 100px;
-    height: 34px;
-    left: 40px;
-    position: absolute;
-}
-
-.toolbar i {
-    font-size: 12px;
-    padding: 12px;
-    vertical-align: -webkit-baseline-middle;
-}
-
 .tm-editor > .content {
     overflow: hidden;
     top: 34px;
@@ -142,7 +149,7 @@ button:last-child .tm-tab { margin-right: 0px }
     transition: 0.3s;
 }
 
-.tm-editor.show-toolbar > .content { top: 68px }
+.tm-editor.show-menubar > .content { top: 68px }
 
 .monaco-editor .decorationsOverviewRuler { display: none }
 

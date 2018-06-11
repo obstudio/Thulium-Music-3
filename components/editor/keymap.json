@@ -20,7 +20,7 @@
         "bind": "ctrl+shift+s"
     },
     {
-        "name": "toggleToolbar",
+        "name": "toggleMenubar",
         "bind": "ctrl+m"
     }
 ]

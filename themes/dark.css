@@ -33,7 +33,7 @@
 .dark .tm-tab > i { color: #a5a6a4 !important }
 .dark .tm-tab > i:hover { color: #fafaf5 !important }
 
-.dark .tm-editor > .toolbar { background-color: #474842 }
+.dark .tm-editor .menubar { background-color: #181915 }
 
 .dark .tm-editor > .extension { background-color: #272822; color: #fafaf5 }
 .dark .tm-editor > .extension > div.top-border { background-color: #474842 }

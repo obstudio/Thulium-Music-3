@@ -134,6 +134,7 @@ body {
 div.main {
     vertical-align: top;
     position: absolute;
+    overflow: hidden;
     left: 0px;
     right: 0px;
     height: 100%;
