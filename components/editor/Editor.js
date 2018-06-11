@@ -294,7 +294,7 @@ module.exports = {
     <button class="toolbar-toggler" @click="toggleToolbar()"><i class="icon-control"/></button>
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions">
-        <transition-group name="tm-tabs">
+        <transition-group name="tm-tabs" move-class="dragged">
         <button v-for="tab in tabs" @mousedown="switchTabById(tab.id, $event)" :key="tab.id">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
