@@ -9,7 +9,7 @@ const extensions = require('../../extensions/extension')
 const storage = require('./storage')
 const commands = require('./command')
 const keymap = require('./keymap.json')
-const Mousetrap = require('Mousetrap')
+const Mousetrap = require('mousetrap')
 
 module.exports = {
   name: 'TmEditor',

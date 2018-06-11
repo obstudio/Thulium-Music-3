@@ -48,11 +48,11 @@ module.exports = {
 
   save(vm) {
     localStorage.setItem('tabs', JSON.stringify(vm.tabs))
-    localStorage.setItem('state', {
+    localStorage.setItem('state', JSON.stringify({
       extensionHeight: vm.extensionHeight,
       extensionShowed: vm.extensionShowed,
       extensionFull: vm.extensionFull,
       toolbar: vm.toolbar
-    })
+    }))
   }
 }
