@@ -27,6 +27,21 @@ module.exports = {
     }
   },
 
+  closeOtherTabs(id) {
+    if (!id) id = this.current.id
+    this.current = this.tabs.find(tab => tab.id === id)
+    this.tabs = [ this.current ]
+  },
+
+  closeTabsToRight(id) {
+    if (!id) id = this.current.id
+    const index = this.tabs.findIndex(tab => tab.id === id)
+    this.tabs.splice(index + 1, Infinity)
+    if (this.tabs.findIndex(tab => tab.id === this.current.id) > index) {
+      this.switchTabByIndex(index)
+    }
+  },
+
   switchTabById(id, event) {
     if (event.buttons !== 1 && event.buttons !== 0) return
     this.current = this.tabs.find(tab => tab.id === id)
@@ -89,6 +104,10 @@ module.exports = {
     } else {
       this.saveAs(id)
     }
+  },
+
+  saveAll() {
+    this.tabs.forEach(tab => this.save(tab.id))
   },
 
   saveAs(id) {

@@ -9,8 +9,6 @@ const extensions = require('../../extensions/extension')
 const commands = require('./command')
 const keymap = require('./keymap.json')
 const TmTab = require('./Tab')
-const fs = require('fs')
-const path = require('path')
 const Mousetrap = require('Mousetrap')
 
 module.exports = {
@@ -314,6 +312,9 @@ module.exports = {
           <a class="label">Open File</a>
           <span class="binding">Ctrl+O</span>
         </div>
+        <div class="menu-item" @click="saveAll()">
+          <a class="label">Save All Files</a>
+        </div>
         <div class="menu-item disabled" @click.stop><a class="label separator"/></div>
         <li v-for="tab in tabs">
           <div class="menu-item" @click="switchTabById(tab.id, $event)">
@@ -324,10 +325,6 @@ module.exports = {
     </transition>
     <transition name="el-zoom-in-top">
       <ul v-show="menuShowed.tab">
-        <div class="menu-item" @click="closeTab(menuTabId)">
-          <a class="label">Close</a>
-          <span class="binding">Ctrl+F4</span>
-        </div>
         <div class="menu-item" @click="save(menuTabId)">
           <a class="label">Save</a>
           <span class="binding">Ctrl+S</span>
@@ -335,6 +332,17 @@ module.exports = {
         <div class="menu-item" @click="saveAs(menuTabId)">
           <a class="label">Save As</a>
           <span class="binding">Ctrl+Shift+S</span>
+        </div>
+        <div class="menu-item disabled" @click.stop><a class="label separator"/></div>
+        <div class="menu-item" @click="closeTab(menuTabId)">
+          <a class="label">Close</a>
+          <span class="binding">Ctrl+F4</span>
+        </div>
+        <div class="menu-item" @click="closeOtherTabs(menuTabId)">
+          <a class="label">Close Other Tabs</a>
+        </div>
+        <div class="menu-item" @click="closeTabsToRight(menuTabId)">
+          <a class="label">Close Tabs to the Right</a>
         </div>
       </ul>
     </transition>
