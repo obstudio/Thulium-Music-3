@@ -6,9 +6,9 @@ const draggable = require('vuedraggable')
 global.define.amd = tempAmd
 
 const extensions = require('../../extensions/extension')
+const storage = require('./storage')
 const commands = require('./command')
 const keymap = require('./keymap.json')
-const TmTab = require('./Tab')
 const Mousetrap = require('Mousetrap')
 
 module.exports = {
@@ -18,25 +18,14 @@ module.exports = {
     draggable
   },
   data() {
-    const tabs = TmTab.load()
-    let current = null
-    for (const tab of tabs) {
-      if (tab.active) current = tab
-    }
-    if (!current) current = tabs[0]
+    const data = storage.load()
     return {
-      current,
-      tabs,
+      ...data,
       row: 1,
       column: 1,
-      toolbar: false,
       extensions,
-      extensionHeight: 200,
-      extensionShowed: false,
-      extensionFull: false,
       activeExtension: extensions[0],
       draggingExtension: false,
-      draggingLastY: 0,
       dragOptions: {
         animation: 150,
         ghostClass: 'drag-ghost'
@@ -232,8 +221,8 @@ module.exports = {
         this.layout(300)
       }, { passive: true })
 
-      addEventListener('beforeunload', e => {
-        TmTab.save(this.tabs)
+      addEventListener('beforeunload', () => {
+        storage.save(this)
       })
     },
 
