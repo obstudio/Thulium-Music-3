@@ -41,6 +41,14 @@ module.exports = class TmTab {
     this.thulium.tab = this
   }
 
+  onModelChange(listener) {
+    this.model.onDidChangeContent(listener)
+  }
+
+  dispose() {
+    this.model.dispose()
+  }
+
   checkChange(data) {
     if (data !== undefined) this.origin = data
     this.changed = this.origin !== this.value

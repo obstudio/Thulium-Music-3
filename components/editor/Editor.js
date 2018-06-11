@@ -7,7 +7,6 @@ global.define.amd = tempAmd
 
 const extensions = require('../../extensions/extension')
 const storage = require('./storage')
-const commands = require('./command')
 const keymap = require('./keymap.json')
 const Mousetrap = require('mousetrap')
 // TODO: improve this pattern maybe. Cause: firing event inside textarea is blocked by mousetrap by default.
@@ -80,7 +79,7 @@ module.exports = {
     'settings.minimap'() {
       if (this.editor) {
         this.editor.updateOptions({
-          minimap: { enabled: this.settings.minimap }
+          minimap: {enabled: this.settings.minimap}
         })
       }
     },
@@ -94,42 +93,21 @@ module.exports = {
       tabs: this.$el.children[5].children[0],
       tab: this.$el.children[5].children[1]
     }
-    this.actions = require('./action')
-    for (const cmd in commands) {
-      this[cmd] = commands[cmd]
-    }
     keymap.forEach(command => {
       Mousetrap.bind(command.bind, () => {
         this[command.name]()
         return false
       })
     })
-
     this.player = undefined
-    this.tabs.forEach(tab => tab.checkChange())
-    this.showEditor()
-
-    addEventListener('mouseup', (e) => {
-      this.layout()
-      this.stopDrag(e)
-    }, { passive: true })
-
-    addEventListener('mousemove', (event) => {
-      if (this.draggingExtension) {
-        this.layout()
-        event.stopPropagation()
-        if (this.extensionHeight <= this.remainHeight || this.draggingLastY < event.clientY) {
-          this.extensionHeight += this.draggingLastY - event.clientY
-          this.draggingLastY = event.clientY
-        }
-      }
-    }, { passive: true })
-
-    addEventListener('dragend', (e) => {
-      this.layout()
-      this.stopDrag(e)
+    this.tabs.forEach(tab => {
+      tab.onModelChange((e) => {
+        this.refresh(tab, e)
+      })
+      tab.checkChange()
     })
-
+    this.showEditor()
+    this.registerGlobalEvents()
     if (global.user) {
       window.monaco.editor.setTheme(global.user.state.Settings.theme)
     }
@@ -137,45 +115,8 @@ module.exports = {
   },
 
   methods: {
-    refresh(tab = this.current) {
-      tab.value = tab.model.getValue(
-        global.user.state.Settings.lineEnding === 'LF' ? 1 : 2
-      )
-      tab.checkChange()
-    },
-
-    startDrag(event) {
-      this.draggingExtension = true
-      this.draggingLastY = event.clientY
-    },
-    
-    stopDrag(event) {
-      this.draggingExtension = false
-    },
-
-    hideContextMenus() {
-      for (const key in this.menuShowed) {
-        this.menuShowed[key] = false
-      }
-    },
-
-    showTopContextMenu(key, event) {
-      const style = this.menu[key].style
-      this.hideContextMenus()
-      if (event.clientX + 200 > this.width) {
-        style.left = event.clientX - 200 - this.left + 'px'
-      } else {
-        style.left = event.clientX - this.left + 'px'
-      }
-      style.top = event.clientY - this.top + 'px'
-      this.menuShowed[key] = true
-    },
-
-    toggleTabMenu(id, event) {
-      event.stopPropagation()
-      this.menuTabId = id
-      this.showTopContextMenu('tab', event)
-    },
+    // commands
+    ...require('./command'),
 
     activate() {
       this.editor.setModel(this.current.model)
@@ -185,7 +126,12 @@ module.exports = {
       global.user.state.Prefix.editor = this.current.title + ' - '
       this.layout()
     },
-
+    refresh(tab) {
+      tab.value = tab.model.getValue(
+        global.user.state.Settings.lineEnding === 'LF' ? 1 : 2
+      )
+      tab.checkChange()
+    },
     layout(time = 0) {
       const now = performance.now(), self = this
       window.requestAnimationFrame(function layout(newTime) {
@@ -196,7 +142,6 @@ module.exports = {
         }
       })
     },
-
     showEditor() {
       const editor = window.monaco.editor.create(this.$el.children[2], {
         model: null,
@@ -204,41 +149,89 @@ module.exports = {
         theme: 'tm',
         folding: false,
         mouseWheelZoom: true,
-        minimap: { enabled: this.settings.minimap }
+        minimap: {enabled: this.settings.minimap}
       })
       this.editor = editor
       editor.vue = this
       registerPlayCommand(editor)
-
-      this.actions.forEach(action => editor.addAction(action))
-
+      require('./action').forEach(action => editor.addAction(action))
       editor.onDidChangeCursorPosition(event => {
         this.row = event.position.lineNumber
         this.column = event.position.column
-        this.refresh()
       })
-
+      editor.onDidChangeModel(() => {
+        editor.focus()
+      })
+    },
+    registerGlobalEvents() {
       addEventListener('resize', () => {
         if (this.extensionShowed && this.extensionHeight > this.remainHeight) {
           this.extensionHeight = this.remainHeight
         }
         this.layout(300)
-      }, { passive: true })
-
+      }, {passive: true})
+      addEventListener('mouseup', (e) => {
+        this.layout()
+        this.stopDrag(e)
+      }, {passive: true})
+      addEventListener('mousemove', (event) => {
+        if (this.draggingExtension) {
+          this.layout()
+          event.stopPropagation()
+          if (this.extensionHeight <= this.remainHeight || this.draggingLastY < event.clientY) {
+            this.extensionHeight += this.draggingLastY - event.clientY
+            this.draggingLastY = event.clientY
+          }
+        }
+      })
       addEventListener('beforeunload', () => {
         storage.save(this)
       })
+      addEventListener('dragend', (e) => {
+        this.layout()
+        this.stopDrag(e)
+      })
     },
 
+    // event handlers
     loadFileDropped(event) {
       for (const file of event.dataTransfer.files) {
         this.loadFile(file.path)
       }
+    },
+    toggleTabMenu(id, event) {
+      event.stopPropagation()
+      this.menuTabId = id
+      this.showTopContextMenu('tab', event)
+    },
+    startDrag(event) {
+      this.draggingExtension = true
+      this.draggingLastY = event.clientY
+    },
+    stopDrag(event) {
+      this.draggingExtension = false
+    },
+    hideContextMenus() {
+      for (const key in this.menuShowed) {
+        this.menuShowed[key] = false
+      }
+    },
+    showTopContextMenu(key, event) {
+      const style = this.menu[key].style
+      this.hideContextMenus()
+      if (event.clientX + 200 > this.width) {
+        style.left = event.clientX - 200 - this.left + 'px'
+      } else {
+        style.left = event.clientX - this.left + 'px'
+      }
+      style.top = event.clientY - this.top + 'px'
+      this.menuShowed[key] = true
     }
   },
-  
+
   props: ['width', 'height', 'left', 'top'],
-  render: VueCompile(`<div class="tm-editor" :class="{'show-toolbar': toolbar}"
+  render: VueCompile(
+`<div class="tm-editor" :class="{'show-toolbar': toolbar}"
   @dragover.stop.prevent @drop.stop.prevent="loadFileDropped" @click="hideContextMenus" @contextmenu="hideContextMenus">
   <div class="toolbar">
     <i class="icon-volume-mute"/>
@@ -340,5 +333,6 @@ module.exports = {
       </ul>
     </transition>
   </div>
-</div>`)
+</div>`
+  )
 }
