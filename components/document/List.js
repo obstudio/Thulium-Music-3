@@ -6,7 +6,7 @@ module.exports = {
       required: true
     }
   },
-  template: `
+  render: VueCompile(`
   <ul v-if="node.inline" class="tm-horizontal">
     <li v-for="(item, index) in node.content" :key="index" v-html="item"></li>
   </ul>
@@ -19,5 +19,5 @@ module.exports = {
     <li v-for="(item, index) in node.content" :key="index">
       <component v-for="(comp, index) in item.content" :key="index" :is="comp.type" :node="comp"></component>
     </li>
-  </ol>`
+  </ol>`)
 }

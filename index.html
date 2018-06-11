@@ -4,15 +4,13 @@
     <meta charset="UTF-8">
     <title>Thulium Music</title>
     <link href="index.css" rel="stylesheet">
-    <link href="components/entry.css" rel="stylesheet">
-    <link href="components/editor.css" rel="stylesheet">
-    <link href="components/document.css" rel="stylesheet">
     <link href="node_modules/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
     <link href="node_modules/element-ui/lib/theme-chalk/display.css" rel="stylesheet">
     <!--TODO: remove in production mode -->
     <script src="http://localhost:8098"></script>
   </head>
   <body>
+    <script src="library.js" type="text/javascript"></script>
     <script>
       const nodeRequire = global.require
     </script>
@@ -35,9 +33,17 @@
       self.module = undefined
       self.process.browser = true
       const { defineLanguage } = require('./library/editor/Editor')
+      global.themes = require('./themes/theme')
       amdRequire(['vs/editor/editor.main'], () => {
         defineLanguage()
-        const theme = require('./themes/theme')
+        global.library.Themes.forEach(theme => {
+          window.monaco.editor.defineTheme(theme.key, {
+            base: global.themes[theme.key].basetheme,
+            inherit: true,
+            rules: global.themes[theme.key].tokenizer,
+            colors: global.themes[theme.key].editor
+          })
+        })
       })
     </script>
     

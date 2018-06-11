@@ -12,6 +12,10 @@ class TmUser {
     } else {
       this.Settings = require(TmUser.UserPath + 'settings.json')
     }
+    this.Captions = require('./languages/' + this.Settings.language + '/general.json')
+    this.Styles = global.themes[this.Settings.theme]
+    this.Route = 'homepage'
+    this.Prefix = { homepage: '', editor: '', settings: '', documents: '' }
   }
 
   saveSettings() {
@@ -40,12 +44,24 @@ switch (process.platform) {
 case 'win32': 
   TmUser.UserPath = path.join(process.env.LOCALAPPDATA, 'Obstudio/Thulium 3/')
   TmUser.DataPath = path.join(process.env.ALLUSERSPROFILE, 'Obstudio/Thulium 3/')
+  TmUser.LineEnding = 'CRLF'
   break
 default:
   // DO SOMETHING
 }
 
-TmUser.LangList = require('./languages/index.json')
+const user = new TmUser()
+user.Settings.lineEnding = TmUser.LineEnding
+global.saveSettings = function() {
+  fs.writeFile(
+    TmUser.UserPath + 'settings.json',
+    JSON.stringify(global.user.state.Settings),
+    { encoding: 'utf8' },
+    () => {}
+  )
+}
 
-module.exports = new TmUser()
-
+module.exports = {
+  state: user,
+  mutations: {}
+}

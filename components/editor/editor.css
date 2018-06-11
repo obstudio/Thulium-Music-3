@@ -1,0 +1,314 @@
+.dragged { transition: none !important }
+
+.tm-editor > .header {
+    height: 68px;
+    top: -30px;
+    left: 0px;
+    width: 100%;
+    transition: 0.3s;
+    position: absolute;
+    overflow: hidden;
+}
+
+.tm-editor.show-menubar > .header { top: 0px }
+.tm-editor.show-menubar > .header > .menubar-toggler { top: 0px }
+
+.tm-editor > .header > .menubar-toggler {
+    padding: 9px 9px;
+    font-size: 16px;
+    top: 30px;
+    height: 34px;
+    transition: 0.3s;
+    right: 0px;
+    float: right;
+    position: absolute;
+}
+
+.tm-editor > .header > .menubar {
+    overflow: hidden;
+    height: 30px;
+    left: 0px;
+    width: 100%;
+    position: relative;
+    transition: 0.3s;
+    float: left;
+}
+
+.tm-top-menu {
+    width: 50px;
+    padding: 8px 12px 8px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1em;
+    font-size: 14px;
+}
+
+.menubar .el-slider__button-wrapper { z-index: auto }
+
+.menubar .volume-slider {
+    top: 0px;
+    width: 100px;
+    height: 34px;
+    left: 40px;
+    position: absolute;
+}
+
+.menubar i {
+    font-size: 12px;
+    padding: 12px;
+    vertical-align: -webkit-baseline-middle;
+}
+
+.tm-editor .header button {
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+    padding: 0px;
+}
+
+.tm-tabs { height: 34px }
+.tm-tabs div.title { font-family: source-san-sans-CN }
+
+.tm-tabs-enter, .tm-tabs-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+}
+.tm-tabs-leave-active {
+    position: absolute;
+}
+
+.tm-tab {
+    height: 34px;
+    top: 0px;
+    padding: 0px;
+    margin: 0px -4px;
+    float: left;
+    transition: all 1s;
+    position: relative;
+}
+
+button:first-child .tm-tab { margin-left: 0px }
+button:last-child .tm-tab { margin-right: 0px }
+.tm-tab.active { z-index: 2 }
+.tm-tab:hover { z-index: 1 }
+
+.tm-tab > div.title {
+    padding: 6px 32px 6px 32px;
+    font-size: 12px;
+    text-align: center;
+    transition: 0.3s;
+    margin-top: 4px;
+}
+
+.tm-tab.changed > div.title,
+.tm-tab.active > div.title,
+.tm-tab:hover > div.title {
+    padding-left: 22px;
+    padding-right: 42px;
+}
+
+.tm-tab > i {
+    display: none;
+    float: right;
+    padding: 15px 22px 11px 0px;
+    text-align: center;
+    font-size: 8px;
+    transition: 0.3s;
+}
+
+.tm-tab.changed > i,
+.tm-tab.active > i,
+.tm-tab:hover > i {
+    display: initial;
+}
+
+.tm-tab > div[class$=-border] {
+    position: absolute;
+    bottom: 0px;
+    height: 0px;
+    width: 0px;
+    transition: 0.3s;
+    border-style: solid;
+    border-width: 30px 0px 0px 0px;
+}
+
+.tm-tab > div.left-border { left: 0px; border-right-width: 15px }
+.tm-tab > div.right-border { right: 0px; border-left-width: 15px }
+
+.tm-editor button.add-tag {
+    padding: 14px 12px 10px 12px;
+    font-size: 10px;
+    transition: 0.3s;
+    height: 34px;
+}
+
+.tm-editor > .content {
+    overflow: hidden;
+    top: 34px;
+    left: 0px;
+    width: 100%;
+    position: absolute;
+    transition: 0.3s;
+}
+
+.tm-editor.show-menubar > .content { top: 64px }
+
+.monaco-editor .decorationsOverviewRuler { display: none }
+
+.tm-editor > .extension {
+    z-index: 2;
+    width: 100%;
+    transition: 0.3s;
+    position: absolute;
+}
+
+.tm-editor > .extension > div.top-border {
+    top: 0px;
+    height: 2px;
+    width: 100%;
+    position: absolute;
+    cursor: ns-resize;
+    z-index: 3;
+}
+
+.tm-editor > .extension .el-tabs__nav-wrap { left: 16px }
+.tm-editor > .extension .nav-right {
+    position: absolute;
+    right: 0px;
+    height: 34px;
+    top: 0px;
+}
+
+.tm-editor > .extension .nav-right {
+    float: right;
+    right: 0px;
+}
+
+.tm-editor > .extension .nav-right button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+    padding: 0px;
+}
+
+.tm-editor > .extension .nav-right button > i {
+    font-size: 12px;
+    padding: 12px;
+    vertical-align: -webkit-baseline-middle;
+}
+
+.tm-editor > .extension .el-tabs__header { margin-bottom: 0px }
+.tm-editor > .extension .el-tabs__nav-wrap::after { z-index: -1 }
+.tm-editor > .extension .el-tabs__nav { z-index: 0 }
+.tm-editor > .extension .el-tabs__item {
+    padding: 10px 16px 6px;
+    user-select: none;
+    line-height: 20px;
+}
+
+.tm-editor > .status {
+    width: 100%;
+    height: 24px;
+    margin: 0px;
+    padding: 0px;
+    position: absolute;
+    transition: 0.3s;
+    -webkit-user-select: none;
+    cursor: default;
+    z-index: 3;
+}
+
+.tm-editor > .status > div {
+    top: 0px;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    position: absolute;
+}
+
+.tm-editor > .status > div.left { left: 4px }
+.tm-editor > .status > div.left > * { float: left }
+.tm-editor > .status > div.right { right: 4px }
+.tm-editor > .status > div.right > * { float: right }
+
+.tm-editor > .status .text {
+    padding: 3px 3px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.tm-editor > .status button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+    padding: 0px;
+}
+
+.tm-editor > .status button > i {
+    font-size: 16px;
+    padding: 4px;
+}
+
+.drag-ghost { visibility: hidden }
+
+.tm-editor > .context-menu {
+    width: 0;
+    height: 0;
+    top: 0;
+    left: 0;
+}
+
+.tm-editor > .context-menu ul {
+    z-index: 10;
+	min-width: 200px;
+    padding: 0px;
+    margin: 0px;
+	outline: 0px;
+    border: none;
+    transition: 0.3s ease;
+	position: absolute;
+	list-style-type: none;
+}
+
+.tm-menu .menu-item {
+    padding: 0px;
+    -webkit-user-select: none;
+    display: -webkit-flex;
+    cursor: pointer;
+}
+
+.tm-menu .menu-item.disabled { cursor: default }
+
+.tm-menu .menu-item .label {
+	flex: 1 1 auto;
+	text-decoration: none;
+	padding: 0.8em 1em;
+	line-height: 1.1em;
+    background: none;
+    font-size: 12px;
+	display: inline-block;
+	-webkit-box-sizing:	border-box;
+	margin: 0px;
+}
+
+.tm-menu .menu-item .binding {
+    display: inline-block;
+	flex: 2 1 auto;
+	padding: 0.8em 1em;
+	line-height: 1.1em;
+	font-size: 12px;
+	text-align: right;
+}
+
+.tm-menu .menu-item .separator {
+	flex: 1 1 auto;
+    display: block;
+    margin: 0.3em 0.5em;
+	padding: 1px 0 0 0;
+	border-bottom: 1px solid;
+	width: 100%;
+}

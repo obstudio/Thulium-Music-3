@@ -6,5 +6,5 @@ module.exports = {
       required: true
     }
   },
-  template: `<component :is="'h'+node.level" v-html="node.text"></component>`
+  render: VueCompile(`<component :is="'h'+node.level" v-html="node.text"></component>`)
 }

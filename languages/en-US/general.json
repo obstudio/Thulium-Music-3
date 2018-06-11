@@ -1,0 +1,38 @@
+{
+    "window": {
+        "about": "About",
+        "community": "Community",
+        "documents": "Documents",
+        "editor": "Editor",
+        "homepage": "Homepage",
+        "player": "Player",
+        "settings": "Settings",
+        "title": "Thulium Music"
+    },
+    "editor": {
+        "all-files": "All Files",
+        "line-col": "Line {line}, Col {col}",
+        "new-file": "new file",
+        "open-file": " Open ...",
+        "save-as": " Save As ...",
+        "section": "Section",
+        "thulium": "Thulium Music",
+        "title": "Editor",
+        "track": "Track"
+    },
+    "homepage": {
+        "title": "Thulium Music"
+    },
+    "documents": {
+        "title": "Documents"
+    },
+    "settings": {
+        "basic": "Basic Settings",
+        "editor": "Editor Settings",
+        "language": "Language",
+        "line-ending": "Line Ending",
+        "minimap": "Show Minimap",
+        "theme": "Theme",
+        "title": "Settings"
+    }
+}

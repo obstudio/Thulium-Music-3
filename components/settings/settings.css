@@ -1,0 +1,20 @@
+div.tm-settings {
+    padding: 20px 40px;
+    height: 100%;
+}
+
+.tm-settings .setting {
+    margin: 12px 0px;
+}
+
+.tm-settings .caption {
+    padding: 2px 24px;
+    font-size: 20px;
+}
+
+.tm-settings .control [class*=el-col-] { text-align: center }
+
+.tm-settings div, .tm-settings h1, .tm-settings h2 {
+    user-select: none;
+    cursor: default;
+}

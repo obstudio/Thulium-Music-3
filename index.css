@@ -1,3 +1,9 @@
+@import "./components/homepage/entry.css";
+@import "./components/editor/editor.css";
+@import "./components/document/document.css";
+@import "./components/settings/settings.css";
+@import "./assets/icons.css";
+
 body {
     margin: 0;
     padding: 0;
@@ -17,19 +23,43 @@ body {
     width: 100%;
     position: absolute;
     overflow: hidden;
+    transition: 0.3s;
     -webkit-app-region: drag;
     -webkit-user-select: none;
 }
 
+.navbar > div.top-border {
+    top: 0px;
+    height: 2px;
+    width: 100%;
+    position: absolute;
+    -webkit-app-region: no-drag;
+}
+
 .navbar > div.title {
-    padding: 10px 64px;
-    text-align: -webkit-center;
+    top: 0px;
+    height: 28px;
+    padding: 10px 120px 10px 56px;
+    text-align: -webkit-left;
     font-size: 20px;
+    transition: 0.3s;
+}
+
+.show-sidebar .navbar > div.title { padding-left: 80px }
+
+.navbar > div.top-right {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    right: 4px;
+    float: right;
 }
 
 .navbar button {
     top: 0px;
     height: 100%;
+    position: absolute;
+    text-align: center;
     -webkit-app-region: no-drag;
     border: none;
     outline: none;
@@ -37,16 +67,27 @@ body {
     transition: 0.3s;
 }
 
-.navbar button.sidebar-toggler {
-    font-size: 20px;
-    left: 0px;
-    width: 48px;
-    padding: 12px 16px;
-    float: left;
+.navbar > div.top-right button {
+    width: 40px;
+    padding: 8px 0px;
 }
 
-.sidebar-showed button.sidebar-toggler {
+.navbar > div.top-right button.minimize { right: 80px }
+.navbar > div.top-right button.maximize { right: 40px }
+.navbar > div.top-right button.close { right: 0px }
+
+.navbar button.sidebar-toggler {
+    left: 0px;
+    width: 48px;
+    font-size: 20px;
+    float: left;
+    padding: 14px 12px;
+}
+
+.show-sidebar .navbar button.sidebar-toggler {
     width: 64px;
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
 .window {
@@ -56,7 +97,6 @@ body {
     top: 48px;
     bottom: 0;
     margin: 0;
-    /*overflow: hidden;*/
 }
 
 .sidebar {
@@ -67,28 +107,45 @@ body {
     transition: 0.3s;
 }
 
-.sidebar-showed .sidebar {
+.show-sidebar .sidebar {
     left: 0px;
     -webkit-app-region: drag;
     -webkit-user-select: none;
 }
 
-.sidebar .el-menu-item {
+.sidebar > div.left-border {
+    left: 0px;
+    width: 2px;
+    top: 0px;
+    height: 100%;
+    position: absolute;
     -webkit-app-region: no-drag;
 }
+
+.sidebar .el-menu { border-right: 0px }
+.sidebar .el-menu-item {
+    font-size: 20px;
+    text-align: center;
+    -webkit-app-region: no-drag;
+    transition: background-color 0.3s;
+}
+.sidebar .el-menu-item .icon-editor { font-size: 22px }
 
 div.main {
     vertical-align: top;
     position: absolute;
+    overflow: hidden;
     left: 0px;
     right: 0px;
     height: 100%;
     transition: 0.3s;
 }
 
-.sidebar-showed div.main {
+.show-sidebar div.main {
     left: 64px;
 }
+
+div.main > div { transition: 0.3s }
 
 @font-face {
     font-family: source-san-sans-CN;

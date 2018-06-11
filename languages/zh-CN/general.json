@@ -1,0 +1,38 @@
+{
+    "window": {
+        "about": "关于",
+        "community": "社区",
+        "documents": "文档",
+        "editor": "编辑器",
+        "homepage": "主页",
+        "player": "播放器",
+        "settings": "设置",
+        "title": "铥铥音乐"
+    },
+    "editor": {
+        "all-files": "所有文件",
+        "line-col": "行 {line}，列 {col}",
+        "new-file": "新文件",
+        "open-file": " 打开 ...",
+        "save-as": " 另存为 ...",
+        "section": "乐章",
+        "thulium": "铥铥音乐",
+        "title": "编辑器",
+        "track": "音轨"
+    },
+    "homepage": {
+        "title": "铥铥音乐"
+    },
+    "documents": {
+        "title": "文档"
+    },
+    "settings": {
+        "basic": "基本设置",
+        "editor": "编辑器设置",
+        "language": "语言",
+        "line-ending": "行尾序列",
+        "minimap": "显示小地图",
+        "theme": "主题",
+        "title": "设置"
+    }
+}
