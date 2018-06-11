@@ -36,6 +36,7 @@ module.exports = {
       activeExtension: extensions[0],
       draggingExtension: false,
       draggingLastY: 0,
+      draggingTab: false,
       dragOptions: {
         animation: 150,
         ghostClass: 'drag-ghost'
@@ -293,8 +294,8 @@ module.exports = {
   <div class="header">
     <button class="toolbar-toggler" @click="toggleToolbar()"><i class="icon-control"/></button>
     <div class="tm-tabs">
-      <draggable :list="tabs" :options="dragOptions">
-        <transition-group name="tm-tabs" move-class="dragged">
+      <draggable :list="tabs" :options="dragOptions" @start="draggingTab=true" @end="draggingTab=false">
+        <transition-group name="tm-tabs" :move-class="draggingTab?'dragged':''">
         <button v-for="tab in tabs" @mousedown="switchTabById(tab.id, $event)" :key="tab.id">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
