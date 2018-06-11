@@ -20,6 +20,8 @@
 .dark .tm-editor > .header button > i { color: #cccccc }
 .dark .tm-editor > .header button:hover > i { color: #fafaf5 }
 
+.dark .tm-top-menu:hover { background-color: #3A3A3A }
+
 .dark .tm-tabs button:not(.add-tag) { background-color: transparent !important }
 .dark .tm-tab > .title { background-color: #181915; color: #bbbbb7 }
 .dark .tm-tab > .left-border { border-right-color: #181915 }
@@ -49,12 +51,12 @@
 .dark .tm-editor > .status button { background-color: #181915; color: #f6f8fa }
 .dark .tm-editor > .status button:hover { background-color: #252525; color: #ffffff }
 
-.dark .tm-editor-menu ul { background-color: #2D2F31; box-shadow: 0 2px 8px #000000 }
-.dark .tm-editor-menu .menu-item .label { color: #bbbbbb }
-.dark .tm-editor-menu .menu-item .binding { color: #a5a5a5 }
-.dark .tm-editor-menu .menu-item .separator { border-bottom-color: #888888 }
-.dark .tm-editor-menu .menu-item:hover:not(.disabled) { background-color: #3A3A3A; color: #dddddd }
-.dark .tm-editor-menu .menu-item.active .label { color: #ACDDFF; text-shadow: 0px 0px 0.15px #ACDDFF }
+.dark .tm-menu { background-color: #2D2F31; box-shadow: 0 2px 8px #000000 }
+.dark .tm-menu .menu-item .label { color: #bbbbbb }
+.dark .tm-menu .menu-item .binding { color: #a5a5a5 }
+.dark .tm-menu .menu-item .separator { border-bottom-color: #888888 }
+.dark .tm-menu .menu-item:hover:not(.disabled) { background-color: #3A3A3A; color: #dddddd }
+.dark .tm-menu .menu-item.active .label { color: #ACDDFF; text-shadow: 0px 0px 0.15px #ACDDFF }
 
 /* document */
 .dark .tm-doc { color: #24292e }

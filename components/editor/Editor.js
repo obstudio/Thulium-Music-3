@@ -44,7 +44,7 @@ module.exports = {
     contentHeight() {
       return String(this.height - 34 - 24
         - (this.extensionShowed ? this.extensionHeight : 0)
-        - (this.menubar ? 34 : 0)
+        - (this.menubar ? 30 : 0)
       ) + 'px'
     },
     settings: () => global.user.state.Settings
@@ -101,7 +101,7 @@ module.exports = {
       if (this.draggingExtension) {
         this.layout()
         event.stopPropagation()
-        const remainHeight = this.height - 34 - 24 - (this.menubar ? 34 : 0)
+        const remainHeight = this.height - 34 - 24 - (this.menubar ? 30 : 0)
         if (this.extensionHeight <= remainHeight || this.draggingLastY < event.clientY) {
           this.extensionHeight += this.draggingLastY - event.clientY
           this.draggingLastY = event.clientY
@@ -217,7 +217,7 @@ module.exports = {
       })
 
       addEventListener('resize', () => {
-        const remainHeight = this.height - 34 - 24 - (this.menubar ? 34 : 0)
+        const remainHeight = this.height - 34 - 24 - (this.menubar ? 30 : 0)
         if (this.extensionShowed && this.extensionHeight > remainHeight) {
           this.extensionHeight = remainHeight
         }
@@ -241,12 +241,10 @@ module.exports = {
   @dragover.stop.prevent @drop.stop.prevent="loadFileDropped">
   <div class="header">
     <div class="menubar">
-      <i class="icon-volume-mute"/>
-      <div class="volume-slider">
-        <el-slider class="icon-volume-mute" v-model="current.volume" :show-tooltip="false"/>
+      <div class="tm-top-menu" @click="addTab(false)">
+        File(<span>F</span>)
       </div>
     </div>
-    <button class="menubar-toggler" @click="toggleMenubar()"><i class="icon-control"/></button>
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
         <transition-group name="tm-tabs" :move-class="draggingTab ? 'dragged' : ''">
@@ -263,6 +261,7 @@ module.exports = {
       </draggable>
       <button class="add-tag" @click="addTab(false)"><i class="icon-add"/></button>
     </div>
+    <button class="menubar-toggler" @click="toggleMenubar()"><i class="icon-control"/></button>
   </div>
   <div class="content" :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
   <div class="extension" :class="{ dragged: draggingExtension }" :style="{
@@ -293,9 +292,9 @@ module.exports = {
       <button @click="extensionShowed = !extensionShowed"><i class="el-icon-menu"/></button>
     </div>
   </div>
-  <div class="tm-editor-menu">
+  <div class="context-menu">
     <transition name="el-zoom-in-top">
-      <ul v-show="menuShowed.tabs">
+      <ul v-show="menuShowed.tabs" class="tm-menu">
         <div class="menu-item" @click="addTab(false)">
           <a class="label">New File</a>
           <span class="binding">Ctrl+N</span>
@@ -316,7 +315,7 @@ module.exports = {
       </ul>
     </transition>
     <transition name="el-zoom-in-top">
-      <ul v-show="menuShowed.tab">
+      <ul v-show="menuShowed.tab" class="tm-menu">
         <div class="menu-item" @click="save(menuTabId)">
           <a class="label">Save</a>
           <span class="binding">Ctrl+S</span>
