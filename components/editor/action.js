@@ -1,6 +1,3 @@
-const fs = require('fs')
-const { dialog } = require('electron').remote
-
 module.exports = [
   {
     id: 'tm-play',
