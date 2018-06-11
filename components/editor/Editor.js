@@ -13,6 +13,10 @@ const Mousetrap = require('mousetrap')
 // TODO: improve this pattern maybe. Cause: firing event inside textarea is blocked by mousetrap by default.
 Mousetrap.prototype.stopCallback = () => false
 
+const ToolbarHeight = 34
+const TabHeight = 34
+const StatusHeight = 24
+
 module.exports = {
   name: 'TmEditor',
 
@@ -20,36 +24,45 @@ module.exports = {
     draggable
   },
   data() {
-    const data = storage.load()
-    return {
-      ...data,
+    const storageState = storage.load()
+    const editorState = {
       row: 1,
-      column: 1,
-      extensions,
-      activeExtension: extensions[0],
-      draggingExtension: false,
-<<<<<<< HEAD
-      draggingLastY: 0,
-      draggingTab: false,
-=======
->>>>>>> mousetrap
+      column: 1
+    }
+    const tabState = {
       dragOptions: {
         animation: 150,
         ghostClass: 'drag-ghost'
       },
+      draggingTab: false
+    }
+    const extensionState = {
+      extensions,
+      activeExtension: extensions[0],
+      draggingExtension: false,
+      draggingLastY: 0
+    }
+    const contextMenuState = {
       menuShowed: {
         tabs: false,
         tab: false
       }
     }
+    return {
+      ...storageState,
+      ...editorState,
+      ...tabState,
+      ...extensionState,
+      ...contextMenuState
+    }
   },
 
   computed: {
     contentHeight() {
-      return String(this.height - 34 - 24
-        - (this.extensionShowed ? this.extensionHeight : 0)
-        - (this.toolbar ? 34 : 0)
-      ) + 'px'
+      return String(this.remainHeight - (this.extensionShowed ? this.extensionHeight : 0)) + 'px'
+    },
+    remainHeight() {
+      return this.height - TabHeight - StatusHeight - (this.toolbar ? ToolbarHeight : 0)
     },
     settings: () => global.user.state.Settings
   },
@@ -64,14 +77,14 @@ module.exports = {
     extensionShowed() {
       this.layout(300)
     },
-    'settings.minimap': function() {
+    'settings.minimap'() {
       if (this.editor) {
         this.editor.updateOptions({
           minimap: { enabled: this.settings.minimap }
         })
       }
     },
-    'settings.lineEnding': function() {
+    'settings.lineEnding'() {
       this.tabs.map(tab => this.refresh(tab))
     }
   },
@@ -105,27 +118,12 @@ module.exports = {
       if (this.draggingExtension) {
         this.layout()
         event.stopPropagation()
-        const remainHeight = this.height - 34 - 24 - (this.toolbar ? 34 : 0)
-        if (this.extensionHeight <= remainHeight || this.draggingLastY < event.clientY) {
+        if (this.extensionHeight <= this.remainHeight || this.draggingLastY < event.clientY) {
           this.extensionHeight += this.draggingLastY - event.clientY
           this.draggingLastY = event.clientY
         }
       }
     }, { passive: true })
-
-    this.$el.addEventListener('click', () => {
-      this.hideContextMenus()
-    })
-
-    this.$el.addEventListener('contextmenu', () => {
-      this.hideContextMenus()
-    })
-
-    this.$el.children[1].addEventListener('contextmenu', event => {
-      event.stopPropagation()
-      this.showTopContextMenu('tabs', event)
-      return false
-    })
 
     addEventListener('dragend', (e) => {
       this.layout()
@@ -221,9 +219,8 @@ module.exports = {
       })
 
       addEventListener('resize', () => {
-        const remainHeight = this.height - 34 - 24 - (this.toolbar ? 34 : 0)
-        if (this.extensionShowed && this.extensionHeight > remainHeight) {
-          this.extensionHeight = remainHeight
+        if (this.extensionShowed && this.extensionHeight > this.remainHeight) {
+          this.extensionHeight = this.remainHeight
         }
         this.layout(300)
       }, { passive: true })
@@ -242,14 +239,14 @@ module.exports = {
   
   props: ['width', 'height', 'left', 'top'],
   render: VueCompile(`<div class="tm-editor" :class="{'show-toolbar': toolbar}"
-  @dragover.stop.prevent @drop.stop.prevent="loadFileDropped">
+  @dragover.stop.prevent @drop.stop.prevent="loadFileDropped" @click="hideContextMenus" @contextmenu="hideContextMenus">
   <div class="toolbar">
     <i class="icon-volume-mute"/>
     <div class="volume-slider">
       <el-slider class="icon-volume-mute" v-model="current.volume" :show-tooltip="false"/>
     </div>
   </div>
-  <div class="header">
+  <div class="header" @contextmenu.stop="showTopContextMenu('tabs', $event)">
     <button class="toolbar-toggler" @click="toggleToolbar()"><i class="icon-control"/></button>
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions" @start="draggingTab=true" @end="draggingTab=false">
