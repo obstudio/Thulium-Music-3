@@ -10,6 +10,8 @@ const storage = require('./storage')
 const commands = require('./command')
 const keymap = require('./keymap.json')
 const Mousetrap = require('mousetrap')
+// TODO: improve this pattern maybe. Cause: firing event inside textarea is blocked by mousetrap by default.
+Mousetrap.prototype.stopCallback = () => false
 
 module.exports = {
   name: 'TmEditor',

@@ -97,7 +97,7 @@ module.exports = {
   },
 
   save(id) {
-    const tab = id ? this.current : this.tabs.find(tab => tab.id === id)
+    const tab = id ? this.tabs.find(tab => tab.id === id) : this.current
     if (!tab.changed) return
     if (tab.path) {
       tab.save()
@@ -111,7 +111,7 @@ module.exports = {
   },
 
   saveAs(id) {
-    const tab = id ? this.current : this.tabs.find(tab => tab.id === id)
+    const tab = id ? this.tabs.find(tab => tab.id === id) : this.current
     const firstLine = tab.model.getLineContent(1)
     let name
     if (firstLine !== '' && firstLine.startsWith('//')) {

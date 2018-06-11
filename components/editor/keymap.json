@@ -1,26 +1,26 @@
 [
     {
         "name": "openFile",
-        "bind": "Ctrl+O"
+        "bind": "ctrl+o"
     },
     {
         "name": "addTab",
-        "bind": "Ctrl+N"
+        "bind": "ctrl+n"
     },
     {
         "name": "closeTab",
-        "bind": "Ctrl+F4"
+        "bind": "ctrl+f1"
     },
     {
         "name": "save",
-        "bind": "Ctrl+S"
+        "bind": "ctrl+s"
     },
     {
         "name": "saveAs",
-        "bind": "Ctrl+Shift+S"
+        "bind": "ctrl+shift+s"
     },
     {
         "name": "toggleToolbar",
-        "bind": "Ctrl+M"
+        "bind": "ctrl+m"
     }
 ]
