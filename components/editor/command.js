@@ -27,6 +27,10 @@ module.exports = {
     }
   },
 
+  closeAllTabs() {
+    this.tabs = [ new TmTab() ]
+  },
+
   closeOtherTabs(id) {
     if (!id) id = this.current.id
     this.current = this.tabs.find(tab => tab.id === id)
@@ -84,11 +88,7 @@ module.exports = {
   openFile() {
     dialog.showOpenDialog(null, {
       title: this.$t('editor.open-file'),
-      properties: {
-        openFile: true,
-        openDirectory: false,
-        multiSelections: true
-      },
+      properties: 'multiSelections',
       filters: [
         { name: this.$t('editor.thulium'), extensions: ['tm', 'tml'] },
         { name: this.$t('editor.all-files'), extensions: ['*'] }

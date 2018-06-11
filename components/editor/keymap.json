@@ -1,26 +1,8 @@
-[
-    {
-        "name": "openFile",
-        "bind": "ctrl+o"
-    },
-    {
-        "name": "addTab",
-        "bind": "ctrl+n"
-    },
-    {
-        "name": "closeTab",
-        "bind": "ctrl+f1"
-    },
-    {
-        "name": "save",
-        "bind": "ctrl+s"
-    },
-    {
-        "name": "saveAs",
-        "bind": "ctrl+shift+s"
-    },
-    {
-        "name": "toggleMenubar",
-        "bind": "ctrl+m"
-    }
-]
+{
+    "openFile": "ctrl+o",
+    "addTab": "ctrl+n",
+    "closeTab": "ctrl+f1",
+    "save": "ctrl+s",
+    "saveAs": "ctrl+shift+s",
+    "toggleMenubar": "ctrl+m"
+}

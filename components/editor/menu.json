@@ -1,0 +1,92 @@
+[
+    {
+        "key": "file",
+        "bind": "F",
+        "content": [
+            {
+                "label": "New File",
+                "command": "addTab",
+                "arguments": [ false ]
+            },
+            {
+                "label": "Open File",
+                "command": "openFile"
+            },
+            {
+                "role": "separator"
+            },
+            {
+                "label": "Save",
+                "command": "save"
+            },
+            {
+                "label": "Save As",
+                "command": "saveAs"
+            },
+            {
+                "label": "Save All",
+                "command": "saveAll"
+            },
+            {
+                "role": "separator"
+            },
+            {
+                "label": "Close Tab",
+                "command": "closeTab"
+            },
+            {
+                "label": "Close Other Tabs",
+                "command": "closeOtherTabs"
+            },
+            {
+                "label": "close Tabs to the Right",
+                "command": "closeTabsToRight"
+            }
+        ]
+    },
+    {
+        "key": "edit",
+        "bind": "E",
+        "content": [
+            {
+                "label": "New File",
+                "command": "addTab",
+                "arguments": [ false ]
+            },
+            {
+                "label": "Open File",
+                "command": "openFile"
+            },
+            {
+                "role": "separator"
+            },
+            {
+                "label": "Save",
+                "command": "save"
+            },
+            {
+                "label": "Save As",
+                "command": "saveAs"
+            },
+            {
+                "label": "Save All",
+                "command": "saveAll"
+            },
+            {
+                "role": "separator"
+            },
+            {
+                "label": "Close Tab",
+                "command": "closeTab"
+            },
+            {
+                "label": "Close Other Tabs",
+                "command": "closeOtherTabs"
+            },
+            {
+                "label": "close Tabs to the Right",
+                "command": "closeTabsToRight"
+            }
+        ]
+    }
+]

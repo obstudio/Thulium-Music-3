@@ -8,6 +8,7 @@ global.define.amd = tempAmd
 const extensions = require('../../extensions/extension')
 const storage = require('./storage')
 const commands = require('./command')
+const menus = require('./menu.json')
 const keymap = require('./keymap.json')
 const Mousetrap = require('mousetrap')
 // TODO: improve this pattern maybe. Cause: firing event inside textarea is blocked by mousetrap by default.
@@ -23,9 +24,11 @@ module.exports = {
     const data = storage.load()
     return {
       ...data,
+      menus,
+      keymap,
+      extensions,
       row: 1,
       column: 1,
-      extensions,
       activeExtension: extensions[0],
       draggingExtension: false,
       draggingTab: false,
@@ -35,7 +38,8 @@ module.exports = {
       },
       menuShowed: {
         tabs: false,
-        tab: false
+        tab: false,
+        top: new Array(menus).fill(false)
       }
     }
   },
@@ -75,18 +79,19 @@ module.exports = {
   mounted() {
     this.menu = {
       tabs: this.$el.children[4].children[0],
-      tab: this.$el.children[4].children[1]
+      tab: this.$el.children[4].children[1],
+      top: this.$el.children[4].children[2].children[0]
     }
     this.actions = require('./action')
     for (const cmd in commands) {
       this[cmd] = commands[cmd]
     }
-    keymap.forEach(command => {
-      Mousetrap.bind(command.bind, () => {
-        this[command.name]()
+    for (const key in keymap) {
+      Mousetrap.bind(keymap[key], () => {
+        this[key]()
         return false
       })
-    })
+    }
 
     this.player = undefined
     this.tabs.forEach(tab => tab.checkChange())
@@ -119,7 +124,7 @@ module.exports = {
 
     this.$el.children[0].addEventListener('contextmenu', event => {
       event.stopPropagation()
-      this.showTopContextMenu('tabs', event)
+      this.showContextMenu('tabs', event)
       return false
     })
 
@@ -153,11 +158,15 @@ module.exports = {
 
     hideContextMenus() {
       for (const key in this.menuShowed) {
-        this.menuShowed[key] = false
+        if (this.menuShowed[key] instanceof Array) {
+          this.menuShowed[key] = new Array(this.menuShowed[key].length).fill(false)
+        } else {
+          this.menuShowed[key] = false
+        }
       }
     },
 
-    showTopContextMenu(key, event) {
+    showContextMenu(key, event) {
       const style = this.menu[key].style
       this.hideContextMenus()
       if (event.clientX + 200 > this.width) {
@@ -169,10 +178,33 @@ module.exports = {
       this.menuShowed[key] = true
     },
 
+    showMenu(index, event) {
+      console.log(this.menu.top.children[index])
+      if (this.menuShowed.top[index]) {
+        this.menuShowed.top[index] = false
+        return
+      }
+      const style = this.menu.top.children[index].style
+      this.hideContextMenus()
+      if (event.target.offsetLeft + 200 > this.width) {
+        style.left = event.target.offsetLeft + event.target.offsetWidth - 200 + 'px'
+      } else {
+        style.left = event.target.offsetLeft + 'px'
+      }
+      style.top = event.target.offsetTop + event.target.offsetHeight + 'px'
+      this.menuShowed.top[index] = true
+    },
+
     toggleTabMenu(id, event) {
       event.stopPropagation()
       this.menuTabId = id
-      this.showTopContextMenu('tab', event)
+      this.showContextMenu('tab', event)
+    },
+
+    executeCommand(command, args = []) {
+      this[command](...args.map(arg => {
+        if (arg === 'false') return false
+      }))
     },
 
     activate() {
@@ -241,8 +273,8 @@ module.exports = {
   @dragover.stop.prevent @drop.stop.prevent="loadFileDropped">
   <div class="header">
     <div class="menubar">
-      <div class="tm-top-menu" @click="addTab(false)">
-        File(<span>F</span>)
+      <div v-for="(menu, index) in menus" class="tm-top-menu" @click.stop="showMenu(index, $event)">
+        {{ menu.key }} (<span>{{ menu.bind }}</span>)
       </div>
     </div>
     <div class="tm-tabs">
@@ -337,6 +369,23 @@ module.exports = {
         </div>
       </ul>
     </transition>
+    <div>
+      <div v-for="(menu, index) in menus">
+        <transition name="el-zoom-in-top">
+          <ul v-show="menuShowed.top[index]" class="tm-menu">
+            <li v-for="item in menu.content">
+              <div v-if="item.role === 'separator'" class="menu-item disabled" @click.stop>
+                <a class="label separator"/>
+              </div>
+              <div v-else class="menu-item" @click="executeCommand(item.command)">
+                <a class="label">{{ item.label }}</a>
+                <span v-if="item.command in keymap" class="binding">{{ keymap[item.command] }}</span>
+              </div>
+            </li>
+          </ul>
+        </transition>
+      </div>
+    </div>
   </div>
 </div>`)
 }
