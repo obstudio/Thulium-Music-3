@@ -12,7 +12,7 @@ const Mousetrap = require('mousetrap')
 // TODO: improve this pattern maybe. Cause: firing event inside textarea is blocked by mousetrap by default.
 Mousetrap.prototype.stopCallback = () => false
 
-const ToolbarHeight = 34
+const MenubarHeight = 30
 const TabHeight = 34
 const StatusHeight = 24
 
@@ -39,7 +39,6 @@ module.exports = {
       extensions,
       activeExtension: extensions[0],
       draggingExtension: false,
-      draggingLastY: 0
     }
     const contextMenuState = {
       menuShowed: {
@@ -61,7 +60,7 @@ module.exports = {
       return String(this.remainHeight - (this.extensionShowed ? this.extensionHeight : 0)) + 'px'
     },
     remainHeight() {
-      return this.height - TabHeight - StatusHeight - (this.toolbar ? ToolbarHeight : 0)
+      return this.height - TabHeight - StatusHeight - (this.menubar ? MenubarHeight : 0)
     },
     settings: () => global.user.state.Settings
   },
@@ -70,7 +69,7 @@ module.exports = {
     width() {
       this.layout(300)
     },
-    toolbar() {
+    menubar() {
       this.layout(300)
     },
     extensionShowed() {
@@ -79,7 +78,7 @@ module.exports = {
     'settings.minimap'() {
       if (this.editor) {
         this.editor.updateOptions({
-          minimap: {enabled: this.settings.minimap}
+          minimap: { enabled: this.settings.minimap }
         })
       }
     },
@@ -90,8 +89,8 @@ module.exports = {
 
   mounted() {
     this.menu = {
-      tabs: this.$el.children[5].children[0],
-      tab: this.$el.children[5].children[1]
+      tabs: this.$el.children[4].children[0],
+      tab: this.$el.children[4].children[1]
     }
     keymap.forEach(command => {
       Mousetrap.bind(command.bind, () => {
@@ -142,14 +141,15 @@ module.exports = {
         }
       })
     },
+
     showEditor() {
-      const editor = window.monaco.editor.create(this.$el.children[2], {
+      const editor = window.monaco.editor.create(this.$el.children[1], {
         model: null,
         language: 'tm',
         theme: 'tm',
         folding: false,
         mouseWheelZoom: true,
-        minimap: {enabled: this.settings.minimap}
+        minimap: { enabled: this.settings.minimap }
       })
       this.editor = editor
       editor.vue = this
@@ -230,20 +230,17 @@ module.exports = {
   },
 
   props: ['width', 'height', 'left', 'top'],
-  render: VueCompile(
-`<div class="tm-editor" :class="{'show-toolbar': toolbar}"
+  render: VueCompile(`<div class="tm-editor" :class="{'show-menubar': menubar}"
   @dragover.stop.prevent @drop.stop.prevent="loadFileDropped" @click="hideContextMenus" @contextmenu="hideContextMenus">
-  <div class="toolbar">
-    <i class="icon-volume-mute"/>
-    <div class="volume-slider">
-      <el-slider class="icon-volume-mute" v-model="current.volume" :show-tooltip="false"/>
-    </div>
-  </div>
   <div class="header" @contextmenu.stop="showTopContextMenu('tabs', $event)">
-    <button class="toolbar-toggler" @click="toggleToolbar()"><i class="icon-control"/></button>
+    <div class="menubar">
+      <div class="tm-top-menu" @click="addTab(false)">
+        File(<span>F</span>)
+      </div>
+    </div>
     <div class="tm-tabs">
-      <draggable :list="tabs" :options="dragOptions" @start="draggingTab=true" @end="draggingTab=false">
-        <transition-group name="tm-tabs" :move-class="draggingTab?'dragged':''">
+      <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
+        <transition-group name="tm-tabs" :move-class="draggingTab ? 'dragged' : ''">
         <button v-for="tab in tabs" @mousedown="switchTabById(tab.id, $event)" :key="tab.id">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
@@ -257,6 +254,7 @@ module.exports = {
       </draggable>
       <button class="add-tag" @click="addTab(false)"><i class="icon-add"/></button>
     </div>
+    <button class="menubar-toggler" @click="toggleMenubar()"><i class="icon-control"/></button>
   </div>
   <div class="content" :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
   <div class="extension" :class="{ dragged: draggingExtension }" :style="{
@@ -287,9 +285,9 @@ module.exports = {
       <button @click="extensionShowed = !extensionShowed"><i class="el-icon-menu"/></button>
     </div>
   </div>
-  <div class="tm-editor-menu">
+  <div class="context-menu">
     <transition name="el-zoom-in-top">
-      <ul v-show="menuShowed.tabs">
+      <ul v-show="menuShowed.tabs" class="tm-menu">
         <div class="menu-item" @click="addTab(false)">
           <a class="label">New File</a>
           <span class="binding">Ctrl+N</span>
@@ -310,7 +308,7 @@ module.exports = {
       </ul>
     </transition>
     <transition name="el-zoom-in-top">
-      <ul v-show="menuShowed.tab">
+      <ul v-show="menuShowed.tab" class="tm-menu">
         <div class="menu-item" @click="save(menuTabId)">
           <a class="label">Save</a>
           <span class="binding">Ctrl+S</span>
@@ -333,6 +331,5 @@ module.exports = {
       </ul>
     </transition>
   </div>
-</div>`
-  )
+</div>`)
 }

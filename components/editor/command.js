@@ -4,11 +4,11 @@ const path = require('path')
 const fs = require('fs')
 
 module.exports = {
-  toggleToolbar() {
-    if (this.toolbar) {
-      this.toolbar = false
+  toggleMenubar() {
+    if (this.menubar) {
+      this.menubar = false
     } else {
-      this.toolbar = true
+      this.menubar = true
       const remainHeight = this.height - 34 - 24 - 34
       if (this.extensionHeight > remainHeight) {
         this.extensionHeight = remainHeight
@@ -84,9 +84,11 @@ module.exports = {
   openFile() {
     dialog.showOpenDialog(null, {
       title: this.$t('editor.open-file'),
-      openFile: true,
-      openDirectory: false,
-      multiSelections: true,
+      properties: {
+        openFile: true,
+        openDirectory: false,
+        multiSelections: true
+      },
       filters: [
         { name: this.$t('editor.thulium'), extensions: ['tm', 'tml'] },
         { name: this.$t('editor.all-files'), extensions: ['*'] }

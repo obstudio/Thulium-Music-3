@@ -4,7 +4,7 @@ const defaultState = {
   extensionHeight: 200,
   extensionShowed: false,
   extensionFull: false,
-  toolbar: false,
+  menubar: false,
   currentId: null
 }
 
@@ -45,7 +45,7 @@ module.exports = {
       extensionShowed: vm.extensionShowed,
       extensionFull: vm.extensionFull,
       currentId: vm.current.id,
-      toolbar: vm.toolbar
+      menubar: vm.menubar
     }))
   }
 }

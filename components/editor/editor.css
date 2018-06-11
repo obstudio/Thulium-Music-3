@@ -1,12 +1,62 @@
 .dragged { transition: none !important }
 
 .tm-editor > .header {
-    height: 34px;
-    top: 0px;
+    height: 68px;
+    top: -30px;
     left: 0px;
     width: 100%;
+    transition: 0.3s;
     position: absolute;
     overflow: hidden;
+}
+
+.tm-editor.show-menubar > .header { top: 0px }
+.tm-editor.show-menubar > .header > .menubar-toggler { top: 0px }
+
+.tm-editor > .header > .menubar-toggler {
+    padding: 9px 9px;
+    font-size: 16px;
+    top: 30px;
+    height: 34px;
+    transition: 0.3s;
+    right: 0px;
+    float: right;
+    position: absolute;
+}
+
+.tm-editor > .header > .menubar {
+    overflow: hidden;
+    height: 30px;
+    left: 0px;
+    width: 100%;
+    position: relative;
+    transition: 0.3s;
+    float: left;
+}
+
+.tm-top-menu {
+    width: 50px;
+    padding: 8px 12px 8px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1em;
+    font-size: 14px;
+}
+
+.menubar .el-slider__button-wrapper { z-index: auto }
+
+.menubar .volume-slider {
+    top: 0px;
+    width: 100px;
+    height: 34px;
+    left: 40px;
+    position: absolute;
+}
+
+.menubar i {
+    font-size: 12px;
+    padding: 12px;
+    vertical-align: -webkit-baseline-middle;
 }
 
 .tm-editor .header button {
@@ -18,7 +68,7 @@
     padding: 0px;
 }
 
-.tm-tabs { height: 100% }
+.tm-tabs { height: 34px }
 .tm-tabs div.title { font-family: source-san-sans-CN }
 
 .tm-tabs-enter, .tm-tabs-leave-to {
@@ -94,45 +144,6 @@ button:last-child .tm-tab { margin-right: 0px }
     height: 34px;
 }
 
-.tm-editor button.toolbar-toggler {
-    padding: 9px 9px;
-    font-size: 16px;
-    top: 0px;
-    height: 34px;
-    transition: 0.3s;
-    float: right;
-    position: relative;
-}
-
-.tm-editor > .toolbar {
-    overflow: hidden;
-    top: 0px;
-    height: 34px;
-    left: 0px;
-    width: 100%;
-    position: absolute;
-    transition: 0.3s;
-    float: left;
-}
-
-.tm-editor.show-toolbar > .toolbar { top: 34px }
-
-.toolbar .el-slider__button-wrapper { z-index: auto }
-
-.toolbar .volume-slider {
-    top: 0px;
-    width: 100px;
-    height: 34px;
-    left: 40px;
-    position: absolute;
-}
-
-.toolbar i {
-    font-size: 12px;
-    padding: 12px;
-    vertical-align: -webkit-baseline-middle;
-}
-
 .tm-editor > .content {
     overflow: hidden;
     top: 34px;
@@ -142,7 +153,7 @@ button:last-child .tm-tab { margin-right: 0px }
     transition: 0.3s;
 }
 
-.tm-editor.show-toolbar > .content { top: 68px }
+.tm-editor.show-menubar > .content { top: 64px }
 
 .monaco-editor .decorationsOverviewRuler { display: none }
 
@@ -244,14 +255,14 @@ button:last-child .tm-tab { margin-right: 0px }
 
 .drag-ghost { visibility: hidden }
 
-.tm-editor-menu {
+.tm-editor > .context-menu {
     width: 0;
     height: 0;
     top: 0;
     left: 0;
 }
 
-.tm-editor-menu ul {
+.tm-editor > .context-menu ul {
     z-index: 10;
 	min-width: 200px;
     padding: 0px;
@@ -263,16 +274,16 @@ button:last-child .tm-tab { margin-right: 0px }
 	list-style-type: none;
 }
 
-.tm-editor-menu .menu-item {
+.tm-menu .menu-item {
     padding: 0px;
     -webkit-user-select: none;
     display: -webkit-flex;
     cursor: pointer;
 }
 
-.tm-editor-menu .menu-item.disabled { cursor: default }
+.tm-menu .menu-item.disabled { cursor: default }
 
-.tm-editor-menu .menu-item .label {
+.tm-menu .menu-item .label {
 	flex: 1 1 auto;
 	text-decoration: none;
 	padding: 0.8em 1em;
@@ -284,7 +295,7 @@ button:last-child .tm-tab { margin-right: 0px }
 	margin: 0px;
 }
 
-.tm-editor-menu .menu-item .binding {
+.tm-menu .menu-item .binding {
     display: inline-block;
 	flex: 2 1 auto;
 	padding: 0.8em 1em;
@@ -293,7 +304,7 @@ button:last-child .tm-tab { margin-right: 0px }
 	text-align: right;
 }
 
-.tm-editor-menu .menu-item .separator {
+.tm-menu .menu-item .separator {
 	flex: 1 1 auto;
     display: block;
     margin: 0.3em 0.5em;
