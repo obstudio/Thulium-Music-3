@@ -32,7 +32,8 @@
             "redo": "Redo",
             "cut": "Cut",
             "copy": "Copy",
-            "paste": "Paste"
+            "paste": "Paste",
+            "toggle-menubar": [ "Show Menu Bar", "Hide Menu Bar" ]
         }
     },
     "homepage": {

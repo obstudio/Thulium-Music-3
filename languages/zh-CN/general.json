@@ -32,7 +32,8 @@
             "redo": "恢复",
             "cut": "剪切",
             "copy": "复制",
-            "paste": "粘贴"
+            "paste": "粘贴",
+            "toggle-menubar": [ "显示菜单栏", "隐藏菜单栏" ]
         }
     },
     "homepage": {

@@ -5,6 +5,7 @@
     { "method": "saveAs" },
     { "method": "saveAll" },
     { "method": "closeTab" },
+    { "method": "toggleMenubar", "context": "$menubar" },
     { "method": "closeOtherTabs", "key": "close-others" },
     { "method": "closeTabsToRight", "key": "close-right" },
     { "method": "executeTrigger", "arguments": "undo", "key": "undo" },

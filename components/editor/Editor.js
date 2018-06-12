@@ -7,7 +7,7 @@ global.define.amd = tempAmd
 
 const extensions = require('../../extensions/extension')
 const storage = require('./storage')
-const menus = require('./menu.json')
+const menus = require('./menu.json').menubar
 const keymap = require('./keymap.json')
 const Mousetrap = require('mousetrap')
 
@@ -142,6 +142,14 @@ module.exports = {
       return binding.replace(/[a-z]+/g, word => {
         return word.charAt(0).toUpperCase() + word.slice(1)
       })
+    },
+    getContextValue(key) {
+      if (commands[key].context) {
+        // FIXME: optimize context pattern
+        return this[commands[key].context.slice(1)] ? '.1' : '.0'
+      } else {
+        return ''
+      }
     },
     activate() {
       this.editor.setModel(this.current.model)
@@ -399,8 +407,15 @@ module.exports = {
               <div v-if="item === '@separator'" class="menu-item disabled" @click.stop>
                 <a class="label separator"/>
               </div>
-              <div v-else class="menu-item" @click="executeCommand(item)">
-                <a class="label">{{ $t('editor.menu.' + item) }}</a>
+              <div v-else-if="item === '@tabs'">
+                <li v-for="tab in tabs">
+                  <div class="menu-item" @click="switchTabById(tab.id, $event)">
+                    <a class="label">{{ tab.title }}</a>
+                  </div>
+                </li>
+              </div>
+              <div v-else-if="typeof item === 'string'" class="menu-item" @click="executeCommand(item)">
+                <a class="label">{{ $t('editor.menu.' + item + getContextValue(item)) }}</a>
                 <span v-if="item in keymap" class="binding">
                   {{ displayKeyBinding(keymap[item]) }}
                 </span>
