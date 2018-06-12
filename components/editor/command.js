@@ -46,22 +46,28 @@ module.exports = {
     }
   },
 
-  switchTabById(id, event) {
-    if (event.buttons !== 1 && event.buttons !== 0) return
-    this.current = this.tabs.find(tab => tab.id === id)
-    this.activate()
+  switchTabById(id) {
+    this.switchTabByIndex(this.tabs.findIndex(tab => tab.id === id))
   },
 
   switchTabByIndex(index) {
-    this.current = this.tabs[index]
+    const newTab = this.tabs[index]
+    if (this.current === newTab) return
+    this.current.viewState = this.editor.saveViewState()
+    this.current = newTab
     this.activate()
   },
 
   addTab(insert = true, data = {}) {
     const index = !insert ? this.tabs.length
       : this.tabs.findIndex(tab => tab.id === this.current.id) + 1
-    this.tabs.splice(index, 0, new TmTab(data))
+    const tab = new TmTab(data)
+    this.tabs.splice(index, 0, tab)
     this.switchTabByIndex(index)
+    tab.onModelChange((e) => {
+      this.refresh(tab, e)
+    })
+    tab.checkChange()
   },
 
   loadFile(filepath) {

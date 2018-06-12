@@ -92,11 +92,14 @@ module.exports = {
   },
 
   mounted() {
+    // properties added in mounted hook to prevent unnecessary reactivity
     this.menu = {
       tabs: this.$el.children[4].children[0],
       tab: this.$el.children[4].children[1],
       top: this.$el.children[4].children[2]
     }
+    this.player = undefined
+
     for (const key in keymap) {
       Mousetrap.bind(keymap[key], () => {
         this[key]()
@@ -104,7 +107,6 @@ module.exports = {
       })
     }
 
-    this.player = undefined
     this.tabs.forEach(tab => {
       tab.onModelChange((e) => {
         this.refresh(tab, e)
@@ -124,16 +126,15 @@ module.exports = {
     ...require('./command'),
     activate() {
       this.editor.setModel(this.current.model)
+      if (this.current.viewState) this.editor.restoreViewState(this.current.viewState)
       const position = this.editor.getPosition()
       this.row = position.lineNumber
       this.column = position.column
       global.user.state.Prefix.editor = this.current.title + ' - '
       this.layout()
     },
-    refresh(tab) {
-      tab.value = tab.model.getValue(
-        global.user.state.Settings.lineEnding === 'LF' ? 1 : 2
-      )
+    refresh(tab, event) {
+      tab.latestVersionId = event.versionId
       tab.checkChange()
     },
     layout(time = 0) {
@@ -176,7 +177,7 @@ module.exports = {
         this.column = event.position.column
       })
       editor.onDidChangeModel(() => {
-        editor.focus()
+        this.$nextTick(() => editor.focus())
       })
     },
     registerGlobalEvents() {
@@ -216,7 +217,6 @@ module.exports = {
       }
     },
     toggleTabMenu(id, event) {
-      event.stopPropagation()
       this.menuTabId = id
       this.showContextMenu('tab', event)
     },
@@ -277,7 +277,7 @@ module.exports = {
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
         <transition-group name="tm-tabs" :move-class="draggingTab ? 'dragged' : ''">
-        <button v-for="tab in tabs" @mousedown="switchTabById(tab.id, $event)" :key="tab.id">
+        <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
             <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
