@@ -13,8 +13,8 @@ const Mousetrap = require('mousetrap')
 // TODO: improve this pattern maybe. Cause: firing event inside textarea is blocked by mousetrap by default.
 Mousetrap.prototype.stopCallback = () => false
 
-const MenubarHeight = 30
-const TabHeight = 34
+const HalfTitleHeight = 34
+const FullTitleHeight = 60
 const StatusHeight = 24
 
 module.exports = {
@@ -41,7 +41,7 @@ module.exports = {
       activeExtension: extensions[0],
       draggingExtension: false,
     }
-    const contextMenuState = {
+    const menuState = {
       menus,
       menuShowed: {
         tabs: false,
@@ -54,7 +54,7 @@ module.exports = {
       ...editorState,
       ...tabState,
       ...extensionState,
-      ...contextMenuState,
+      ...menuState,
       keymap
     }
   },
@@ -64,7 +64,7 @@ module.exports = {
       return String(this.remainHeight - (this.extensionShowed ? this.extensionHeight : 0)) + 'px'
     },
     remainHeight() {
-      return this.height - TabHeight - StatusHeight - (this.menubar ? MenubarHeight : 0)
+      return this.height - StatusHeight - (this.menubar ? FullTitleHeight : HalfTitleHeight)
     },
     settings: () => global.user.state.Settings
   },
@@ -122,7 +122,6 @@ module.exports = {
   methods: {
     // commands
     ...require('./command'),
-
     activate() {
       this.editor.setModel(this.current.model)
       const position = this.editor.getPosition()
@@ -147,9 +146,16 @@ module.exports = {
         }
       })
     },
+    executeEditorAction(id) {
+      this.editor.getAction('editor.action.' + id).run(this.editor)
+    },
     executeCommand(command, args = []) {
       this[command](...args.map(arg => {
-        if (arg === 'false') return false
+        if (typeof arg === 'string' && arg.startsWith('$')) {
+          return this[arg.slice(1)]
+        } else {
+          return arg
+        }
       }))
     },
     showEditor() {
@@ -242,7 +248,6 @@ module.exports = {
       this.menuShowed[key] = true
     },
     showMenu(index, event) {
-      console.log(this.menu.top.children[index])
       if (this.menuShowed.top[index]) {
         this.menuShowed.top.splice(index, 1, false)
         return
@@ -264,7 +269,8 @@ module.exports = {
   @dragover.stop.prevent @drop.stop.prevent="loadFileDropped" @click="hideContextMenus" @contextmenu="hideContextMenus">
   <div class="header" @contextmenu.stop="showContextMenu('tabs', $event)">
     <div class="menubar">
-      <div v-for="(menu, index) in menus" class="tm-top-menu" @click.stop="showMenu(index, $event)">
+      <div v-for="(menu, index) in menus" class="tm-top-menu"
+        @contextmenu.stop @click.stop="showMenu(index, $event)">
         {{ menu.key }} (<span>{{ menu.bind }}</span>)
       </div>
     </div>

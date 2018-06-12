@@ -88,7 +88,7 @@ module.exports = {
   openFile() {
     dialog.showOpenDialog(null, {
       title: this.$t('editor.open-file'),
-      properties: 'multiSelections',
+      properties: ['openFile', 'multiSelections'],
       filters: [
         { name: this.$t('editor.thulium'), extensions: ['tm', 'tml'] },
         { name: this.$t('editor.all-files'), extensions: ['*'] }

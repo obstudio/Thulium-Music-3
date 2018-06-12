@@ -1,8 +1,8 @@
 .dragged { transition: none !important }
 
 .tm-editor > .header {
-    height: 68px;
-    top: -30px;
+    height: 60px;
+    top: -26px;
     left: 0px;
     width: 100%;
     transition: 0.3s;
@@ -16,7 +16,7 @@
 .tm-editor > .header > .menubar-toggler {
     padding: 9px 9px;
     font-size: 16px;
-    top: 30px;
+    top: 26px;
     height: 34px;
     transition: 0.3s;
     right: 0px;
@@ -38,8 +38,8 @@
 .tm-editor.show-menubar > .header > .menubar { visibility: visible }
 
 .tm-top-menu {
-    width: 50px;
-    padding: 4px 12px 4px;
+    vertical-align: -2px;
+    padding: 8px 12px 8px;
     cursor: pointer;
     user-select: none;
     text-align: center;
@@ -73,7 +73,7 @@
     padding: 0px;
 }
 
-.tm-tabs { height: 34px }
+.tm-tabs { height: 30px }
 .tm-tabs div.title { font-family: source-san-sans-CN }
 
 .tm-tabs-enter, .tm-tabs-leave-to {
@@ -85,7 +85,7 @@
 }
 
 .tm-tab {
-    height: 34px;
+    height: 30px;
     top: 0px;
     padding: 0px;
     margin: 0px -4px;
@@ -104,7 +104,7 @@ button:last-child .tm-tab { margin-right: 0px }
     font-size: 12px;
     text-align: center;
     transition: 0.3s;
-    margin-top: 4px;
+    margin-top: 0px;
 }
 
 .tm-tab.changed > div.title,
@@ -117,7 +117,7 @@ button:last-child .tm-tab { margin-right: 0px }
 .tm-tab > i {
     display: none;
     float: right;
-    padding: 15px 22px 11px 0px;
+    padding: 11px 22px 11px 0px;
     text-align: center;
     font-size: 8px;
     transition: 0.3s;
@@ -143,10 +143,10 @@ button:last-child .tm-tab { margin-right: 0px }
 .tm-tab > div.right-border { right: 0px; border-left-width: 15px }
 
 .tm-editor button.add-tag {
-    padding: 14px 12px 10px 12px;
+    padding: 10px 12px;
     font-size: 10px;
     transition: 0.3s;
-    height: 34px;
+    height: 30px;
 }
 
 .tm-editor > .content {
@@ -158,7 +158,7 @@ button:last-child .tm-tab { margin-right: 0px }
     transition: 0.3s;
 }
 
-.tm-editor.show-menubar > .content { top: 64px }
+.tm-editor.show-menubar > .content { top: 60px }
 
 .monaco-editor .decorationsOverviewRuler { display: none }
 
