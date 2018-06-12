@@ -1,8 +1,13 @@
 {
-    "openFile": "ctrl+o",
-    "addTab": "ctrl+n",
-    "closeTab": "ctrl+f1",
+    "open-file": "ctrl+o",
+    "add-tab": "ctrl+n",
+    "close-tab": "ctrl+f4",
     "save": "ctrl+s",
-    "saveAs": "ctrl+shift+s",
-    "toggleMenubar": "ctrl+m"
+    "save-as": "ctrl+shift+s",
+    "toggle-menubar": "ctrl+m",
+    "undo": "!ctrl+z",
+    "redo": "!ctrl+y",
+    "cut": "!ctrl+x",
+    "copy": "!ctrl+c",
+    "paste": "!ctrl+v"
 }

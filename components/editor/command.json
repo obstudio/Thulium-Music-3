@@ -1,0 +1,15 @@
+[
+    { "method": "addTab", "arguments": false },
+    { "method": "openFile" },
+    { "method": "save" },
+    { "method": "saveAs" },
+    { "method": "saveAll" },
+    { "method": "closeTab" },
+    { "method": "closeOtherTabs", "key": "close-others" },
+    { "method": "closeTabsToRight", "key": "close-right" },
+    { "method": "executeTrigger", "arguments": "undo", "key": "undo" },
+    { "method": "executeTrigger", "arguments": "redo", "key": "redo" },
+    { "method": "executeAction", "arguments": "clipboardCutAction", "key": "cut" },
+    { "method": "executeAction", "arguments": "clipboardCopyAction", "key": "copy" },
+    { "method": "executeAction", "arguments": "clipboardPasteAction", "key": "paste" }
+]

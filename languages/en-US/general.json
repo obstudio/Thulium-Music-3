@@ -18,7 +18,22 @@
         "section": "Section",
         "thulium": "Thulium Music",
         "title": "Editor",
-        "track": "Track"
+        "track": "Track",
+        "menu": {
+            "add-tab": "New Tab",
+            "open-file": "Open ...",
+            "save": "Save",
+            "save-as": "Save As ...",
+            "save-all": "Save All",
+            "close-tab": "Close Tab",
+            "close-others": "Close Other Tabs",
+            "close-right": "Close Tabs to the Right",
+            "undo": "Undo",
+            "redo": "Redo",
+            "cut": "Cut",
+            "copy": "Copy",
+            "paste": "Paste"
+        }
     },
     "homepage": {
         "title": "Thulium Music"

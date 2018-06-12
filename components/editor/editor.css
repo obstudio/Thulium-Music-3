@@ -105,6 +105,7 @@ button:last-child .tm-tab { margin-right: 0px }
     text-align: center;
     transition: 0.3s;
     margin-top: 0px;
+    user-select: none;
 }
 
 .tm-tab.changed > div.title,

@@ -3,66 +3,28 @@
         "key": "file",
         "bind": "F",
         "content": [
-            {
-                "label": "New File",
-                "command": "addTab",
-                "arguments": [ false ]
-            },
-            {
-                "label": "Open File",
-                "command": "openFile"
-            },
-            {
-                "role": "separator"
-            },
-            {
-                "label": "Save",
-                "command": "save"
-            },
-            {
-                "label": "Save As",
-                "command": "saveAs"
-            },
-            {
-                "label": "Save All",
-                "command": "saveAll"
-            },
-            {
-                "role": "separator"
-            },
-            {
-                "label": "Close Tab",
-                "command": "closeTab"
-            },
-            {
-                "label": "Close Other Tabs",
-                "command": "closeOtherTabs"
-            },
-            {
-                "label": "close Tabs to the Right",
-                "command": "closeTabsToRight"
-            }
+            "add-tab",
+            "open-file",
+            "@separator",
+            "save",
+            "save-as",
+            "save-all",
+            "@separator",
+            "close-tab",
+            "close-others",
+            "close-right"
         ]
     },
     {
         "key": "edit",
         "bind": "E",
         "content": [
-            {
-                "label": "Cut",
-                "command": "executeEditorAction",
-                "arguments": [ "clipboardCutAction" ]
-            },
-            {
-                "label": "Copy",
-                "command": "executeEditorAction",
-                "arguments": [ "clipboardCopyAction" ]
-            },
-            {
-                "label": "Paste",
-                "command": "executeEditorAction",
-                "arguments": [ "clipboardPasteAction" ]
-            }
+            "undo",
+            "redo",
+            "@separator",
+            "cut",
+            "copy",
+            "paste"
         ]
     }
 ]

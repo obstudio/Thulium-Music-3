@@ -10,12 +10,24 @@ const storage = require('./storage')
 const menus = require('./menu.json')
 const keymap = require('./keymap.json')
 const Mousetrap = require('mousetrap')
-// TODO: improve this pattern maybe. Cause: firing event inside textarea is blocked by mousetrap by default.
+
+// TODO: improve this pattern maybe. 
+// Cause: firing event inside textarea is blocked by mousetrap by default.
 Mousetrap.prototype.stopCallback = () => false
 
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
 const StatusHeight = 24
+const commands = {}
+
+function toKebab(camel) {
+  return camel.replace(/[A-Z]/g, char => '-' + char.toLowerCase())
+}
+
+for (const command of require('./command.json')) {
+  const key = command.key ? command.key : toKebab(command.method)
+  commands[key] = command
+}
 
 module.exports = {
   name: 'TmEditor',
@@ -101,8 +113,9 @@ module.exports = {
     this.player = undefined
 
     for (const key in keymap) {
+      if (!(key in commands) || keymap[key].startsWith('!')) continue
       Mousetrap.bind(keymap[key], () => {
-        this[key]()
+        this.executeCommand(key)
         return false
       })
     }
@@ -123,7 +136,13 @@ module.exports = {
 
   methods: {
     // commands
-    ...require('./command'),
+    ...require('./method'),
+    displayKeyBinding(binding) {
+      if (binding.charAt(0) === '!') binding = binding.slice(1)
+      return binding.replace(/[a-z]+/g, word => {
+        return word.charAt(0).toUpperCase() + word.slice(1)
+      })
+    },
     activate() {
       this.editor.setModel(this.current.model)
       if (this.current.viewState) this.editor.restoreViewState(this.current.viewState)
@@ -147,11 +166,17 @@ module.exports = {
         }
       })
     },
-    executeEditorAction(id) {
+    executeAction(id) {
       this.editor.getAction('editor.action.' + id).run(this.editor)
     },
-    executeCommand(command, args = []) {
-      this[command](...args.map(arg => {
+    executeTrigger(id) {
+      this.editor.trigger(id, id)
+    },
+    executeCommand(key) {
+      let args = commands[key].arguments
+      if (args === undefined) args = []
+      if (!(args instanceof Array)) args = [args]
+      this[commands[key].method](...args.map(arg => {
         if (typeof arg === 'string' && arg.startsWith('$')) {
           return this[arg.slice(1)]
         } else {
@@ -224,7 +249,7 @@ module.exports = {
       this.draggingExtension = true
       this.draggingLastY = event.clientY
     },
-    stopDrag(event) {
+    stopDrag() {
       this.draggingExtension = false
     },
     hideContextMenus() {
@@ -371,12 +396,14 @@ module.exports = {
         <transition name="el-zoom-in-top">
           <ul v-show="menuShowed.top[index]" class="tm-menu">
             <li v-for="item in menu.content">
-              <div v-if="item.role === 'separator'" class="menu-item disabled" @click.stop>
+              <div v-if="item === '@separator'" class="menu-item disabled" @click.stop>
                 <a class="label separator"/>
               </div>
-              <div v-else class="menu-item" @click="executeCommand(item.command)">
-                <a class="label">{{ item.label }}</a>
-                <span v-if="item.command in keymap" class="binding">{{ keymap[item.command] }}</span>
+              <div v-else class="menu-item" @click="executeCommand(item)">
+                <a class="label">{{ $t('editor.menu.' + item) }}</a>
+                <span v-if="item in keymap" class="binding">
+                  {{ displayKeyBinding(keymap[item]) }}
+                </span>
               </div>
             </li>
           </ul>
