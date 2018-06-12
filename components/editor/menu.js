@@ -30,7 +30,7 @@ module.exports = {
   inject: ['tabs', 'switchTabById', 'executeCommand'],
   render: VueCompile(`<transition name="el-zoom-in-top">
     <ul v-show="show" class="tm-menu">
-      <li v-for="item in menu.content">
+      <li v-for="item in menu">
         <div v-if="item === '@separator'" class="menu-item disabled" @click.stop>
           <a class="separator"/>
         </div>

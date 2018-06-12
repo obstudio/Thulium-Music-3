@@ -50,7 +50,7 @@ module.exports = {
     const menuState = {
       menus,
       menuShowed: {
-        tabs: false,
+        header: false,
         tab: false,
         top: new Array(menus.menubar.length).fill(false)
       }
@@ -269,7 +269,7 @@ module.exports = {
     <div class="menubar">
       <div v-for="(menu, index) in menus.menubar" class="tm-top-menu"
         @contextmenu.stop @click.stop="showMenu(index, $event)">
-        {{ menu.key }} (<span>{{ menu.bind }}</span>)
+        {{ $t('editor.menu.' + menu.key) }} (<span>{{ menu.bind }}</span>)
       </div>
     </div>
     <div class="tm-tabs">
@@ -320,53 +320,11 @@ module.exports = {
     </div>
   </div>
   <div class="context-menu">
-    <transition name="el-zoom-in-top">
-      <ul v-show="menuShowed.tabs" class="tm-menu">
-        <div class="menu-item" @click="addTab(false)">
-          <a class="label">New File</a>
-          <span class="binding">Ctrl+N</span>
-        </div>
-        <div class="menu-item" @click="openFile()">
-          <a class="label">Open File</a>
-          <span class="binding">Ctrl+O</span>
-        </div>
-        <div class="menu-item" @click="saveAll()">
-          <a class="label">Save All Files</a>
-        </div>
-        <div class="menu-item disabled" @click.stop><a class="label separator"/></div>
-        <li v-for="tab in tabs">
-          <div class="menu-item" @click="switchTabById(tab.id, $event)">
-            <a class="label">{{ tab.title }}</a>
-          </div>
-        </li>
-      </ul>
-    </transition>
-    <transition name="el-zoom-in-top">
-      <ul v-show="menuShowed.tab" class="tm-menu">
-        <div class="menu-item" @click="save(menuTabId)">
-          <a class="label">Save</a>
-          <span class="binding">Ctrl+S</span>
-        </div>
-        <div class="menu-item" @click="saveAs(menuTabId)">
-          <a class="label">Save As</a>
-          <span class="binding">Ctrl+Shift+S</span>
-        </div>
-        <div class="menu-item disabled" @click.stop><a class="label separator"/></div>
-        <div class="menu-item" @click="closeTab(menuTabId)">
-          <a class="label">Close</a>
-          <span class="binding">Ctrl+F4</span>
-        </div>
-        <div class="menu-item" @click="closeOtherTabs(menuTabId)">
-          <a class="label">Close Other Tabs</a>
-        </div>
-        <div class="menu-item" @click="closeTabsToRight(menuTabId)">
-          <a class="label">Close Tabs to the Right</a>
-        </div>
-      </ul>
-    </transition>
+    <tm-menu :menu="menus.header" :show="menuShowed.header"/>
+    <tm-menu :menu="menus.tab" :show="menuShowed.tab"/>
     <div>
       <div v-for="(menu, index) in menus.menubar">
-        <tm-menu :menu="menu" :show="menuShowed.top[index]"/>
+        <tm-menu :menu="menu.content" :show="menuShowed.top[index]"/>
       </div>
     </div>
   </div>

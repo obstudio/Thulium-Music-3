@@ -3,6 +3,8 @@
         "add-tab",
         "open-file",
         "@separator",
+        "toggle-menubar",
+        "@separator",
         "@tabs"
     ],
     "tab": [

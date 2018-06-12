@@ -20,6 +20,9 @@
         "title": "Editor",
         "track": "Track",
         "menu": {
+            "file": "File",
+            "edit": "Edit",
+            "view": "View",
             "add-tab": "New Tab",
             "open-file": "Open ...",
             "save": "Save",

@@ -20,6 +20,9 @@
         "title": "编辑器",
         "track": "音轨",
         "menu": {
+            "file": "文件",
+            "edit": "编辑",
+            "view": "查看",
             "add-tab": "新建",
             "open-file": "打开 ...",
             "save": "保存",
