@@ -6,34 +6,28 @@ const draggable = require('vuedraggable')
 global.define.amd = tempAmd
 
 const extensions = require('../../extensions/extension')
+const TmCommand = require('./command')
+const TmMenu = require('./menu')
 const storage = require('./storage')
-const menus = require('./menu.json').menubar
-const keymap = require('./keymap.json')
-const Mousetrap = require('mousetrap')
-
-// TODO: improve this pattern maybe. 
-// Cause: firing event inside textarea is blocked by mousetrap by default.
-Mousetrap.prototype.stopCallback = () => false
+const menus = require('./menu.json')
 
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
 const StatusHeight = 24
-const commands = {}
-
-function toKebab(camel) {
-  return camel.replace(/[A-Z]/g, char => '-' + char.toLowerCase())
-}
-
-for (const command of require('./command.json')) {
-  const key = command.key ? command.key : toKebab(command.method)
-  commands[key] = command
-}
 
 module.exports = {
   name: 'TmEditor',
 
   components: {
+    TmMenu,
     draggable
+  },
+  provide() {
+    return {
+      tabs: this.tabs,
+      switchTabById: this.switchTabById,
+      executeCommand: this.executeCommand
+    }
   },
   data() {
     const storageState = storage.load()
@@ -58,7 +52,7 @@ module.exports = {
       menuShowed: {
         tabs: false,
         tab: false,
-        top: new Array(menus.length).fill(false)
+        top: new Array(menus.menubar.length).fill(false)
       }
     }
     return {
@@ -66,8 +60,7 @@ module.exports = {
       ...editorState,
       ...tabState,
       ...extensionState,
-      ...menuState,
-      keymap
+      ...menuState
     }
   },
 
@@ -112,13 +105,7 @@ module.exports = {
     }
     this.player = undefined
 
-    for (const key in keymap) {
-      if (!(key in commands) || keymap[key].startsWith('!')) continue
-      Mousetrap.bind(keymap[key], () => {
-        this.executeCommand(key)
-        return false
-      })
-    }
+    TmCommand.onMount()
 
     this.tabs.forEach(tab => {
       tab.onModelChange((e) => {
@@ -137,20 +124,6 @@ module.exports = {
   methods: {
     // commands
     ...require('./method'),
-    displayKeyBinding(binding) {
-      if (binding.charAt(0) === '!') binding = binding.slice(1)
-      return binding.replace(/[a-z]+/g, word => {
-        return word.charAt(0).toUpperCase() + word.slice(1)
-      })
-    },
-    getContextValue(key) {
-      if (commands[key].context) {
-        // FIXME: optimize context pattern
-        return this[commands[key].context.slice(1)] ? '.1' : '.0'
-      } else {
-        return ''
-      }
-    },
     activate() {
       this.editor.setModel(this.current.model)
       if (this.current.viewState) this.editor.restoreViewState(this.current.viewState)
@@ -181,16 +154,7 @@ module.exports = {
       this.editor.trigger(id, id)
     },
     executeCommand(key) {
-      let args = commands[key].arguments
-      if (args === undefined) args = []
-      if (!(args instanceof Array)) args = [args]
-      this[commands[key].method](...args.map(arg => {
-        if (typeof arg === 'string' && arg.startsWith('$')) {
-          return this[arg.slice(1)]
-        } else {
-          return arg
-        }
-      }))
+      TmCommand.executeCommand.call(this, key)
     },
     showEditor() {
       const editor = window.monaco.editor.create(this.$el.children[1], {
@@ -299,10 +263,11 @@ module.exports = {
 
   props: ['width', 'height', 'left', 'top'],
   render: VueCompile(`<div class="tm-editor" :class="{'show-menubar': menubar}"
-  @dragover.stop.prevent @drop.stop.prevent="loadFileDropped" @click="hideContextMenus" @contextmenu="hideContextMenus">
+    @dragover.stop.prevent @drop.stop.prevent="loadFileDropped"
+    @click="hideContextMenus" @contextmenu="hideContextMenus">
   <div class="header" @contextmenu.stop="showContextMenu('tabs', $event)">
     <div class="menubar">
-      <div v-for="(menu, index) in menus" class="tm-top-menu"
+      <div v-for="(menu, index) in menus.menubar" class="tm-top-menu"
         @contextmenu.stop @click.stop="showMenu(index, $event)">
         {{ menu.key }} (<span>{{ menu.bind }}</span>)
       </div>
@@ -400,29 +365,8 @@ module.exports = {
       </ul>
     </transition>
     <div>
-      <div v-for="(menu, index) in menus">
-        <transition name="el-zoom-in-top">
-          <ul v-show="menuShowed.top[index]" class="tm-menu">
-            <li v-for="item in menu.content">
-              <div v-if="item === '@separator'" class="menu-item disabled" @click.stop>
-                <a class="label separator"/>
-              </div>
-              <div v-else-if="item === '@tabs'">
-                <li v-for="tab in tabs">
-                  <div class="menu-item" @click="switchTabById(tab.id, $event)">
-                    <a class="label">{{ tab.title }}</a>
-                  </div>
-                </li>
-              </div>
-              <div v-else-if="typeof item === 'string'" class="menu-item" @click="executeCommand(item)">
-                <a class="label">{{ $t('editor.menu.' + item + getContextValue(item)) }}</a>
-                <span v-if="item in keymap" class="binding">
-                  {{ displayKeyBinding(keymap[item]) }}
-                </span>
-              </div>
-            </li>
-          </ul>
-        </transition>
+      <div v-for="(menu, index) in menus.menubar">
+        <tm-menu :menu="menu" :show="menuShowed.top[index]"/>
       </div>
     </div>
   </div>
