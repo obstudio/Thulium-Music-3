@@ -46,14 +46,15 @@ module.exports = {
     }
   },
 
-  switchTabById(id, event) {
-    if (event.buttons !== 1 && event.buttons !== 0) return
-    this.current = this.tabs.find(tab => tab.id === id)
-    this.activate()
+  switchTabById(id) {
+    this.switchTabByIndex(this.tabs.findIndex(tab => tab.id === id))
   },
 
   switchTabByIndex(index) {
-    this.current = this.tabs[index]
+    const newTab = this.tabs[index]
+    if (this.current === newTab) return
+    this.current.viewState = this.editor.saveViewState()
+    this.current = newTab
     this.activate()
   },
 
