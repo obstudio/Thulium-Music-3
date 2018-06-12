@@ -29,18 +29,23 @@
     height: 30px;
     left: 0px;
     width: 100%;
+    visibility: hidden;
     position: relative;
     transition: 0.3s;
     float: left;
 }
 
+.tm-editor.show-menubar > .header > .menubar { visibility: visible }
+
 .tm-top-menu {
     width: 50px;
-    padding: 8px 12px 8px;
+    padding: 4px 12px 4px;
     cursor: pointer;
+    user-select: none;
     text-align: center;
     line-height: 1em;
     font-size: 14px;
+    display: inline;
 }
 
 .menubar .el-slider__button-wrapper { z-index: auto }
