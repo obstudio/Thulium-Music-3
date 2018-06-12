@@ -39,7 +39,7 @@ module.exports = {
       menuShowed: {
         tabs: false,
         tab: false,
-        top: new Array(menus).fill(false)
+        top: new Array(menus.length).fill(false)
       }
     }
   },
@@ -80,7 +80,7 @@ module.exports = {
     this.menu = {
       tabs: this.$el.children[4].children[0],
       tab: this.$el.children[4].children[1],
-      top: this.$el.children[4].children[2].children[0]
+      top: this.$el.children[4].children[2]
     }
     this.actions = require('./action')
     for (const cmd in commands) {
@@ -181,10 +181,10 @@ module.exports = {
     showMenu(index, event) {
       console.log(this.menu.top.children[index])
       if (this.menuShowed.top[index]) {
-        this.menuShowed.top[index] = false
+        this.menuShowed.top.splice(index, 1, false)
         return
       }
-      const style = this.menu.top.children[index].style
+      const style = this.menu.top.children[index].children[0].style
       this.hideContextMenus()
       if (event.target.offsetLeft + 200 > this.width) {
         style.left = event.target.offsetLeft + event.target.offsetWidth - 200 + 'px'
