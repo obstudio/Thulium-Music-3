@@ -262,7 +262,7 @@ module.exports = {
   props: ['width', 'height', 'left', 'top'],
   render: VueCompile(`<div class="tm-editor" :class="{'show-menubar': menubar}"
   @dragover.stop.prevent @drop.stop.prevent="loadFileDropped" @click="hideContextMenus" @contextmenu="hideContextMenus">
-  <div class="header" @contextmenu.stop="showTopContextMenu('tabs', $event)">
+  <div class="header" @contextmenu.stop="showContextMenu('tabs', $event)">
     <div class="menubar">
       <div v-for="(menu, index) in menus" class="tm-top-menu" @click.stop="showMenu(index, $event)">
         {{ menu.key }} (<span>{{ menu.bind }}</span>)
