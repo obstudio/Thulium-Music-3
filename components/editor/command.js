@@ -61,8 +61,13 @@ module.exports = {
   addTab(insert = true, data = {}) {
     const index = !insert ? this.tabs.length
       : this.tabs.findIndex(tab => tab.id === this.current.id) + 1
-    this.tabs.splice(index, 0, new TmTab(data))
+    const tab = new TmTab(data)
+    this.tabs.splice(index, 0, tab)
     this.switchTabByIndex(index)
+    tab.onModelChange((e) => {
+      this.refresh(tab, e)
+    })
+    tab.checkChange()
   },
 
   loadFile(filepath) {

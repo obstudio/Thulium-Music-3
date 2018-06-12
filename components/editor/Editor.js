@@ -134,10 +134,8 @@ module.exports = {
       global.user.state.Prefix.editor = this.current.title + ' - '
       this.layout()
     },
-    refresh(tab) {
-      tab.value = tab.model.getValue(
-        global.user.state.Settings.lineEnding === 'LF' ? 1 : 2
-      )
+    refresh(tab, event) {
+      tab.latestVersionId = event.versionId
       tab.checkChange()
     },
     layout(time = 0) {
