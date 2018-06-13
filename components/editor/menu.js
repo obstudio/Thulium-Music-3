@@ -2,9 +2,6 @@ const { keymap, commands } = require('./command')
 
 module.exports = {
   name: 'TmMenu',
-  data() {
-    return { keymap, commands }
-  },
 
   methods: {
     displayKeyBinding(key) {
@@ -26,7 +23,7 @@ module.exports = {
   },
 
   props: ['menu', 'show'],
-  inject: ['tabs', 'executeMethod', 'executeCommand'],
+  inject: ['tabs', 'execute', 'executeCommand'],
   render: VueCompile(`<transition name="el-zoom-in-top">
     <ul v-show="show" class="tm-menu">
       <li v-for="item in menu">
@@ -35,12 +32,12 @@ module.exports = {
         </div>
         <div v-else-if="item === '@tabs'">
           <li v-for="tab in tabs">
-            <div class="menu-item" @click="executeMethod('switchTabById', tab.id)">
+            <div class="menu-item" @click="execute('switchTabById', tab.id)">
               <a class="label">{{ tab.title }}</a>
             </div>
           </li>
         </div>
-        <div v-else-if="typeof item === 'string'" class="menu-item" @click="executeCommand(item)">
+        <div v-else class="menu-item" @click="executeCommand(item)">
           <a class="label">{{ $t('editor.menu.' + item + getContextValue(item)) }}</a>
           <span class="binding">{{ displayKeyBinding(item) }}</span>
         </div>

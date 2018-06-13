@@ -27,7 +27,9 @@ module.exports = {
       tabs: this.tabs,
       contextId: this.contextId,
       executeCommand: this.executeCommand,
-      executeMethod: this.executeMethod
+      execute(method, ...args) {
+        if (method in this) this[method](...args)
+      }
     }
   },
   data() {
@@ -54,11 +56,11 @@ module.exports = {
         header: false,
         tab: false,
         top: new Array(menus.menubar.length).fill(false)
-      }
+      },
+      altKey: false,
+      contextId: null
     }
-    console.log(storageState)
     return {
-      contextId: null,
       ...storageState,
       ...editorState,
       ...tabState,
@@ -159,9 +161,6 @@ module.exports = {
     },
     executeCommand(key) {
       TmCommand.executeCommand.call(this, key)
-    },
-    executeMethod(method, ...args) {
-      if (method in this) this[method](...args)
     },
     showEditor() {
       const editor = window.monaco.editor.create(this.$el.children[1], {

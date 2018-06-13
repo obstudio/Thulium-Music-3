@@ -6,7 +6,8 @@
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "packager": "electron-packager . Thulium --win --arch=x64 --out=./build --app-version=3.0.0 --overwrite --icon=./build/icon.ico"
   },
   "build": {
     "appId": "Thulium"
