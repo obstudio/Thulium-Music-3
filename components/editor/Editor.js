@@ -34,7 +34,8 @@ module.exports = {
         animation: 150,
         ghostClass: 'drag-ghost'
       },
-      draggingTab: false
+      draggingTab: false,
+      addTagLeft: 0
     }
     const extensionState = {
       extensions,
@@ -66,7 +67,15 @@ module.exports = {
     remainHeight() {
       return this.height - TabHeight - StatusHeight - (this.menubar ? MenubarHeight : 0)
     },
-    settings: () => global.user.state.Settings
+    settings: () => global.user.state.Settings,
+    addTagPosition() {
+      return {
+        left: `${this.addTagLeft}px`
+      }
+    },
+    tabsWidth() {
+      return this.addTagLeft < this.width - 34 ? `100%` : `${this.width - 34}px`
+    }
   },
 
   watch: {
@@ -113,6 +122,12 @@ module.exports = {
       })
       tab.checkChange()
     })
+    this.$nextTick(() => {
+      this.tabs.forEach(oriTab => {
+        oriTab.tabNode = this.$el.children[0].children[1].children[0].children[0].children[this.tabs.findIndex(tab => tab.id === oriTab.id)]
+      })
+      this.refreshAddTagLeft()
+    })
     this.showEditor()
     this.registerGlobalEvents()
     if (global.user) {
@@ -137,6 +152,14 @@ module.exports = {
     refresh(tab, event) {
       tab.latestVersionId = event.versionId
       tab.checkChange()
+    },
+    refreshAddTagLeft() {
+      requestAnimationFrame(() => {
+        const left = this.addTagLeft = this.tabs.reduce((pre, cur) => {
+          return pre + cur.tabNode.clientWidth
+        }, 0)
+        this.addTagLeft = Math.min(this.width - 34, left)
+      })
     },
     layout(time = 0) {
       const now = performance.now(), self = this
@@ -256,6 +279,9 @@ module.exports = {
       }
       style.top = event.target.offsetTop + event.target.offsetHeight + 'px'
       this.menuShowed.top[index] = true
+    },
+    scrollTab(e) {
+      e.currentTarget.scrollLeft += e.deltaY
     }
   },
 
@@ -270,8 +296,8 @@ module.exports = {
     </div>
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
-        <transition-group tag="div" name="tm-tabs" :move-class="draggingTab ? 'dragged' : ''" class="tm-scroll-tab">
-        <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id">
+        <transition-group tag="div" name="tm-tabs" :move-class="draggingTab ? 'dragged' : ''" class="tm-scroll-tabs" :style="{width: tabsWidth}" @wheel.prevent.stop.native="scrollTab">
+        <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id" class="tm-scroll-tab">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
             <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
@@ -282,9 +308,9 @@ module.exports = {
         </button>
         </transition-group>
       </draggable>
-      <button class="add-tag" @click="addTab(false)"><i class="icon-add"/></button>
+      <button class="add-tag" @click="addTab(false)" style="position: absolute; top: 30px;" :style="addTagPosition"><i class="icon-add"/></button>
     </div>
-    <button class="menubar-toggler" @click="toggleMenubar()"><i class="icon-control"/></button>
+    <!--<button class="menubar-toggler" @click="toggleMenubar()"><i class="icon-control"/></button>-->
   </div>
   <div class="content" :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
   <div class="extension" :class="{ dragged: draggingExtension }" :style="{

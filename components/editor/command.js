@@ -25,16 +25,24 @@ module.exports = {
     } else if (this.current.id === id) {
       this.switchTabByIndex(index === 0 ? 0 : index - 1)
     }
+    this.refreshAddTagLeft()
   },
 
   closeAllTabs() {
-    this.tabs = [ new TmTab() ]
+    const newTab = new TmTab()
+    this.tabs = [ newTab ]
+    this.$nextTick(() => {
+      newTab.tabNode = this.$el.children[0].children[1].children[0].children[0].children[this.tabs.findIndex(tab => tab.id === newTab.id)]
+      this.refreshAddTagLeft()
+    })
+    this.refreshAddTagLeft()
   },
 
   closeOtherTabs(id) {
     if (!id) id = this.current.id
     this.current = this.tabs.find(tab => tab.id === id)
     this.tabs = [ this.current ]
+    this.refreshAddTagLeft()
   },
 
   closeTabsToRight(id) {
@@ -44,6 +52,7 @@ module.exports = {
     if (this.tabs.findIndex(tab => tab.id === this.current.id) > index) {
       this.switchTabByIndex(index)
     }
+    this.refreshAddTagLeft()
   },
 
   switchTabById(id) {
@@ -61,13 +70,17 @@ module.exports = {
   addTab(insert = true, data = {}) {
     const index = !insert ? this.tabs.length
       : this.tabs.findIndex(tab => tab.id === this.current.id) + 1
-    const tab = new TmTab(data)
-    this.tabs.splice(index, 0, tab)
+    const newTab = new TmTab(data)
+    this.tabs.splice(index, 0, newTab)
     this.switchTabByIndex(index)
-    tab.onModelChange((e) => {
-      this.refresh(tab, e)
+    newTab.onModelChange((e) => {
+      this.refresh(newTab, e)
     })
-    tab.checkChange()
+    newTab.checkChange()
+    this.$nextTick(() => {
+      newTab.tabNode = this.$el.children[0].children[1].children[0].children[0].children[this.tabs.findIndex(tab => tab.id === newTab.id)]
+      this.refreshAddTagLeft()
+    })
   },
 
   loadFile(filepath) {
