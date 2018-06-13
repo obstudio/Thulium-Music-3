@@ -29,21 +29,24 @@ module.exports = {
 
   closeAllTabs() {
     this.tabs.splice(0, Infinity, new TmTab())
+    this.switchTabByIndex(0)
   },
 
   closeOtherTabs(id) {
     if (!id) id = this.current.id
-    this.current = this.tabs.find(tab => tab.id === id)
-    this.tabs = [ this.current ]
+    const index = this.tabs.findIndex(tab => tab.id === id)
+    this.switchTabByIndex(index)
+    this.tabs.splice(index + 1, Infinity)
+    this.tabs.splice(0, index - 1)
   },
 
   closeTabsToRight(id) {
     if (!id) id = this.current.id
     const index = this.tabs.findIndex(tab => tab.id === id)
-    this.tabs.splice(index + 1, Infinity)
     if (this.tabs.findIndex(tab => tab.id === this.current.id) > index) {
       this.switchTabByIndex(index)
     }
+    this.tabs.splice(index + 1, Infinity)
   },
 
   switchTabById(id) {

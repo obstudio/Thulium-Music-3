@@ -41,7 +41,11 @@
                 "@separator",
                 "cut",
                 "copy",
-                "paste"
+                "paste",
+                "@separator",
+                "find",
+                "find-next",
+                "find-previous"
             ]
         },
         {
@@ -49,6 +53,7 @@
             "bind": "V",
             "content": [
                 "toggle-menubar",
+                "command-palette",
                 "@separator",
                 "@tabs"
             ]

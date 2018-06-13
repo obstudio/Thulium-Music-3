@@ -5,9 +5,14 @@
     "save": "ctrl+s",
     "save-as": "ctrl+shift+s",
     "toggle-menubar": "ctrl+m",
+    "command-palette": "f1",
     "undo": "!ctrl+z",
     "redo": "!ctrl+y",
     "cut": "!ctrl+x",
     "copy": "!ctrl+c",
-    "paste": "!ctrl+v"
+    "paste": "!ctrl+v",
+    "find": "!ctrl+f",
+    "replace": "!ctrl+h",
+    "find-next": "!f3",
+    "find-previous": "!shift+f3"
 }

@@ -29,14 +29,19 @@
             "save-as": "另存为 ...",
             "save-all": "全部保存",
             "close-tab": "关闭标签",
-            "close-others": "关闭其他",
-            "close-right": "关闭右侧",
+            "close-all": "关闭所有标签",
+            "close-others": "关闭其他标签",
+            "close-right": "关闭右侧标签",
             "undo": "撤销",
             "redo": "恢复",
             "cut": "剪切",
             "copy": "复制",
             "paste": "粘贴",
-            "toggle-menubar": [ "显示菜单栏", "隐藏菜单栏" ]
+            "find": "查找 ...",
+            "find-next": "查找下一个",
+            "find-previous": "查找上一个",
+            "toggle-menubar": [ "显示菜单栏", "隐藏菜单栏" ],
+            "command-palette": "命令面板 ..."
         }
     },
     "homepage": {

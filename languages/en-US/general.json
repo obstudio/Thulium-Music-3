@@ -29,6 +29,7 @@
             "save-as": "Save As ...",
             "save-all": "Save All",
             "close-tab": "Close Tab",
+            "close-all": "Close All Tabs",
             "close-others": "Close Other Tabs",
             "close-right": "Close Tabs to the Right",
             "undo": "Undo",
@@ -36,7 +37,11 @@
             "cut": "Cut",
             "copy": "Copy",
             "paste": "Paste",
-            "toggle-menubar": [ "Show Menu Bar", "Hide Menu Bar" ]
+            "find": "Find ...",
+            "find-next": "Find Next",
+            "find-previous": "Find Previous",
+            "toggle-menubar": [ "Show Menu Bar", "Hide Menu Bar" ],
+            "command-palette": "Command Palette ..."
         }
     },
     "homepage": {

@@ -7,7 +7,6 @@ module.exports = {
   },
 
   methods: {
-    ...require('./method'),
     displayKeyBinding(key) {
       let binding = keymap[key]
       if (!binding) return ''
@@ -19,7 +18,7 @@ module.exports = {
     getContextValue(key) {
       if (commands[key].context) {
         // FIXME: optimize context pattern
-        return this[commands[key].context.slice(1)] ? '.1' : '.0'
+        return this.$parent[commands[key].context.slice(1)] ? '.1' : '.0'
       } else {
         return ''
       }

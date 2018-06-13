@@ -25,6 +25,7 @@ module.exports = {
   provide() {
     return {
       tabs: this.tabs,
+      contextId: this.contextId,
       executeCommand: this.executeCommand,
       executeMethod: this.executeMethod
     }
@@ -55,7 +56,9 @@ module.exports = {
         top: new Array(menus.menubar.length).fill(false)
       }
     }
+    console.log(storageState)
     return {
+      contextId: null,
       ...storageState,
       ...editorState,
       ...tabState,
@@ -148,7 +151,7 @@ module.exports = {
       })
     },
     executeAction(id) {
-      const action = this.editor.getAction('editor.action.' + id)
+      const action = this.editor.getAction(id)
       if (action) action.run(this.editor)
     },
     executeTrigger(id) {
@@ -218,7 +221,7 @@ module.exports = {
       }
     },
     toggleTabMenu(id, event) {
-      this.menuTabId = id
+      this.contextId = id
       this.showContextMenu('tab', event)
     },
     startDrag(event) {
@@ -249,6 +252,7 @@ module.exports = {
       this.menuShowed[key] = true
     },
     showMenu(index, event) {
+      this.contextId = null
       if (this.menuShowed.top[index]) {
         this.menuShowed.top.splice(index, 1, false)
         return
@@ -292,7 +296,6 @@ module.exports = {
       </draggable>
       <button class="add-tag" @click="addTab(false)"><i class="icon-add"/></button>
     </div>
-    <button class="menubar-toggler" @click="toggleMenubar()"><i class="icon-control"/></button>
   </div>
   <div class="content" :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
   <div class="extension" :class="{ dragged: draggingExtension }" :style="{
