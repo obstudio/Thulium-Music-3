@@ -270,7 +270,7 @@ module.exports = {
     </div>
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
-        <transition-group name="tm-tabs" :move-class="draggingTab ? 'dragged' : ''">
+        <transition-group tag="div" name="tm-tabs" :move-class="draggingTab ? 'dragged' : ''" class="tm-scroll-tab">
         <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>

@@ -317,3 +317,9 @@ button:last-child .tm-tab { margin-right: 0px }
 	border-bottom: 1px solid;
 	width: 100%;
 }
+
+.tm-scroll-tab {
+    display: flex;
+    min-width: fit-content;
+
+}
