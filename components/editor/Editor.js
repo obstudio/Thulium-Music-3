@@ -25,8 +25,8 @@ module.exports = {
   provide() {
     return {
       tabs: this.tabs,
-      switchTabById: this.switchTabById,
-      executeCommand: this.executeCommand
+      executeCommand: this.executeCommand,
+      executeMethod: this.executeMethod
     }
   },
   data() {
@@ -99,7 +99,7 @@ module.exports = {
   mounted() {
     // properties added in mounted hook to prevent unnecessary reactivity
     this.menu = {
-      tabs: this.$el.children[4].children[0],
+      header: this.$el.children[4].children[0],
       tab: this.$el.children[4].children[1],
       top: this.$el.children[4].children[2]
     }
@@ -148,13 +148,17 @@ module.exports = {
       })
     },
     executeAction(id) {
-      this.editor.getAction('editor.action.' + id).run(this.editor)
+      const action = this.editor.getAction('editor.action.' + id)
+      if (action) action.run(this.editor)
     },
     executeTrigger(id) {
       this.editor.trigger(id, id)
     },
     executeCommand(key) {
       TmCommand.executeCommand.call(this, key)
+    },
+    executeMethod(method, ...args) {
+      if (method in this) this[method](...args)
     },
     showEditor() {
       const editor = window.monaco.editor.create(this.$el.children[1], {
@@ -251,12 +255,12 @@ module.exports = {
       }
       const style = this.menu.top.children[index].children[0].style
       this.hideContextMenus()
-      if (event.target.offsetLeft + 200 > this.width) {
-        style.left = event.target.offsetLeft + event.target.offsetWidth - 200 + 'px'
+      if (event.currentTarget.offsetLeft + 200 > this.width) {
+        style.left = event.currentTarget.offsetLeft + event.currentTarget.offsetWidth - 200 + 'px'
       } else {
-        style.left = event.target.offsetLeft + 'px'
+        style.left = event.currentTarget.offsetLeft + 'px'
       }
-      style.top = event.target.offsetTop + event.target.offsetHeight + 'px'
+      style.top = event.currentTarget.offsetTop + event.currentTarget.offsetHeight + 'px'
       this.menuShowed.top[index] = true
     }
   },
@@ -265,7 +269,7 @@ module.exports = {
   render: VueCompile(`<div class="tm-editor" :class="{'show-menubar': menubar}"
     @dragover.stop.prevent @drop.stop.prevent="loadFileDropped"
     @click="hideContextMenus" @contextmenu="hideContextMenus">
-  <div class="header" @contextmenu.stop="showContextMenu('tabs', $event)">
+  <div class="header" @contextmenu.stop="showContextMenu('header', $event)">
     <div class="menubar">
       <div v-for="(menu, index) in menus.menubar" class="tm-top-menu"
         @contextmenu.stop @click.stop="showMenu(index, $event)">

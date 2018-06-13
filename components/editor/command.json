@@ -1,5 +1,5 @@
 [
-    { "method": "addTab", "arguments": false },
+    { "method": "addTab" },
     { "method": "openFile" },
     { "method": "save" },
     { "method": "saveAs" },

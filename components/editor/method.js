@@ -28,7 +28,7 @@ module.exports = {
   },
 
   closeAllTabs() {
-    this.tabs = [ new TmTab() ]
+    this.tabs.splice(0, Infinity, new TmTab())
   },
 
   closeOtherTabs(id) {

@@ -20,16 +20,20 @@ module.exports = {
   keymap,
   commands,
   executeCommand(key) {
-    let args = commands[key].arguments
-    if (args === undefined) args = []
-    if (!(args instanceof Array)) args = [args]
-    this[commands[key].method](...args.map(arg => {
-      if (typeof arg === 'string' && arg.startsWith('$')) {
-        return this[arg.slice(1)]
-      } else {
-        return arg
-      }
-    }))
+    if (commands[key].method in this) {
+      let args = commands[key].arguments
+      if (args === undefined) args = []
+      if (!(args instanceof Array)) args = [args]
+      this[commands[key].method](...args.map(arg => {
+        if (typeof arg === 'string' && arg.startsWith('$')) {
+          return this[arg.slice(1)]
+        } else {
+          return arg
+        }
+      }))
+    } else {
+      console.warn(`No command ${key} was found!`)
+    }
   },
   onMount() {
     for (const key in keymap) {

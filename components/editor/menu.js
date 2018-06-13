@@ -27,7 +27,7 @@ module.exports = {
   },
 
   props: ['menu', 'show'],
-  inject: ['tabs', 'switchTabById', 'executeCommand'],
+  inject: ['tabs', 'executeMethod', 'executeCommand'],
   render: VueCompile(`<transition name="el-zoom-in-top">
     <ul v-show="show" class="tm-menu">
       <li v-for="item in menu">
@@ -36,7 +36,7 @@ module.exports = {
         </div>
         <div v-else-if="item === '@tabs'">
           <li v-for="tab in tabs">
-            <div class="menu-item" @click="switchTabById(tab.id, $event)">
+            <div class="menu-item" @click="executeMethod('switchTabById', tab.id)">
               <a class="label">{{ tab.title }}</a>
             </div>
           </li>
