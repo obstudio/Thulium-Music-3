@@ -166,7 +166,7 @@ button:last-child .tm-tab { margin-right: 0px }
 .tm-editor > .extension {
     z-index: 2;
     width: 100%;
-    transition: 0.3s;
+    transition: 0.5s ease;
     position: absolute;
 }
 

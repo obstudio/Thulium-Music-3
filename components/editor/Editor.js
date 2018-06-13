@@ -26,10 +26,8 @@ module.exports = {
     return {
       tabs: this.tabs,
       contextId: this.contextId,
-      executeCommand: this.executeCommand,
-      execute(method, ...args) {
-        if (method in this) this[method](...args)
-      }
+      execute: this.executeMethod,
+      executeCommand: this.executeCommand
     }
   },
   data() {
@@ -87,7 +85,7 @@ module.exports = {
       this.layout(300)
     },
     extensionShowed() {
-      this.layout(300)
+      this.layout(500)
     },
     'settings.minimap'() {
       if (this.editor) {
@@ -110,7 +108,7 @@ module.exports = {
     }
     this.player = undefined
 
-    TmCommand.onMount()
+    TmCommand.onMount.call(this)
 
     this.tabs.forEach(tab => {
       tab.onModelChange((e) => {
@@ -161,6 +159,9 @@ module.exports = {
     },
     executeCommand(key) {
       TmCommand.executeCommand.call(this, key)
+    },
+    executeMethod(method, ...args) {
+      if (method in this) this[method](...args)
     },
     showEditor() {
       const editor = window.monaco.editor.create(this.$el.children[1], {

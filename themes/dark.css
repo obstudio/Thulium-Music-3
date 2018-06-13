@@ -79,3 +79,10 @@
 .dark .tm-settings .el-radio-button:last-child .el-radio-button__inner { border-right-color: #dcdfe6 }
 .dark .tm-settings .el-radio-button__orig-radio:checked + .el-radio-button__inner { background-color: #409EFF; color: #ffffff; border-color: #409EFF !important }
 
+/* dialog */
+.dark ~ div > .el-message-box { background-color: #faebd7; border-color: #dacbaf }
+.dark ~ div > .el-message-box .el-message-box__content { color: #223355 }
+.dark ~ div > .el-message-box .el-message-box__status.el-icon-warning { color: #f7a747 }
+.dark ~ div > .el-message-box .el-button { background: #fffff0; color: #000000; border-color: #f5f5dc }
+.dark ~ div > .el-message-box .el-button:hover { color: #409eff; border-color: #c6e2ff; background: #ecf5ff }
+.dark ~ div > .el-message-box .el-button--primary { color: #fff; background-color: #409EFF; border-color: #409EFF }

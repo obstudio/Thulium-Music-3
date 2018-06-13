@@ -19,6 +19,7 @@
         "thulium": "铥铥音乐",
         "title": "编辑器",
         "track": "音轨",
+        "close-tab-msg": "文件尚未保存，是否继续？",
         "menu": {
             "file": "文件",
             "edit": "编辑",
@@ -58,5 +59,10 @@
         "minimap": "显示小地图",
         "theme": "主题",
         "title": "设置"
+    },
+    "message": {
+        "tip": "提示",
+        "confirm": "确认",
+        "cancel": "取消"
     }
 }

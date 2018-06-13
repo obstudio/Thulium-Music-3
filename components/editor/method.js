@@ -19,11 +19,22 @@ module.exports = {
   closeTab(id) {
     if (!id) id = this.current.id
     const index = this.tabs.findIndex(tab => tab.id === id)
-    this.tabs.splice(index, 1)
-    if (this.tabs.length === 0) {
-      this.addTab()
-    } else if (this.current.id === id) {
-      this.switchTabByIndex(index === 0 ? 0 : index - 1)
+    const close = () => {
+      this.tabs.splice(index, 1)
+      if (this.tabs.length === 0) {
+        this.addTab()
+      } else if (this.current.id === id) {
+        this.switchTabByIndex(index === 0 ? 0 : index - 1)
+      }
+    }
+    if (this.tabs[index].changed) {
+      this.$confirm(this.$t('editor.close-tab-msg'), this.$t('message.tip'), {
+        confirmButtonText: this.$t('message.confirm'),
+        cancelButtonText: this.$t('message.cancel'),
+        type: 'warning'
+      }).then(close).catch(() => {})
+    } else {
+      close()
     }
   },
 
@@ -37,7 +48,7 @@ module.exports = {
     const index = this.tabs.findIndex(tab => tab.id === id)
     this.switchTabByIndex(index)
     this.tabs.splice(index + 1, Infinity)
-    this.tabs.splice(0, index - 1)
+    this.tabs.splice(0, index)
   },
 
   closeTabsToRight(id) {

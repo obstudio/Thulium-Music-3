@@ -32,7 +32,7 @@ module.exports = {
         }
       }))
     } else {
-      console.warn(`No command ${key} was found!`)
+      this.$message.error(`No command ${key} was found!`)
     }
   },
   onMount() {

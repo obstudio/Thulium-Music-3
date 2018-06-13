@@ -19,6 +19,7 @@
         "thulium": "Thulium Music",
         "title": "Editor",
         "track": "Track",
+        "close-tab-msg": "The file has not been saved, sure to continue?",
         "menu": {
             "file": "File",
             "edit": "Edit",
@@ -58,5 +59,10 @@
         "minimap": "Show Minimap",
         "theme": "Theme",
         "title": "Settings"
+    },
+    "message": {
+        "tip": "Tip",
+        "confirm": "Comfirm",
+        "cancel": "Cancel"
     }
 }
