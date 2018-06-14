@@ -17,6 +17,8 @@ const MenubarHeight = 30
 const TabHeight = 34
 const StatusHeight = 24
 
+let last = null
+
 module.exports = {
   name: 'TmEditor',
 
@@ -97,6 +99,9 @@ module.exports = {
     },
     'settings.lineEnding'() {
       this.tabs.map(tab => this.refresh(tab))
+    },
+    current() {
+      this.adjustTabsScroll()
     }
   },
 
@@ -107,6 +112,7 @@ module.exports = {
       tab: this.$el.children[4].children[1],
       top: this.$el.children[4].children[2]
     }
+    this.tabsNode = this.$el.children[0].children[1].children[0].children[0]
     this.player = undefined
 
     for (const key in keymap) {
@@ -127,6 +133,7 @@ module.exports = {
         oriTab.tabNode = this.$el.children[0].children[1].children[0].children[0].children[this.tabs.findIndex(tab => tab.id === oriTab.id)]
       })
       this.refreshAddTagLeft()
+      this.adjustTabsScroll()
     })
     this.showEditor()
     this.registerGlobalEvents()
@@ -224,6 +231,21 @@ module.exports = {
       addEventListener('dragend', (e) => {
         this.layout()
         this.stopDrag(e)
+      })
+    },
+    adjustTabsScroll() {
+      requestAnimationFrame((p) => {
+        if (last && p - last < 500) return
+        console.log(p)
+        last = p
+        const left = this.current.tabNode.offsetLeft
+        const width = this.current.tabNode.clientWidth
+        const scroll = this.tabsNode.scrollLeft
+        if (scroll < left + width - this.tabsNode.clientWidth) {
+          this.tabsNode.scrollLeft = left + width - this.tabsNode.clientWidth
+        } else if (scroll > left) {
+          this.tabsNode.scrollLeft = left
+        }
       })
     },
 
