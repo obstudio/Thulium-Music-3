@@ -84,7 +84,6 @@ module.exports = {
       }
     },
     tabsWidth() {
-      console.log('ffffffffffffff')
       this.adjustTabsScroll()
       return this.addTagLeft < this.width - 34 ? `100%` : `${this.width - 34}px`
     }
@@ -248,9 +247,9 @@ module.exports = {
         const width = tabsNode.children[index].clientWidth
         const scroll = tabsNode.scrollLeft
         if (scroll < left + width - tabsNode.clientWidth) {
-          console.log(tabsNode.scrollLeft = left + width - tabsNode.clientWidth)
+          tabsNode.scrollLeft = left + width - tabsNode.clientWidth
         } else if (scroll > left) {
-          console.log(tabsNode.scrollLeft = left)
+          tabsNode.scrollLeft = left
         }
       })
     },
