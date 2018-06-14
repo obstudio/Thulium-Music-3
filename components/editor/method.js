@@ -36,7 +36,10 @@ module.exports = {
     } else {
       close()
     }
-    this.refreshAddTagLeft()
+    this.$nextTick(() => {
+      this.refreshAddTagLeft()
+      this.adjustTabsScroll()
+    })
   },
 
   closeAllTabs() {
@@ -44,9 +47,9 @@ module.exports = {
     this.tabs.splice(0, Infinity, newTab)
     this.switchTabByIndex(0)
     this.$nextTick(() => {
-      newTab.tabNode = this.$el.children[0].children[1].children[0].children[0].children[this.tabs.findIndex(tab => tab.id === newTab.id)]
       this.refreshAddTagLeft()
-    })  },
+    })
+  },
 
   closeOtherTabs(id) {
     if (!id) id = this.current.id
@@ -90,7 +93,6 @@ module.exports = {
     })
     newTab.checkChange()
     this.$nextTick(() => {
-      newTab.tabNode = this.$el.children[0].children[1].children[0].children[0].children[this.tabs.findIndex(tab => tab.id === newTab.id)]
       this.refreshAddTagLeft()
     })
   },

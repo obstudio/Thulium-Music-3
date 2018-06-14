@@ -84,6 +84,7 @@ module.exports = {
       }
     },
     tabsWidth() {
+      console.log('ffffffffffffff')
       this.adjustTabsScroll()
       return this.addTagLeft < this.width - 34 ? `100%` : `${this.width - 34}px`
     }
@@ -121,7 +122,6 @@ module.exports = {
       tab: this.$el.children[4].children[1],
       top: this.$el.children[4].children[2]
     }
-    this.tabsNode = this.$el.children[0].children[1].children[0].children[0]
     this.player = undefined
 
     TmCommand.onMount.call(this)
@@ -132,13 +132,9 @@ module.exports = {
       })
       tab.checkChange()
     })
-    this.$nextTick(() => {
-      this.tabs.forEach(oriTab => {
-        oriTab.tabNode = this.$el.children[0].children[1].children[0].children[0].children[this.tabs.findIndex(tab => tab.id === oriTab.id)]
-      })
-      this.refreshAddTagLeft()
-      this.adjustTabsScroll()
-    })
+    this.refreshAddTagLeft()
+    this.adjustTabsScroll()
+
     this.showEditor()
     this.registerGlobalEvents()
     if (global.user) {
@@ -165,8 +161,8 @@ module.exports = {
     },
     refreshAddTagLeft() {
       requestAnimationFrame(() => {
-        const left = this.addTagLeft = this.tabs.reduce((pre, cur) => {
-          return pre + cur.tabNode.clientWidth
+        const left = this.tabs.reduce((pre, cur, index) => {
+          return pre + this.$refs.tabs.$el.children[index].clientWidth
         }, 0)
         this.addTagLeft = Math.min(this.width - 34, left)
       })
@@ -246,16 +242,15 @@ module.exports = {
     },
     adjustTabsScroll() {
       requestAnimationFrame((p) => {
-        // if (last && p - last < 500) return
-        // console.log(p)
-        // last = p
-        const left = this.current.tabNode.offsetLeft
-        const width = this.current.tabNode.clientWidth
-        const scroll = this.tabsNode.scrollLeft
-        if (scroll < left + width - this.tabsNode.clientWidth) {
-          this.tabsNode.scrollLeft = left + width - this.tabsNode.clientWidth
+        const index = this.tabs.indexOf(this.current)
+        const tabsNode = this.$refs.tabs.$el
+        const left = tabsNode.children[index].offsetLeft
+        const width = tabsNode.children[index].clientWidth
+        const scroll = tabsNode.scrollLeft
+        if (scroll < left + width - tabsNode.clientWidth) {
+          console.log(tabsNode.scrollLeft = left + width - tabsNode.clientWidth)
         } else if (scroll > left) {
-          this.tabsNode.scrollLeft = left
+          console.log(tabsNode.scrollLeft = left)
         }
       })
     },
@@ -331,7 +326,7 @@ module.exports = {
     </div>
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
-        <transition-group tag="div" name="tm-tabs" :move-class="draggingTab ? 'dragged' : ''" class="tm-scroll-tabs" :style="{width: tabsWidth}" @wheel.prevent.stop.native="scrollTab">
+        <transition-group tag="div" ref="tabs" name="tm-tabs" :move-class="draggingTab ? 'dragged' : ''" class="tm-scroll-tabs" :style="{width: tabsWidth}" @wheel.prevent.stop.native="scrollTab">
         <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id" class="tm-scroll-tab">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
