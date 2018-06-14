@@ -191,6 +191,14 @@ button:last-child .tm-tab { margin-right: 0px }
     text-align: center;
 }
 
+.tm-editor > .extension .underline {
+    position: absolute;
+    position: absolute;
+    top: 32px;
+    height: 2px;
+    transition: 0.5s ease;
+}
+
 .tm-editor > .extension .nav-right {
     position: absolute;
     right: 0px;
@@ -213,17 +221,9 @@ button:last-child .tm-tab { margin-right: 0px }
     right: 0px;
 }
 
-.tm-extension-enter-active, .tm-extension-leave-active { transition: .5s ease }
-
-.tm-extension-enter { 
-    transform: translateX(100%);
-    opacity: 0;
-}
-
-.tm-extension-leave-to { 
-    transform: translateX(-100%);
-    opacity: 0;
-}
+.tm-ext-enter-active, .tm-ext-leave-active { transition: .5s ease }
+.tm-ext-to-right { transform: translateX(100%) }
+.tm-ext-to-left { transform: translateX(-100%) }
 
 .tm-editor > .status {
     width: 100%;

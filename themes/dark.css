@@ -37,6 +37,7 @@
 .dark .tm-editor > .extension > div.top-border { background-color: #474842 }
 .dark .tm-editor > .extension button { background-color: #272822; color: #f6f8fa }
 .dark .tm-editor > .extension button:hover i { background-color: #3A3A3A; color: #fafaf5 }
+.dark .tm-editor > .extension .underline { background-color: #409EFF }
 .dark .tm-editor > .extension .nav-left button { color: #c6cbd1 }
 .dark .tm-editor > .extension .nav-left button:hover { color: #fafaf5 }
 .dark .tm-editor > .extension .nav-left button.active { color: #409EFF }

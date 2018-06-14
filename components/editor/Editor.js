@@ -48,8 +48,11 @@ module.exports = {
     }
     const extensionState = {
       extensions,
-      activeExtension: extensions[0],
+      activeExtension: 0,
       draggingExtension: false,
+      extUnderlineLeft: '0px',
+      extUnderlineWidth: '0px',
+      extensionMoveToRight: false
     }
     const menuState = {
       menus,
@@ -131,6 +134,7 @@ module.exports = {
       })
       tab.checkChange()
     })
+    this.refreshExtUnderline()
     this.refreshAddTagLeft()
     this.adjustTabsScroll()
 
@@ -225,7 +229,9 @@ module.exports = {
         if (this.draggingExtension) {
           this.layout()
           event.stopPropagation()
-          if (this.extensionHeight <= this.remainHeight || this.draggingLastY < event.clientY) {
+          const toMax = this.extensionHeight <= this.remainHeight || this.draggingLastY < event.clientY
+          const toMin = this.extensionHeight >= 36 || this.draggingLastY > event.clientY
+          if (toMax && toMin) {
             this.extensionHeight += this.draggingLastY - event.clientY
             this.draggingLastY = event.clientY
           }
@@ -309,6 +315,17 @@ module.exports = {
     },
     scrollTab(e) {
       e.currentTarget.scrollLeft += e.deltaY
+    },
+    changeExtension(id) {
+      if (this.activeExtension === id) return
+      this.extensionMoveToRight = id > this.activeExtension
+      this.activeExtension = id
+      this.refreshExtUnderline()
+    },
+    refreshExtUnderline() {
+      const current = this.$el.children[2].children[1].children[this.activeExtension]
+      this.extUnderlineLeft = current.offsetLeft + 8 + 'px'
+      this.extUnderlineWidth = current.offsetWidth - 16 + 'px'
     }
   },
 
@@ -347,11 +364,12 @@ module.exports = {
     }">
     <div class="top-border" @mousedown="startDrag"/>
     <div class="nav-left">
-      <button v-for="extension in extensions" @click="activeExtension = extension"
-        :key="extension" :class="{ active: activeExtension === extension }">
+      <button v-for="(extension, index) in extensions" @click="changeExtension(index)"
+        :key="extension" :class="{ active: activeExtension === index }">
         {{ extension }}
       </button>
     </div>
+    <div class="underline" :style="{ left: extUnderlineLeft, width: extUnderlineWidth }"/>
     <div class="nav-right">
       <button @click="extensionFull = !extensionFull">
         <i :class="extensionFull ? 'icon-down' : 'icon-up'"/>
@@ -360,9 +378,13 @@ module.exports = {
         <i class="icon-close"/>
       </button>
     </div>
-    <transition name="tm-extension">
-      <component :is="'tm-ext-' + activeExtension" class="tm-ext"/>
-    </transition>
+    <keep-alive>
+      <transition name="tm-ext"
+        :leave-to-class="'tm-ext-to-' + (extensionMoveToRight ? 'left' : 'right')"
+        :enter-class="'tm-ext-to-' + (extensionMoveToRight ? 'right' : 'left')">
+        <component :is="'tm-ext-' + extensions[activeExtension]" class="tm-ext"/>
+      </transition>
+    </keep-alive>
   </div>
   <div class="status" :style="{ bottom: extensionShowed && extensionFull ? '-24px' : '0px' }">
     <div class="left">
