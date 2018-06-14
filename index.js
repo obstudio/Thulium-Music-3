@@ -5,7 +5,6 @@ const Router = require('vue-router')
 const Vuex = require('vuex')
 const VueCompiler = require('vue-template-compiler/browser')
 
-const Player = require('./library/player')
 const Lexer = require('./library/tmdoc/Lexer')
 // Vue files can not be used
 // const Icon = require('vue-awesome/components/Icon')
@@ -17,9 +16,6 @@ Vue.use(Router)
 Vue.use(VueI18n)
 Vue.use(ElementUI)
 Vue.config.productionTip = false
-Vue.prototype.$createPlayer = (source, spec) => {
-  return new Player(source, spec)
-}
 Vue.prototype.$markdown = (content) => {
   if (typeof content !== 'string') return []
   return new Lexer().lex(content)

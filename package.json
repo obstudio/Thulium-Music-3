@@ -31,7 +31,8 @@
     "vue-router": "^3.0.1",
     "vue-template-compiler": "^2.5.16",
     "vuedraggable": "^2.16.0",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "wafd-tm3": "^1.0.1"
   },
   "license": "ISC",
   "repository": {

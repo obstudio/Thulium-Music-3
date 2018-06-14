@@ -1,4 +1,3 @@
-const audioLibDir = 'https://jjyyxx.github.io/webaudiofontdata/data/'
 const defaultInstr = 'Piano'
 const instrDict = require('./config/Instrument.json')
 const drumDict = require('./config/Percussion.json')
@@ -11,9 +10,9 @@ function audioLibFile(instr) {
     instr = defaultInstr
   }
   if (instr in instrDict) {
-    return audioLibDir + ('00' + instrDict[instr].toString()).slice(-3) + '0_FluidR3_GM_sf2_file.json'
+    return ('00' + instrDict[instr].toString()).slice(-3) + '0_FluidR3_GM_sf2_file.json'
   } else {
-    return audioLibDir + '128' + drumDict[instr].toString() + '_0_FluidR3_GM_sf2_file.json'
+    return '128' + drumDict[instr].toString() + '_0_FluidR3_GM_sf2_file.json'
   }
 }
 

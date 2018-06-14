@@ -1,3 +1,5 @@
+const Player = require('../../library/player')
+
 module.exports = [
   {
     id: 'tm-play',
@@ -14,11 +16,11 @@ module.exports = [
           this.player.toggle()
         } else {
           this.player.close()
-          this.player = this.$createPlayer(value)
+          this.player = new Player(value)
           this.player.play()
         }
       } else {
-        this.player = this.$createPlayer(value)
+        this.player = new Player(value)
         this.player.play()
       }
     }
