@@ -148,6 +148,8 @@ button:last-child .tm-tab { margin-right: 0px }
     font-size: 10px;
     transition: 0.3s;
     height: 30px;
+    position: absolute;
+    top: 28px;
 }
 
 .tm-editor > .content {
@@ -317,4 +319,20 @@ button:last-child .tm-tab { margin-right: 0px }
 	padding: 1px 0 0 0;
 	border-bottom: 1px solid;
 	width: 100%;
+}
+
+.tm-scroll-tabs {
+    display: flex;
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+.tm-scroll-tabs > :last-child {
+    padding-right: 34px;
+}
+
+.tm-scroll-tab {
+    display: flex;
+    min-width: fit-content;
+    width: 100px;
 }

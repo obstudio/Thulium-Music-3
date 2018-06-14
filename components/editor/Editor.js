@@ -84,6 +84,7 @@ module.exports = {
       }
     },
     tabsWidth() {
+      this.adjustTabsScroll()
       return this.addTagLeft < this.width - 34 ? `100%` : `${this.width - 34}px`
     }
   },
@@ -245,9 +246,9 @@ module.exports = {
     },
     adjustTabsScroll() {
       requestAnimationFrame((p) => {
-        if (last && p - last < 500) return
-        console.log(p)
-        last = p
+        // if (last && p - last < 500) return
+        // console.log(p)
+        // last = p
         const left = this.current.tabNode.offsetLeft
         const width = this.current.tabNode.clientWidth
         const scroll = this.tabsNode.scrollLeft
@@ -342,7 +343,7 @@ module.exports = {
         </button>
         </transition-group>
       </draggable>
-      <button class="add-tag" @click="addTab(false)" style="position: absolute; top: 30px;" :style="addTagPosition"><i class="icon-add"/></button>
+      <button class="add-tag" @click="addTab(false)" :style="addTagPosition"><i class="icon-add"/></button>
     </div>
   </div>
   <div class="content" :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
