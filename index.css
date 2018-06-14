@@ -17,6 +17,8 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+body button { font-family: source-san-sans-CN }
+
 .navbar {
     height: 48px;
     top: 0px;

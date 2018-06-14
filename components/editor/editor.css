@@ -5,24 +5,12 @@
     top: -26px;
     left: 0px;
     width: 100%;
-    transition: 0.3s;
+    transition: 0.5s;
     position: absolute;
     overflow: hidden;
 }
 
 .tm-editor.show-menubar > .header { top: 0px }
-.tm-editor.show-menubar > .header > .menubar-toggler { top: 0px }
-
-.tm-editor > .header > .menubar-toggler {
-    padding: 9px 9px;
-    font-size: 16px;
-    top: 26px;
-    height: 34px;
-    transition: 0.3s;
-    right: 0px;
-    float: right;
-    position: absolute;
-}
 
 .tm-editor > .header > .menubar {
     overflow: hidden;
@@ -149,7 +137,7 @@ button:last-child .tm-tab { margin-right: 0px }
     transition: 0.3s;
     height: 30px;
     position: absolute;
-    top: 28px;
+    top: 30px;
 }
 
 .tm-editor > .content {
@@ -158,7 +146,7 @@ button:last-child .tm-tab { margin-right: 0px }
     left: 0px;
     width: 100%;
     position: absolute;
-    transition: 0.3s;
+    transition: 0.5s;
 }
 
 .tm-editor.show-menubar > .content { top: 60px }
@@ -181,20 +169,7 @@ button:last-child .tm-tab { margin-right: 0px }
     z-index: 3;
 }
 
-.tm-editor > .extension .el-tabs__nav-wrap { left: 16px }
-.tm-editor > .extension .nav-right {
-    position: absolute;
-    right: 0px;
-    height: 34px;
-    top: 0px;
-}
-
-.tm-editor > .extension .nav-right {
-    float: right;
-    right: 0px;
-}
-
-.tm-editor > .extension .nav-right button {
+.tm-editor > .extension button {
     border: none;
     outline: none;
     cursor: pointer;
@@ -202,19 +177,52 @@ button:last-child .tm-tab { margin-right: 0px }
     padding: 0px;
 }
 
+.tm-editor > .extension .nav-left {
+    position: relative;
+    height: 34px;
+    width: 100%;
+}
+
+.tm-editor > .extension .nav-left button {
+    float: left;
+    padding: 10px 12px 8px;
+    font-size: 16px;
+    line-height: 1em;
+    text-align: center;
+}
+
+.tm-editor > .extension .nav-right {
+    position: absolute;
+    right: 0px;
+    height: 34px;
+    top: 0px;
+    float: right;
+}
+
 .tm-editor > .extension .nav-right button > i {
-    font-size: 12px;
+    font-size: 10px;
     padding: 12px;
     vertical-align: -webkit-baseline-middle;
 }
 
-.tm-editor > .extension .el-tabs__header { margin-bottom: 0px }
-.tm-editor > .extension .el-tabs__nav-wrap::after { z-index: -1 }
-.tm-editor > .extension .el-tabs__nav { z-index: 0 }
-.tm-editor > .extension .el-tabs__item {
-    padding: 10px 16px 6px;
-    user-select: none;
-    line-height: 20px;
+.tm-ext {
+    position: absolute;
+    top: 36px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+.tm-extension-enter-active, .tm-extension-leave-active { transition: .5s ease }
+
+.tm-extension-enter { 
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.tm-extension-leave-to { 
+    transform: translateX(-100%);
+    opacity: 0;
 }
 
 .tm-editor > .status {
@@ -223,7 +231,7 @@ button:last-child .tm-tab { margin-right: 0px }
     margin: 0px;
     padding: 0px;
     position: absolute;
-    transition: 0.3s;
+    transition: 0.5s;
     -webkit-user-select: none;
     cursor: default;
     z-index: 3;

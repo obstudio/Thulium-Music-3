@@ -91,10 +91,10 @@ module.exports = {
 
   watch: {
     width() {
-      this.layout(300)
+      this.layout(500)
     },
     menubar() {
-      this.layout(300)
+      this.layout(500)
     },
     extensionShowed() {
       this.layout(500)
@@ -215,7 +215,7 @@ module.exports = {
         if (this.extensionShowed && this.extensionHeight > this.remainHeight) {
           this.extensionHeight = this.remainHeight
         }
-        this.layout(300)
+        this.layout(500)
       }, {passive: true})
       addEventListener('mouseup', (e) => {
         this.layout()
@@ -346,12 +346,12 @@ module.exports = {
       bottom: (extensionShowed ? extensionFull ? 0 : 24 : 24 - extensionHeight) + 'px'
     }">
     <div class="top-border" @mousedown="startDrag"/>
-    <el-tabs v-model="activeExtension" @tab-click="">
-      <el-tab-pane v-for="ext in extensions" :label="ext" :key="ext" :name="ext">
-        <component :is="'tm-ext-' + ext" :full="extensionFull" :line="row" :col="column"
-                   :height="extensionFull ? height : extensionHeight"/>
-      </el-tab-pane>
-    </el-tabs>
+    <div class="nav-left">
+      <button v-for="extension in extensions" @click="activeExtension = extension"
+        :key="extension" :class="{ active: activeExtension === extension }">
+        {{ extension }}
+      </button>
+    </div>
     <div class="nav-right">
       <button @click="extensionFull = !extensionFull">
         <i :class="extensionFull ? 'icon-down' : 'icon-up'"/>
@@ -360,6 +360,9 @@ module.exports = {
         <i class="icon-close"/>
       </button>
     </div>
+    <transition name="tm-extension">
+      <component :is="'tm-ext-' + activeExtension" class="tm-ext"/>
+    </transition>
   </div>
   <div class="status" :style="{ bottom: extensionShowed && extensionFull ? '-24px' : '0px' }">
     <div class="left">
