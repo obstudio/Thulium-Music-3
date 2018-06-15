@@ -3,26 +3,27 @@ const Player = require('../../library/player')
 module.exports = [
   {
     id: 'tm-play',
-    label: 'Play/Pause',
+    label: 'Play',
     keybindings: [ window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_P],
     precondition: null,
     keybindingContext: null,
     contextMenuGroupId: 'navigation',
     contextMenuOrder: 1.5,
     run: (editor) => {
-      const value = editor.getValue()
-      if (this.player) {
-        if (this.player.value === value) {
-          this.player.toggle()
-        } else {
-          this.player.close()
-          this.player = new Player(value)
-          this.player.play()
-        }
-      } else {
-        this.player = new Player(value)
-        this.player.play()
-      }
+      const value = editor.getModel().tab.value
+      Player.update(value).play()
+    }
+  },
+  {
+    id: 'tm-pause-resume',
+    label: 'Pause/Resume',
+    keybindings: [ window.monaco.KeyMod.CtrlCmd | window.monaco.KeyCode.KEY_R],
+    precondition: null,
+    keybindingContext: null,
+    contextMenuGroupId: 'navigation',
+    contextMenuOrder: 1.5,
+    run: (editor) => {
+        Player.toggle()
     }
   },
   {
@@ -36,10 +37,7 @@ module.exports = [
     contextMenuGroupId: 'navigation',
     contextMenuOrder: 1.5,
     run() {
-      if (this.player) {
-        this.player.close()
-        this.player = undefined
-      }
+      Player.close()
     }
   }
 ]

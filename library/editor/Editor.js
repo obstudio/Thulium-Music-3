@@ -37,9 +37,9 @@ let commandId = ''
 function registerPlayCommand(editor) {
   commandId = editor.addCommand(window.monaco.KeyCode.NumLock, (_, result, Index, Tracks) => {
     if (Tracks === undefined) {
-      new Player(result, Index).play()
+      Player.update(result, Index).play()
     } else {
-      new Player(result, { Index, Tracks }).play()
+      Player.update(result, { Index, Tracks }).play()
     }
   }, '')
 }
