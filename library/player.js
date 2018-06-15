@@ -1,8 +1,12 @@
-const defaultInstr = 'Piano'
 const instrDict = require('./config/Instrument.json')
 const drumDict = require('./config/Percussion.json')
 const Thulium = require('./Thulium')
 const WafPlayer = require('./waf/player')
+
+const defaultInstr = 'Piano'
+const sampleRate = 44100
+const numOfchannels = 1
+
 window.fonts = window.fonts || {}
 
 function audioLibFile(instr) {
@@ -45,15 +49,16 @@ module.exports = {
   /**
    * @param source {string} tm source
    * @param [spec] {Array<{}|string>}
+   * @param offline {boolean}
    */
-  update(source, spec) {
+  update(source, {spec, offline = false} = {}) {
     this.close()
 
     const result = new Thulium(source, {useFile: false}).adapt('MIDI', spec)
     this.tracks = result.tracks
     this.time = result.time
     this.dueTime = undefined
-    this.ctx = new AudioContext()
+    this.ctx = offline ? new OfflineAudioContext(numOfchannels, sampleRate * numOfchannels * this.time, sampleRate) : new AudioContext()
     this.player = new WafPlayer()
 
     this.status = 1
@@ -102,7 +107,7 @@ module.exports = {
 
   close() {
     if (this.status !== 5 && this.status !== 2) {
-      if (this.ctx) this.ctx.close()
+      if (this.ctx instanceof AudioContext) this.ctx.close()
       this.status = 5
     }
   },
