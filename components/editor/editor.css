@@ -137,6 +137,7 @@ button:last-child .tm-tab { margin-right: 0px }
     transition: 0.3s;
     height: 30px;
     position: absolute;
+    line-height: 1em;
     top: 30px;
 }
 
@@ -177,29 +178,29 @@ button:last-child .tm-tab { margin-right: 0px }
     padding: 0px;
 }
 
-.tm-editor > .extension .nav-left {
+.tm-editor > .extension > .nav-left {
     position: relative;
-    height: 34px;
+    height: 36px;
     width: 100%;
+    user-select: none;
 }
 
-.tm-editor > .extension .nav-left button {
+.tm-editor > .extension > .nav-left button {
     float: left;
-    padding: 10px 12px 8px;
+    padding: 10px 12px;
     font-size: 16px;
     line-height: 1em;
     text-align: center;
 }
 
-.tm-editor > .extension .underline {
+.tm-editor > .extension > .underline {
     position: absolute;
-    position: absolute;
-    top: 32px;
+    top: 34px;
     height: 2px;
     transition: 0.5s ease;
 }
 
-.tm-editor > .extension .nav-right {
+.tm-editor > .extension > .nav-right {
     position: absolute;
     right: 0px;
     height: 34px;
@@ -207,7 +208,7 @@ button:last-child .tm-tab { margin-right: 0px }
     float: right;
 }
 
-.tm-editor > .extension .nav-right button > i {
+.tm-editor > .extension > .nav-right button > i {
     font-size: 10px;
     padding: 12px;
     vertical-align: -webkit-baseline-middle;
@@ -227,7 +228,7 @@ button:last-child .tm-tab { margin-right: 0px }
 
 .tm-editor > .status {
     width: 100%;
-    height: 24px;
+    height: 28px;
     margin: 0px;
     padding: 0px;
     position: absolute;
@@ -245,15 +246,16 @@ button:last-child .tm-tab { margin-right: 0px }
     position: absolute;
 }
 
-.tm-editor > .status > div.left { left: 4px }
+.tm-editor > .status > div.left { left: 6px }
 .tm-editor > .status > div.left > * { float: left }
-.tm-editor > .status > div.right { right: 4px }
+.tm-editor > .status > div.right { right: 6px }
 .tm-editor > .status > div.right > * { float: right }
 
 .tm-editor > .status .text {
-    padding: 3px 3px;
+    padding: 7px 7px;
     text-align: center;
-    font-size: 12px;
+    font-size: 14px;
+    line-height: 1em;
 }
 
 .tm-editor > .status button {
@@ -261,12 +263,13 @@ button:last-child .tm-tab { margin-right: 0px }
     outline: none;
     cursor: pointer;
     transition: 0.3s;
-    padding: 0px;
+    padding: 5px;
 }
 
 .tm-editor > .status button > i {
-    font-size: 16px;
-    padding: 4px;
+    font-size: 18px;
+    line-height: 1em;
+    text-align: center;
 }
 
 .drag-ghost { visibility: hidden }

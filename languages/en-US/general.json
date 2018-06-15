@@ -42,6 +42,7 @@
             "find-next": "Find Next",
             "find-previous": "Find Previous",
             "toggle-menubar": [ "Show Menu Bar", "Hide Menu Bar" ],
+            "toggle-extension": [ "Show Extension", "Hide Extension" ],
             "command-palette": "Command Palette ..."
         }
     },

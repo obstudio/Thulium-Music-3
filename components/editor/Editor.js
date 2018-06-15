@@ -13,7 +13,7 @@ const menus = require('./menu.json')
 
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
-const StatusHeight = 24
+const StatusHeight = 28
 
 let last = null
 
@@ -360,9 +360,9 @@ module.exports = {
   <div class="content" :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
   <div class="extension" :class="{ dragged: draggingExtension }" :style="{
       height: (extensionShowed && extensionFull ? '100%' : extensionHeight + 'px'),
-      bottom: (extensionShowed ? extensionFull ? 0 : 24 : 24 - extensionHeight) + 'px'
+      bottom: (extensionShowed ? extensionFull ? 0 : 28 : 28 - extensionHeight) + 'px'
     }">
-    <div class="top-border" @mousedown="startDrag"/>
+    <div class="top-border" v-show="!extensionFull" @mousedown="startDrag"/>
     <div class="nav-left">
       <button v-for="(extension, index) in extensions" @click="changeExtension(index)"
         :key="extension" :class="{ active: activeExtension === index }">
@@ -386,12 +386,12 @@ module.exports = {
       </transition>
     </keep-alive>
   </div>
-  <div class="status" :style="{ bottom: extensionShowed && extensionFull ? '-24px' : '0px' }">
+  <div class="status" :style="{ bottom: extensionShowed && extensionFull ? '-28px' : '0px' }">
     <div class="left">
       <div class="text">{{ $t('editor.line-col', { line: row, col: column }) }}</div>
     </div>
     <div class="right">
-      <button @click="extensionShowed = !extensionShowed"><i class="el-icon-menu"/></button>
+      <button @click="toggleExtension()"><i class="icon-control"/></button>
     </div>
   </div>
   <div class="context-menu">
