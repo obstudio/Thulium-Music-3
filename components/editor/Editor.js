@@ -25,6 +25,7 @@ module.exports = {
   provide() {
     return {
       tabs: this.tabs,
+      tab: this.current,
       contextId: this.contextId,
       execute: this.executeMethod
     }
@@ -381,7 +382,8 @@ module.exports = {
       <transition name="tm-ext"
         :leave-to-class="'tm-ext-to-' + (extensionMoveToRight ? 'left' : 'right')"
         :enter-class="'tm-ext-to-' + (extensionMoveToRight ? 'right' : 'left')">
-        <component :is="'tm-ext-' + extensions[activeExtension].name" class="tm-ext"/>
+        <component :is="'tm-ext-' + extensions[activeExtension].name" class="tm-ext"
+          :width="width" :height="extensionHeight - 36" :isFull="extensionFull"/>
       </transition>
     </keep-alive>
   </div>

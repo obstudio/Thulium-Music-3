@@ -54,7 +54,7 @@ module.exports = {
   update(source, {spec, offline = false} = {}) {
     this.close()
 
-    const result = new Thulium(source, {useFile: false}).adapt('MIDI', spec)
+    const result = new Thulium(source, {useFile: false}).adapt(spec, 'MIDI')
     this.tracks = result.tracks
     this.time = result.time
     this.dueTime = undefined
