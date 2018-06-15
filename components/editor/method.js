@@ -16,6 +16,10 @@ module.exports = {
     }
   },
 
+  toggleExtension() {
+    this.extensionShowed = !this.extensionShowed
+  },
+
   closeTab(id) {
     if (!id) id = this.current.id
     const index = this.tabs.findIndex(tab => tab.id === id)

@@ -9,6 +9,7 @@
     { "method": "closeOtherTabs", "arguments": "$contextId", "key": "close-others" },
     { "method": "closeTabsToRight", "arguments": "$contextId", "key": "close-right" },
     { "method": "toggleMenubar", "context": "$menubar" },
+    { "method": "toggleExtension", "context": "$extensionShowed" },
     { "method": "executeTrigger", "arguments": "undo", "key": "undo" },
     { "method": "executeTrigger", "arguments": "redo", "key": "redo" },
     { "method": "executeAction", "arguments": "editor.action.clipboardCutAction", "key": "cut" },

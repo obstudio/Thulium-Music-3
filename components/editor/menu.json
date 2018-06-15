@@ -29,7 +29,8 @@
                 "@separator",
                 "close-tab",
                 "close-others",
-                "close-right"
+                "close-right",
+                "close-all"
             ]
         },
         {
@@ -53,6 +54,7 @@
             "bind": "V",
             "content": [
                 "toggle-menubar",
+                "toggle-extension",
                 "command-palette",
                 "@separator",
                 "@tabs"
