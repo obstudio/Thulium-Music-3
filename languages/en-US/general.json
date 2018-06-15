@@ -41,8 +41,8 @@
             "find": "Find ...",
             "find-next": "Find Next",
             "find-previous": "Find Previous",
-            "toggle-menubar": [ "Show Menu Bar", "Hide Menu Bar" ],
-            "toggle-extension": [ "Show Extension", "Hide Extension" ],
+            "toggle-menubar": [ "Hide Menu Bar", "Show Menu Bar" ],
+            "toggle-extension": [ "Hide Extension", "Show Extension" ],
             "command-palette": "Command Palette ..."
         }
     },

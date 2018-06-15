@@ -12,18 +12,25 @@ module.exports = {
         return word.charAt(0).toUpperCase() + word.slice(1)
       })
     },
-    getContextValue(key) {
-      if (commands[key].context) {
-        // FIXME: optimize context pattern
-        return this.$parent[commands[key].context.slice(1)] ? '.1' : '.0'
+    getCaption(key) {
+      if (commands[key].caption) {
+        let pointer
+        for (pointer = 0; pointer < commands[key].caption.length; pointer++) {
+          if (this.getValue(commands[key].caption[pointer])) break
+        }
+        return this.$t(`editor.menu.${key}.${pointer}`)
       } else {
-        return ''
+        return this.$t(`editor.menu.${key}`)
       }
     },
+    getValue(data) {
+      // FIXME: optimize value pattern
+      return this.$parent[data.slice(1)]
+    }
   },
 
   props: ['menu', 'show'],
-  inject: ['tabs', 'execute', 'executeCommand'],
+  inject: ['tabs', 'execute'],
   render: VueCompile(`<transition name="el-zoom-in-top">
     <ul v-show="show" class="tm-menu">
       <li v-for="item in menu">
@@ -37,8 +44,8 @@ module.exports = {
             </div>
           </li>
         </div>
-        <div v-else class="menu-item" @click="executeCommand(item)">
-          <a class="label">{{ $t('editor.menu.' + item + getContextValue(item)) }}</a>
+        <div v-else class="menu-item" @click="execute('executeCommand', item)">
+          <a class="label">{{ getCaption(item) }}</a>
           <span class="binding">{{ displayKeyBinding(item) }}</span>
         </div>
       </li>

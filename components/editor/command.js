@@ -13,6 +13,9 @@ function toKebab(camel) {
 
 for (const command of require('./command.json')) {
   const key = command.key ? command.key : toKebab(command.method)
+  if (command.caption && !(command.caption instanceof Array)) {
+    command.caption = [command.caption]
+  }
   commands[key] = command
 }
 

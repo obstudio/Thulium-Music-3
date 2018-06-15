@@ -131,7 +131,11 @@ module.exports = {
         { name: this.$t('editor.all-files'), extensions: ['*'] }
       ]
     }, (filepaths) => {
-      filepaths.forEach(filepath => this.loadFile(filepath))
+      if (filepaths) {
+        filepaths.forEach(filepath => this.loadFile(filepath))
+      } else {
+        // do somethins
+      }
     })
   },
 
@@ -165,6 +169,12 @@ module.exports = {
         { name: this.$t('editor.thulium'), extensions: ['tm', 'tml'] },
         { name: this.$t('editor.all-files'), extensions: ['*'] }
       ]
-    }, (filepath) => tab.save(filepath))
+    }, (filepath) => {
+      if (filepath) {
+        tab.save(filepath)
+      } else {
+        // do somethins
+      }
+    })
   }
 }

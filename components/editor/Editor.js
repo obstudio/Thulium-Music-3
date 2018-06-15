@@ -15,8 +15,6 @@ const HalfTitleHeight = 34
 const FullTitleHeight = 60
 const StatusHeight = 28
 
-let last = null
-
 module.exports = {
   name: 'TmEditor',
 
@@ -28,8 +26,7 @@ module.exports = {
     return {
       tabs: this.tabs,
       contextId: this.contextId,
-      execute: this.executeMethod,
-      executeCommand: this.executeCommand
+      execute: this.executeMethod
     }
   },
   data() {
@@ -81,11 +78,6 @@ module.exports = {
       return this.height - StatusHeight - (this.menubar ? FullTitleHeight : HalfTitleHeight)
     },
     settings: () => global.user.state.Settings,
-    addTagPosition() {
-      return {
-        left: `${this.addTagLeft}px`
-      }
-    },
     tabsWidth() {
       this.adjustTabsScroll()
       return this.addTagLeft < this.width - 34 ? `100%` : `${this.width - 34}px`
@@ -120,9 +112,9 @@ module.exports = {
   mounted() {
     // properties added in mounted hook to prevent unnecessary reactivity
     this.menu = {
-      header: this.$el.children[4].children[0],
-      tab: this.$el.children[4].children[1],
-      top: this.$el.children[4].children[2]
+      header: this.$refs.menus.children[0],
+      tab: this.$refs.menus.children[1],
+      top: this.$refs.menus.children[2]
     }
     this.player = undefined
 
@@ -137,12 +129,9 @@ module.exports = {
     this.refreshExtUnderline()
     this.refreshAddTagLeft()
     this.adjustTabsScroll()
-
     this.showEditor()
     this.registerGlobalEvents()
-    if (global.user) {
-      window.monaco.editor.setTheme(global.user.state.Settings.theme)
-    }
+    window.monaco.editor.setTheme(global.user.state.Settings.theme)
     this.activate()
   },
 
@@ -194,7 +183,7 @@ module.exports = {
       if (method in this) this[method](...args)
     },
     showEditor() {
-      const editor = window.monaco.editor.create(this.$el.children[1], {
+      const editor = window.monaco.editor.create(this.$refs.content, {
         model: null,
         language: 'tm',
         theme: 'tm',
@@ -323,9 +312,16 @@ module.exports = {
       this.refreshExtUnderline()
     },
     refreshExtUnderline() {
-      const current = this.$el.children[2].children[1].children[this.activeExtension]
+      const current = this.$refs.exts.children[this.activeExtension]
       this.extUnderlineLeft = current.offsetLeft + 8 + 'px'
       this.extUnderlineWidth = current.offsetWidth - 16 + 'px'
+    },
+    getExtensionName(ext) {
+      if (global.user.state.Settings.language in ext.i18n) {
+        return ext.i18n[global.user.state.Settings.language]
+      } else {
+        return ext.i18n.default
+      }
     }
   },
 
@@ -354,19 +350,22 @@ module.exports = {
         </button>
         </transition-group>
       </draggable>
-      <button class="add-tag" @click="addTab(false)" :style="addTagPosition"><i class="icon-add"/></button>
+      <button class="add-tag" @click="addTab(false)" :style="{ left: addTagLeft + 'px' }">
+        <i class="icon-add"/>
+      </button>
     </div>
   </div>
-  <div class="content" :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
+  <div class="content" ref="content"
+    :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
   <div class="extension" :class="{ dragged: draggingExtension }" :style="{
       height: (extensionShowed && extensionFull ? '100%' : extensionHeight + 'px'),
       bottom: (extensionShowed ? extensionFull ? 0 : 28 : 28 - extensionHeight) + 'px'
     }">
     <div class="top-border" v-show="!extensionFull" @mousedown="startDrag"/>
-    <div class="nav-left">
-      <button v-for="(extension, index) in extensions" @click="changeExtension(index)"
-        :key="extension" :class="{ active: activeExtension === index }">
-        {{ extension }}
+    <div class="nav-left" ref="exts">
+      <button v-for="(ext, index) in extensions" @click="changeExtension(index)"
+        :key="ext.name" :class="{ active: activeExtension === index }">
+        {{ getExtensionName(ext) }}
       </button>
     </div>
     <div class="underline" :style="{ left: extUnderlineLeft, width: extUnderlineWidth }"/>
@@ -382,7 +381,7 @@ module.exports = {
       <transition name="tm-ext"
         :leave-to-class="'tm-ext-to-' + (extensionMoveToRight ? 'left' : 'right')"
         :enter-class="'tm-ext-to-' + (extensionMoveToRight ? 'right' : 'left')">
-        <component :is="'tm-ext-' + extensions[activeExtension]" class="tm-ext"/>
+        <component :is="'tm-ext-' + extensions[activeExtension].name" class="tm-ext"/>
       </transition>
     </keep-alive>
   </div>
@@ -394,7 +393,7 @@ module.exports = {
       <button @click="toggleExtension()"><i class="icon-control"/></button>
     </div>
   </div>
-  <div class="context-menu">
+  <div class="context-menu" ref="menus">
     <tm-menu :menu="menus.header" :show="menuShowed.header"/>
     <tm-menu :menu="menus.tab" :show="menuShowed.tab"/>
     <div>

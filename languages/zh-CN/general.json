@@ -41,8 +41,8 @@
             "find": "查找 ...",
             "find-next": "查找下一个",
             "find-previous": "查找上一个",
-            "toggle-menubar": [ "显示菜单栏", "隐藏菜单栏" ],
-            "toggle-extension": [ "显示扩展", "隐藏扩展" ],
+            "toggle-menubar": [ "隐藏菜单栏", "显示菜单栏" ],
+            "toggle-extension": [ "隐藏扩展", "显示扩展" ],
             "command-palette": "命令面板 ..."
         }
     },
