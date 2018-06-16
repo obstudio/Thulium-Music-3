@@ -195,7 +195,6 @@ module.exports = {
       this.editor = editor
       editor.vue = this
       registerPlayCommand(editor)
-      require('./action').forEach(action => editor.addAction(action))
       editor.onDidChangeCursorPosition(event => {
         this.row = event.position.lineNumber
         this.column = event.position.column

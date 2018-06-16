@@ -43,7 +43,11 @@
             "find-previous": "查找上一个",
             "toggle-menubar": [ "隐藏菜单栏", "显示菜单栏" ],
             "toggle-extension": [ "隐藏扩展", "显示扩展" ],
-            "command-palette": "命令面板 ..."
+            "command-palette": "命令面板 ...",
+            "play": "播放当前文件",
+            "stop": "停止播放",
+            "toggle": "切换播放",
+            "output": "输出当前文件"
         }
     },
     "homepage": {

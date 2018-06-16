@@ -15,5 +15,6 @@
     "find": "!ctrl+f",
     "replace": "!ctrl+h",
     "find-next": "!f3",
-    "find-previous": "!shift+f3"
+    "find-previous": "!shift+f3",
+    "play": "ctrl+p"
 }

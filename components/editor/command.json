@@ -18,5 +18,9 @@
     { "method": "executeAction", "arguments": "editor.action.quickCommand", "key": "command-palette" },
     { "method": "executeAction", "arguments": "actions.find", "key": "find" },
     { "method": "executeAction", "arguments": "editor.action.nextMatchFindAction", "key": "find-next" },
-    { "method": "executeAction", "arguments": "editor.action.previoustMatchFindAction", "key": "find-previous" }
+    { "method": "executeAction", "arguments": "editor.action.previoustMatchFindAction", "key": "find-previous" },
+    { "method": "togglePlayerStatus", "arguments": ["play", "$contextId"], "key": "play" },
+    { "method": "togglePlayerStatus", "arguments": ["stop", "$contextId"], "key": "stop" },
+    { "method": "togglePlayerStatus", "arguments": ["toggle", "$contextId"], "key": "toggle" },
+    { "method": "togglePlayerStatus", "arguments": ["output", "$contextId"], "key": "output" }
 ]

@@ -43,7 +43,11 @@
             "find-previous": "Find Previous",
             "toggle-menubar": [ "Hide Menu Bar", "Show Menu Bar" ],
             "toggle-extension": [ "Hide Extension", "Show Extension" ],
-            "command-palette": "Command Palette ..."
+            "command-palette": "Command Palette ...",
+            "play": "Play Current File",
+            "stop": "Stop playing",
+            "toggle": "Toggle playing",
+            "output": "Output Current File"
         }
     },
     "homepage": {

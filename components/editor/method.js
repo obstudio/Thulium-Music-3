@@ -1,6 +1,8 @@
 const { dialog } = require('electron').remote
 const TmTab = require('./Tab')
 const path = require('path')
+const Player = require('../../library/player')
+const A2W = require('audiobuffer-to-wav')
 const fs = require('fs')
 
 module.exports = {
@@ -176,5 +178,32 @@ module.exports = {
         // do somethins
       }
     })
+  },
+
+  togglePlayerStatus(targetStatus, id) {
+    switch (targetStatus) {
+      case 'toggle':
+        Player.toggle()
+        break
+      case 'stop':
+        Player.close()
+        break
+      case 'play':
+      case 'output': {
+        const value = this.tabs.find(tab => tab.id === id).value
+        if (targetStatus === 'play') {
+          Player.update(value).play()
+        } else {
+          Player.update(value, {offline: true}).play().then(() => {
+            return Player.ctx.startRendering()
+          }).then((buffer) => {
+            fs.writeFile('test.wav', new Buffer(A2W(buffer)), () => {
+              console.log('Hurray!')
+            })
+          })
+        }
+        break
+      }
+    }
   }
 }
