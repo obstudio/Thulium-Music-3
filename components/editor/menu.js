@@ -10,7 +10,7 @@ module.exports = {
       if (binding.charAt(0) === '!') binding = binding.slice(1)
       return binding.replace(/[a-z]+/g, word => {
         return word.charAt(0).toUpperCase() + word.slice(1)
-      })
+      }).replace(/ /g, ', ')
     },
     getCaption(key) {
       if (commands[key].caption) {
@@ -21,6 +21,13 @@ module.exports = {
         return this.$t(`editor.menu.${key}.${pointer}`)
       } else {
         return this.$t(`editor.menu.${key}`)
+      }
+    },
+    getContext(key) {
+      if (commands[key].context) {
+        return this.getValue(commands[key].context)
+      } else {
+        return true
       }
     },
     getValue(data) {
@@ -44,7 +51,8 @@ module.exports = {
             </div>
           </li>
         </div>
-        <div v-else class="menu-item" @click="execute('executeCommand', item)">
+        <div v-else class="menu-item" v-show="getContext(item)"
+          @click="execute('executeCommand', item)">
           <a class="label">{{ getCaption(item) }}</a>
           <span class="binding">{{ displayKeyBinding(item) }}</span>
         </div>

@@ -15,10 +15,13 @@
         "close-others",
         "close-right",
         "@separator",
-        "play",
-        "stop",
-        "toggle",
-        "output"
+        "start-play",
+        "stop-play",
+        "toggle-play"
+    ],
+    "extension": [
+        "toggle-extension",
+        "toggle-full-ext"
     ],
     "menubar": [
         {
@@ -60,9 +63,21 @@
             "content": [
                 "toggle-menubar",
                 "toggle-extension",
+                "toggle-full-ext",
                 "command-palette",
                 "@separator",
                 "@tabs"
+            ]
+        },
+        {
+            "key": "play",
+            "bind": "P",
+            "content": [
+                "start-play",
+                "stop-play",
+                "toggle-play",
+                "@separator",
+                "output"
             ]
         }
     ]

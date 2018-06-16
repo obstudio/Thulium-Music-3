@@ -22,6 +22,10 @@ module.exports = {
     this.extensionShowed = !this.extensionShowed
   },
 
+  toggleFullExt() {
+    this.extensionFull = !this.extensionFull
+  },
+
   closeTab(id) {
     if (!id) id = this.current.id
     const index = this.tabs.findIndex(tab => tab.id === id)
@@ -136,7 +140,7 @@ module.exports = {
       if (filepaths) {
         filepaths.forEach(filepath => this.loadFile(filepath))
       } else {
-        // do somethins
+        // do something
       }
     })
   },
@@ -175,7 +179,7 @@ module.exports = {
       if (filepath) {
         tab.save(filepath)
       } else {
-        // do somethins
+        // do something
       }
     })
   },

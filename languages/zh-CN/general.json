@@ -24,6 +24,7 @@
             "file": "文件",
             "edit": "编辑",
             "view": "查看",
+            "play": "播放",
             "add-tab": "新建",
             "open-file": "打开 ...",
             "save": "保存",
@@ -43,11 +44,12 @@
             "find-previous": "查找上一个",
             "toggle-menubar": [ "隐藏菜单栏", "显示菜单栏" ],
             "toggle-extension": [ "隐藏扩展", "显示扩展" ],
+            "toggle-full-ext": [ "取消全屏扩展", "全屏显示扩展" ],
             "command-palette": "命令面板 ...",
-            "play": "播放当前文件",
-            "stop": "停止播放",
-            "toggle": "切换播放",
-            "output": "输出当前文件"
+            "start-play": "开始播放",
+            "stop-play": "停止播放",
+            "toggle-play": "切换播放",
+            "output": "输出到 wav"
         }
     },
     "homepage": {

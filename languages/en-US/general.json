@@ -24,6 +24,7 @@
             "file": "File",
             "edit": "Edit",
             "view": "View",
+            "play": "play",
             "add-tab": "New Tab",
             "open-file": "Open ...",
             "save": "Save",
@@ -43,11 +44,12 @@
             "find-previous": "Find Previous",
             "toggle-menubar": [ "Hide Menu Bar", "Show Menu Bar" ],
             "toggle-extension": [ "Hide Extension", "Show Extension" ],
+            "toggle-full-ext": [ "Hide Full Extension", "Show Full Extension" ],
             "command-palette": "Command Palette ...",
-            "play": "Play Current File",
-            "stop": "Stop playing",
-            "toggle": "Toggle playing",
-            "output": "Output Current File"
+            "start-play": "Start Playing",
+            "stop-play": "Stop playing",
+            "toggle-play": "Toggle playing",
+            "output": "Output to wav"
         }
     },
     "homepage": {

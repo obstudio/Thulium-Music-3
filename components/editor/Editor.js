@@ -57,6 +57,7 @@ module.exports = {
       menuShowed: {
         header: false,
         tab: false,
+        extension: false,
         top: new Array(menus.menubar.length).fill(false)
       },
       altKey: false,
@@ -115,7 +116,8 @@ module.exports = {
     this.menu = {
       header: this.$refs.menus.children[0],
       tab: this.$refs.menus.children[1],
-      top: this.$refs.menus.children[2]
+      extension: this.$refs.menus.children[2],
+      top: this.$refs.menus.children[3]
     }
     this.player = undefined
 
@@ -362,7 +364,7 @@ module.exports = {
       bottom: (extensionShowed ? extensionFull ? 0 : 28 : 28 - extensionHeight) + 'px'
     }">
     <div class="top-border" v-show="!extensionFull" @mousedown="startDrag"/>
-    <div class="nav-left" ref="exts">
+    <div class="nav-left" ref="exts" @contextmenu.stop="showContextMenu('extension', $event)">
       <button v-for="(ext, index) in extensions" @click="changeExtension(index)"
         :key="ext.name" :class="{ active: activeExtension === index }">
         {{ getExtensionName(ext) }}
@@ -370,7 +372,7 @@ module.exports = {
     </div>
     <div class="underline" :style="{ left: extUnderlineLeft, width: extUnderlineWidth }"/>
     <div class="nav-right">
-      <button @click="extensionFull = !extensionFull">
+      <button @click="toggleFullExt()">
         <i :class="extensionFull ? 'icon-down' : 'icon-up'"/>
       </button>
       <button @click="extensionShowed = false">
@@ -397,6 +399,7 @@ module.exports = {
   <div class="context-menu" ref="menus">
     <tm-menu :menu="menus.header" :show="menuShowed.header"/>
     <tm-menu :menu="menus.tab" :show="menuShowed.tab"/>
+    <tm-menu :menu="menus.extension" :show="menuShowed.extension"/>
     <div>
       <div v-for="(menu, index) in menus.menubar">
         <tm-menu :menu="menu.content" :show="menuShowed.top[index]"/>

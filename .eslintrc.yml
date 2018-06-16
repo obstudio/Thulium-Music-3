@@ -12,8 +12,9 @@ parserOptions:
     jsx: true
 rules:
   indent:
-    - error
+    - warn
     - 2
+    - switch-case: 2
   linebreak-style:
     - error
     - windows

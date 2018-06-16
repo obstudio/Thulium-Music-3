@@ -10,6 +10,7 @@
     { "method": "closeTabsToRight", "arguments": "$contextId", "key": "close-right" },
     { "method": "toggleMenubar", "caption": "$menubar" },
     { "method": "toggleExtension", "caption": "$extensionShowed" },
+    { "method": "toggleFullExt", "caption": "$extensionFull", "context": "$extensionShowed" },
     { "method": "executeTrigger", "arguments": "undo", "key": "undo" },
     { "method": "executeTrigger", "arguments": "redo", "key": "redo" },
     { "method": "executeAction", "arguments": "editor.action.clipboardCutAction", "key": "cut" },
@@ -19,8 +20,8 @@
     { "method": "executeAction", "arguments": "actions.find", "key": "find" },
     { "method": "executeAction", "arguments": "editor.action.nextMatchFindAction", "key": "find-next" },
     { "method": "executeAction", "arguments": "editor.action.previoustMatchFindAction", "key": "find-previous" },
-    { "method": "togglePlayerStatus", "arguments": ["play", "$contextId"], "key": "play" },
-    { "method": "togglePlayerStatus", "arguments": ["stop", "$contextId"], "key": "stop" },
-    { "method": "togglePlayerStatus", "arguments": ["toggle", "$contextId"], "key": "toggle" },
+    { "method": "togglePlayerStatus", "arguments": ["play", "$contextId"], "key": "start-play" },
+    { "method": "togglePlayerStatus", "arguments": ["stop", "$contextId"], "key": "stop-play" },
+    { "method": "togglePlayerStatus", "arguments": ["toggle", "$contextId"], "key": "toggle-play" },
     { "method": "togglePlayerStatus", "arguments": ["output", "$contextId"], "key": "output" }
 ]

@@ -17,7 +17,6 @@ module.exports = {
   inject: ['tab'],
   props: ['width', 'height', 'isFull'],
   render: VueCompile(`<div class="renderer">
-    <canvas ref="canvas" :height="height - 100 + 'px'" :width="width"/>
     {{ tm }}
   </div>`)
 }
