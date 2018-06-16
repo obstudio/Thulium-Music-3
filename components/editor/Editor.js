@@ -52,14 +52,18 @@ module.exports = {
       extUnderlineWidth: '0px',
       extensionMoveToRight: false
     }
+    menuShowed = {}
+    for (const key in menus) {
+      menuShowed[key] = false
+    }
+    menuEmbedded = {}
+    for (const key in menus) {
+      menuEmbedded[key] = new Array(menus[key].length).fill(false)
+    }
     const menuState = {
       menus,
-      menuShowed: {
-        header: false,
-        tab: false,
-        extension: false,
-        top: new Array(menus.menubar.length).fill(false)
-      },
+      menuShowed,
+      menuEmbedded,
       altKey: false,
       contextId: null
     }
@@ -117,7 +121,7 @@ module.exports = {
       header: this.$refs.menus.children[0],
       tab: this.$refs.menus.children[1],
       extension: this.$refs.menus.children[2],
-      top: this.$refs.menus.children[3]
+      menubar: this.$refs.menus.children[3]
     }
     this.player = undefined
 
@@ -270,10 +274,9 @@ module.exports = {
     },
     hideContextMenus() {
       for (const key in this.menuShowed) {
-        if (this.menuShowed[key] instanceof Array) {
-          this.menuShowed[key] = new Array(this.menuShowed[key].length).fill(false)
-        } else {
-          this.menuShowed[key] = false
+        this.menuShowed[key] = false
+        for (const index in this.menuEmbedded[key]) {
+          this.menuEmbedded[key][index] = false
         }
       }
     },
@@ -290,11 +293,11 @@ module.exports = {
     },
     showMenu(index, event) {
       this.contextId = null
-      if (this.menuShowed.top[index]) {
-        this.menuShowed.top.splice(index, 1, false)
+      if (this.menuEmbedded.menubar[index]) {
+        this.menuShowed.menubar = false
         return
       }
-      const style = this.menu.top.children[index].children[0].style
+      const style = this.menu.menubar.style
       this.hideContextMenus()
       if (event.currentTarget.offsetLeft + 200 > this.width) {
         style.left = event.currentTarget.offsetLeft + event.currentTarget.offsetWidth - 200 + 'px'
@@ -302,7 +305,8 @@ module.exports = {
         style.left = event.currentTarget.offsetLeft + 'px'
       }
       style.top = event.currentTarget.offsetTop + event.currentTarget.offsetHeight + 'px'
-      this.menuShowed.top[index] = true
+      this.menuShowed.menubar = true
+      this.menuEmbedded.menubar[index] = true
     },
     scrollTab(e) {
       e.currentTarget.scrollLeft += e.deltaY
@@ -400,11 +404,7 @@ module.exports = {
     <tm-menu :menu="menus.header" :show="menuShowed.header"/>
     <tm-menu :menu="menus.tab" :show="menuShowed.tab"/>
     <tm-menu :menu="menus.extension" :show="menuShowed.extension"/>
-    <div>
-      <div v-for="(menu, index) in menus.menubar">
-        <tm-menu :menu="menu.content" :show="menuShowed.top[index]"/>
-      </div>
-    </div>
+    <tm-menu :menu="menus.menubar" :show="menuShowed.menubar" :embed="menuEmbedded.menubar"/>
   </div>
 </div>`)
 }

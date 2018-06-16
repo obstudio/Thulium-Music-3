@@ -3,6 +3,10 @@ const { keymap, commands } = require('./command')
 module.exports = {
   name: 'TmMenu',
 
+  mounted() {
+    console.log(this.show)
+  },
+
   methods: {
     displayKeyBinding(key) {
       let binding = keymap[key]
@@ -36,11 +40,24 @@ module.exports = {
     }
   },
 
-  props: ['menu', 'show'],
   inject: ['tabs', 'execute'],
+  props: {
+    menu: {
+      type: Array,
+      required: true
+    },
+    show: {
+      default: false
+    },
+    embed: {
+      default() {
+        return []
+      }
+    }
+  },
   render: VueCompile(`<transition name="el-zoom-in-top">
     <ul v-show="show" class="tm-menu">
-      <li v-for="item in menu">
+      <li v-for="(item, index) in menu">
         <div v-if="item === '@separator'" class="menu-item disabled" @click.stop>
           <a class="separator"/>
         </div>
@@ -50,6 +67,9 @@ module.exports = {
               <a class="label">{{ tab.title }}</a>
             </div>
           </li>
+        </div>
+        <div v-else-if="item instanceof Object" v-show="embed[index]">
+          <tm-menu :menu="item.content" :show="true"/>
         </div>
         <div v-else class="menu-item" v-show="getContext(item)"
           @click="execute('executeCommand', item)">
