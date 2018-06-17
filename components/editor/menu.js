@@ -62,7 +62,7 @@ Vue.component('tm-menu', {
         </li>
       </div>
       <div v-else-if="item instanceof Object" v-show="embed[index]">
-        <tm-menu-content :data="item.content"/>
+        <tm-menu :data="item.content"/>
       </div>
       <div v-else class="menu-item" v-show="getContext(item)"
         @click="execute('executeCommand', item)">

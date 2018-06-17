@@ -258,6 +258,9 @@ module.exports = {
     hideContextMenus() {
       for (const key in this.menuData) {
         this.menuData[key].show = false
+        for (let index = 0; index < this.menuData[key].embed.length; index++) {
+          this.menuData[key].embed[index] = false
+        }
       }
     },
     showContextMenu(key, event) {
@@ -273,6 +276,7 @@ module.exports = {
     },
     showMenu(index, event) {
       this.contextId = null
+      console.log(this.menuData.menubar)
       if (this.menuData.menubar.embed[index]) {
         this.menuData.menubar.embed[index] = false
         return
