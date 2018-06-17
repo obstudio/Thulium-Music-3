@@ -44,7 +44,8 @@ module.exports = {
         scrollFn: () => {}
       },
       draggingTab: false,
-      addTagLeft: 0
+      addTagLeft: 0,
+      tabTransition: false
     }
     const extensionState = {
       extensions,
@@ -106,9 +107,14 @@ module.exports = {
     'settings.lineEnding'() {
       this.tabs.map(tab => this.refresh(tab))
     },
-    current(newTab, oldTab) {
+    current(newTab) {
       if (this.tabs[this.tabs.length - 1] === newTab) {
-        setTimeout(() => this.$refs.tabs.$el.scrollLeft = this.$refs.tabs.$el.scrollWidth - this.$refs.tabs.$el.clientWidth, 1000)
+        const el = this.$refs.tabs.$el
+        const self = this
+        requestAnimationFrame(function fixRight() {
+          el.scrollLeft = el.scrollWidth - el.clientWidth
+          if (self.tabTransition) requestAnimationFrame(() => fixRight())
+        })
       } else {
         this.adjustTabsScroll()
       }
@@ -284,7 +290,8 @@ module.exports = {
         }
       }
     },
-    test(el) {
+    appendTabLeaveStyle(el) {
+      this.tabTransition = true
       el.style.left=`${el.offsetLeft-el.parentElement.scrollLeft}px`
       el.style.position="absolute"
     },
@@ -351,7 +358,7 @@ module.exports = {
     </div>
     <div class="tm-tabs">
       <!--<draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">-->
-        <transition-group ref="tabs" name="tm-tabs" class="tm-scroll-tabs" :style="{width: tabsWidth}" @wheel.prevent.stop.native="scrollTab" @beforeLeave="test">
+        <transition-group ref="tabs" name="tm-tabs" class="tm-scroll-tabs" :style="{width: tabsWidth}" @wheel.prevent.stop.native="scrollTab" @beforeLeave="appendTabLeaveStyle" @afterLeave="tabTransition=false">
         <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id" :identifier="'tab-'+tab.id" class="tm-scroll-tab">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
