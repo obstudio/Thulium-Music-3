@@ -23,7 +23,7 @@ module.exports = {
   provide() {
     return {
       tabs: this.tabs,
-      tab: this.current,
+      current: this.current,
       contextId: this.contextId,
       execute: this.executeMethod
     }
@@ -251,6 +251,7 @@ module.exports = {
       this.showContextMenu('tab', event)
     },
     startDrag(event) {
+      this.hideContextMenus()
       this.draggingExtension = true
       this.draggingLastY = event.clientY
     },
@@ -274,11 +275,19 @@ module.exports = {
       } else {
         style.left = event.clientX - this.left + 'px'
       }
-      style.top = event.clientY - this.top + 'px'
+      if (event.clientY - this.top > this.height / 2) {
+        style.top = ''
+        style.bottom = this.top + this.height - event.clientY + 'px'
+      } else {
+        style.top = event.clientY - this.top + 'px'
+        style.bottom = ''
+      }
       this.menuData[key].show = true
     },
     hoverMenu(index, event) {
-      if (this.menubarActive) this.showMenu(index, event)
+      if (this.menubarActive && !this.menuData.menubar.embed[index]) {
+        this.showMenu(index, event)
+      }
     },
     showMenu(index, event) {
       this.contextId = null
@@ -335,7 +344,8 @@ module.exports = {
   <div class="header" @contextmenu.stop="showContextMenu('header', $event)">
     <div class="menubar">
       <div v-for="(menu, index) in menuData.menubar.content" class="tm-top-menu"
-        @contextmenu.stop @click.stop="showMenu(index, $event)" @mouseover.stop="hoverMenu(index, $event)">
+        @click.stop="showMenu(index, $event)" @mouseover.stop="hoverMenu(index, $event)"
+        :class="{ active: menuData.menubar.embed[index] }" @contextmenu.stop>
         {{ $t('editor.menu.' + menu.key) }} (<span>{{ menu.bind }}</span>)
       </div>
     </div>
@@ -347,7 +357,7 @@ module.exports = {
           <button v-for="tab in tabs" :key="tab.id" class="tm-scroll-tab"
             @click.middle.prevent.stop="closeTab(tab.id)" @mousedown.left="switchTabById(tab.id)">
             <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
-              <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
+              <i v-if="tab.changed" class="icon-changed" @mousedown.stop @click.stop="closeTab(tab.id)"/>
               <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
               <div class="title" @contextmenu.stop="toggleTabMenu(tab.id, $event)">{{ tab.title }}</div>
               <div class="left-border"/>

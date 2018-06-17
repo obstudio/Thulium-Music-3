@@ -32,6 +32,7 @@ module.exports = {
       state = {}
     }
     const current = tabs.find(tab => tab.id === state.currentId)
+    delete state.currentId
     return Object.assign(defaultState, state, {
       tabs: tabs,
       current: current ? current : tabs[0]

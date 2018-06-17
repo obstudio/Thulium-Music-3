@@ -334,6 +334,13 @@ button:last-child .tm-tab { margin-right: 0px }
 	margin: 0px;
 }
 
+.tm-menu .menu-item .label.active { font-weight: bold }
+.tm-menu .menu-item .label i.icon-circle {
+    font-size: 6px;
+    padding-left: 4px;
+    vertical-align: 2px;
+}
+
 .tm-menu .menu-item .binding {
     display: inline-block;
 	flex: 2 1 auto;

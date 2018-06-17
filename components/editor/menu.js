@@ -36,7 +36,7 @@ Vue.component('tm-menu', {
       return this.$parent[data.slice(1)]
     }
   },
-  inject: ['tabs', 'execute'],
+  inject: ['tabs', 'execute', 'current'],
   props: {
     data: {
       type: Array,
@@ -59,9 +59,12 @@ Vue.component('tm-menu', {
         <a class="separator"/>
       </div>
       <div v-else-if="item === '@tabs'">
-        <li v-for="tab in tabs">
+        <li v-for="tab in tabs" :key="tab.id">
           <div class="menu-item" @click="execute('switchTabById', tab.id)">
-            <a class="label">{{ tab.title }}</a>
+            <a class="label" :class="{ active: tab.id === current.id }">
+              {{ tab.title }}
+              <i v-if="tab.changed" class="icon-circle"/>
+            </a>
           </div>
         </li>
       </div>
