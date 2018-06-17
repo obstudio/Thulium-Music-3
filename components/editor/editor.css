@@ -332,11 +332,6 @@ button:last-child .tm-tab { margin-right: 0px }
 }
 
 .tm-menu .menu-item .label.active { font-weight: bold }
-.tm-menu .menu-item .label i.icon-circle {
-    font-size: 6px;
-    padding-left: 4px;
-    vertical-align: 2px;
-}
 
 .tm-menu .menu-item .binding {
     display: inline-block;
@@ -345,6 +340,11 @@ button:last-child .tm-tab { margin-right: 0px }
 	line-height: 1.1em;
 	font-size: 12px;
 	text-align: right;
+}
+
+.tm-menu .menu-item .binding i {
+    font-size: 9px;
+    vertical-align: 1px;
 }
 
 .tm-menu .menu-item .separator {

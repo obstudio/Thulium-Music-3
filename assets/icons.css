@@ -15,10 +15,8 @@
   -webkit-font-smoothing: antialiased;
 }
 
-.icon-changed:before { content: "\e901" }
-.icon-changed:hover::before { content: "\ea0f" }
-
 .icon-circle:before { content: "\e901" }
+.icon-circle:hover::before { content: "\ea0f" }
 .icon-volume-medium:before { content: "\e909" }
 .icon-volume-high:before { content: "\e90a" }
 .icon-volume-low:before { content: "\e90b" }

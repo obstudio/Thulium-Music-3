@@ -25,10 +25,10 @@ Vue.component('tm-menu', {
       }
     },
     getContext(key) {
-      if (commands[key].context) {
-        return this.getValue(commands[key].context)
+      if (commands[key].enabled) {
+        return !this.getValue(commands[key].enabled)
       } else {
-        return true
+        return false
       }
     },
     getValue(data) {
@@ -61,10 +61,11 @@ Vue.component('tm-menu', {
       <div v-else-if="item === '@tabs'">
         <li v-for="tab in tabs" :key="tab.id">
           <div class="menu-item" @click="execute('switchTabById', tab.id)">
-            <a class="label" :class="{ active: tab.id === current.id }">
-              {{ tab.title }}
-              <i v-if="tab.changed" class="icon-circle"/>
-            </a>
+            <a class="label" :class="{ active: tab.id === current.id }">{{ tab.title }}</a>
+            <span class="binding">
+              <i v-if="tab.changed" class="icon-circle" @click.stop="execute('closeTab', tab.id)"/>
+              <i v-else class="icon-close" @click.stop="execute('closeTab', tab.id)"/>
+            </span>
           </div>
         </li>
       </div>
@@ -75,8 +76,11 @@ Vue.component('tm-menu', {
           <tm-menu v-show="embed[index]" :data="item.content" :move="0"/>
         <!--/transition-->
       </div>
-      <div v-else class="menu-item" v-show="getContext(item)"
-        @click="execute('executeCommand', item)">
+      <div v-else-if="getContext(item)" class="menu-item disabled" @click.stop>
+        <a class="label">{{ getCaption(item) }}</a>
+        <span class="binding">{{ displayKeyBinding(item) }}</span>
+      </div>
+      <div v-else class="menu-item" @click="execute('executeCommand', item)">
         <a class="label">{{ getCaption(item) }}</a>
         <span class="binding">{{ displayKeyBinding(item) }}</span>
       </div>
@@ -101,6 +105,64 @@ module.exports = {
     this.menuRef = {}
     for (let index = 0; index < menuKeys.length; index++) {
       this.menuRef[menuKeys[index]] = this.$refs.menus.children[index]
+    }
+  },
+  methods: {
+    hideContextMenus() {
+      this.menubarActive = false
+      for (const key in this.menuData) {
+        this.menuData[key].show = false
+        for (let index = 0; index < this.menuData[key].embed.length; index++) {
+          this.menuData[key].embed.splice(index, 1, false)
+        }
+      }
+    },
+    showContextMenu(key, event) {
+      const style = this.menuRef[key].style
+      this.hideContextMenus()
+      if (event.clientX + 200 > this.width) {
+        style.left = event.clientX - 200 - this.left + 'px'
+      } else {
+        style.left = event.clientX - this.left + 'px'
+      }
+      if (event.clientY - this.top > this.height / 2) {
+        style.top = ''
+        style.bottom = this.top + this.height - event.clientY + 'px'
+      } else {
+        style.top = event.clientY - this.top + 'px'
+        style.bottom = ''
+      }
+      this.menuData[key].show = true
+    },
+    hoverMenu(index, event) {
+      if (this.menubarActive && !this.menuData.menubar.embed[index]) {
+        this.showMenu(index, event)
+      }
+    },
+    showMenu(index, event) {
+      this.contextId = null
+      const style = this.menuRef.menubar.style
+      const last = this.menuData.menubar.embed.indexOf(true)
+      if (last === index) {
+        this.menubarActive = false
+        this.menuData.menubar.show = false
+        this.menuData.menubar.embed.splice(index, 1, false)
+        return
+      } else if (last === -1) {
+        this.menubarMove = 0
+      } else {
+        this.menubarMove = index - last
+      }
+      this.hideContextMenus()
+      if (event.currentTarget.offsetLeft + 200 > this.width) {
+        style.left = event.currentTarget.offsetLeft + event.currentTarget.offsetWidth - 200 + 'px'
+      } else {
+        style.left = event.currentTarget.offsetLeft + 'px'
+      }
+      style.top = event.currentTarget.offsetTop + event.currentTarget.offsetHeight + 'px'
+      this.menubarActive = true
+      this.menuData.menubar.show = true
+      this.menuData.menubar.embed.splice(index, 1, true)
     }
   }
 }

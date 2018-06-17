@@ -293,62 +293,6 @@ module.exports = {
     stopDrag() {
       this.draggingExtension = false
     },
-    hideContextMenus() {
-      this.menubarActive = false
-      for (const key in this.menuData) {
-        this.menuData[key].show = false
-        for (let index = 0; index < this.menuData[key].embed.length; index++) {
-          this.menuData[key].embed.splice(index, 1, false)
-        }
-      }
-    },
-    showContextMenu(key, event) {
-      const style = this.menuRef[key].style
-      this.hideContextMenus()
-      if (event.clientX + 200 > this.width) {
-        style.left = event.clientX - 200 - this.left + 'px'
-      } else {
-        style.left = event.clientX - this.left + 'px'
-      }
-      if (event.clientY - this.top > this.height / 2) {
-        style.top = ''
-        style.bottom = this.top + this.height - event.clientY + 'px'
-      } else {
-        style.top = event.clientY - this.top + 'px'
-        style.bottom = ''
-      }
-      this.menuData[key].show = true
-    },
-    hoverMenu(index, event) {
-      if (this.menubarActive && !this.menuData.menubar.embed[index]) {
-        this.showMenu(index, event)
-      }
-    },
-    showMenu(index, event) {
-      this.contextId = null
-      const style = this.menuRef.menubar.style
-      const last = this.menuData.menubar.embed.indexOf(true)
-      if (last === index) {
-        this.menubarActive = false
-        this.menuData.menubar.show = false
-        this.menuData.menubar.embed.splice(index, 1, false)
-        return
-      } else if (last === -1) {
-        this.menubarMove = 0
-      } else {
-        this.menubarMove = index - last
-      }
-      this.hideContextMenus()
-      if (event.currentTarget.offsetLeft + 200 > this.width) {
-        style.left = event.currentTarget.offsetLeft + event.currentTarget.offsetWidth - 200 + 'px'
-      } else {
-        style.left = event.currentTarget.offsetLeft + 'px'
-      }
-      style.top = event.currentTarget.offsetTop + event.currentTarget.offsetHeight + 'px'
-      this.menubarActive = true
-      this.menuData.menubar.show = true
-      this.menuData.menubar.embed.splice(index, 1, true)
-    },
     scrollTab(e) {
       this.doScroll(e.deltaY)
     },
@@ -369,7 +313,8 @@ module.exports = {
       } else {
         return ext.i18n.default
       }
-    }
+    },
+    ...TmMenu.methods
   },
 
   props: ['width', 'height', 'left', 'top'],
