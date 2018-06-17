@@ -42,6 +42,10 @@ Vue.component('tm-menu', {
       type: Array,
       required: true
     },
+    move: {
+      type: Number,
+      required: true
+    },
     embed: {
       type: Array,
       default() {
@@ -49,7 +53,7 @@ Vue.component('tm-menu', {
       }
     }
   },
-  render: VueCompile(`<div>
+  render: VueCompile(`<div class="content">
     <li v-for="(item, index) in data">
       <div v-if="item === '@separator'" class="menu-item disabled" @click.stop>
         <a class="separator"/>
@@ -61,8 +65,12 @@ Vue.component('tm-menu', {
           </div>
         </li>
       </div>
-      <div v-else-if="item instanceof Object" v-show="embed[index]">
-        <tm-menu :data="item.content"/>
+      <div v-else-if="item instanceof Object">
+        <transition name="tm-menu"
+          :leave-to-class="'transform-to-' + (move > 0 ? 'left' : move < 0 ? 'right' : 'none')"
+          :enter-class="'transform-to-' + (move > 0 ? 'right' : move < 0 ? 'left' : 'none')">
+          <tm-menu v-show="embed[index]" :data="item.content" :move="0"/>
+        </transition>
       </div>
       <div v-else class="menu-item" v-show="getContext(item)"
         @click="execute('executeCommand', item)">
