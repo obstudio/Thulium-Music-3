@@ -39,13 +39,10 @@ module.exports = {
     const tabState = {
       dragOptions: {
         animation: 150,
-        ghostClass: 'drag-ghost',
-        scroll: false,
-        scrollFn: () => {}
+        ghostClass: 'drag-ghost'
       },
       draggingTab: false,
-      addTagLeft: 0,
-      tabTransition: false
+      addTagLeft: 0
     }
     const extensionState = {
       extensions,
@@ -108,16 +105,7 @@ module.exports = {
       this.tabs.map(tab => this.refresh(tab))
     },
     current(newTab) {
-      if (this.tabs[this.tabs.length - 1] === newTab) {
-        const el = this.$refs.tabs.$el
-        const self = this
-        requestAnimationFrame(function fixRight() {
-          el.scrollLeft = el.scrollWidth - el.clientWidth
-          if (self.tabTransition) requestAnimationFrame(() => fixRight())
-        })
-      } else {
         this.adjustTabsScroll()
-      }
     }
   },
 
@@ -265,6 +253,13 @@ module.exports = {
     },
 
     // event handlers
+    appendTabLeaveStyle(el) {
+      if (el.nextElementSibling === null) {
+        el.parentElement.animate({width: [`${this.width - el.clientWidth - 34}px`, `${this.width - 34}px`]}, 150)
+      }
+      el.style.left=`${el.offsetLeft-el.parentElement.scrollLeft}px`
+      el.style.position = 'absolute'
+    },
     loadFileDropped(event) {
       for (const file of event.dataTransfer.files) {
         this.loadFile(file.path)
@@ -289,11 +284,6 @@ module.exports = {
           this.menuShowed[key] = false
         }
       }
-    },
-    appendTabLeaveStyle(el) {
-      this.tabTransition = true
-      el.style.left=`${el.offsetLeft-el.parentElement.scrollLeft}px`
-      el.style.position="absolute"
     },
     showContextMenu(key, event) {
       const style = this.menu[key].style
@@ -323,7 +313,9 @@ module.exports = {
       this.menuShowed.top[index] = true
     },
     scrollTab(e) {
+      e.currentTarget.style.scrollBehavior = 'auto'
       e.currentTarget.scrollLeft += e.deltaY
+      e.currentTarget.style.scrollBehavior = 'smooth'
     },
     changeExtension(id) {
       if (this.activeExtension === id) return
@@ -357,8 +349,8 @@ module.exports = {
       </div>
     </div>
     <div class="tm-tabs">
-      <!--<draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">-->
-        <transition-group ref="tabs" name="tm-tabs" class="tm-scroll-tabs" :style="{width: tabsWidth}" @wheel.prevent.stop.native="scrollTab" @beforeLeave="appendTabLeaveStyle" @afterLeave="tabTransition=false">
+      <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
+        <transition-group ref="tabs" name="tm-tabs" class="tm-scroll-tabs" :style="{width: tabsWidth}" :move-class="draggingTab ? 'dragged' : ''" @wheel.prevent.stop.native="scrollTab" @beforeLeave="appendTabLeaveStyle">
         <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id" :identifier="'tab-'+tab.id" class="tm-scroll-tab">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
@@ -369,7 +361,7 @@ module.exports = {
           </div>
         </button>
         </transition-group>
-      <!--</draggable>-->
+      </draggable>
       <button class="add-tag" @click="addTab(false)" :style="{ left: addTagLeft + 'px' }">
         <i class="icon-add"/>
       </button>
