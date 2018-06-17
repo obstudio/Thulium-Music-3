@@ -14,7 +14,30 @@ const menus = require('./menu.json')
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
 const StatusHeight = 28
+function SmoothScroll(target, speed, smooth) {
+  let moving = false
+  let pos = target.scrollLeft
 
+  function scrolled(deltaY) {
+    const delta = deltaY / 100
+
+    pos += delta * speed
+    pos = Math.max(-10, Math.min(pos, target.scrollWidth - target.clientWidth + 10)) // limit scrolling
+
+    if (!moving) update()
+  }
+
+  function update() {
+    moving = true
+    const delta = (pos - target.scrollLeft) / smooth
+    target.scrollLeft += delta
+    if (Math.abs(delta) > 0.5)
+      requestAnimationFrame(update)
+    else
+      moving = false
+  }
+  return scrolled
+}
 module.exports = {
   name: 'TmEditor',
 
@@ -126,6 +149,8 @@ module.exports = {
       })
       tab.checkChange()
     })
+    this.doScroll = SmoothScroll(this.$refs.tabs.$el, 100, 10)
+
     this.refreshExtUnderline()
     this.refreshAddTagLeft()
     this.adjustTabsScroll()
@@ -245,9 +270,9 @@ module.exports = {
         const width = this.current.node.clientWidth
         const scroll = tabsNode.scrollLeft
         if (scroll < left + width - tabsNode.clientWidth) {
-          tabsNode.scrollLeft = left + width - tabsNode.clientWidth
+          this.doScroll(left + width - tabsNode.clientWidth - scroll + 20)
         } else if (scroll > left) {
-          tabsNode.scrollLeft = left
+          this.doScroll(left - scroll - 20)
         }
       })
     },
@@ -313,9 +338,7 @@ module.exports = {
       this.menuShowed.top[index] = true
     },
     scrollTab(e) {
-      e.currentTarget.style.scrollBehavior = 'auto'
-      e.currentTarget.scrollLeft += e.deltaY
-      e.currentTarget.style.scrollBehavior = 'smooth'
+      this.doScroll(e.deltaY)
     },
     changeExtension(id) {
       if (this.activeExtension === id) return
