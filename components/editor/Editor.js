@@ -52,6 +52,7 @@ module.exports = {
     }
     const menuState = {
       menubarMove: 0,
+      menubarActive: false,
       menuData: TmMenu.menuData,
       menuKeys: TmMenu.menuKeys,
       altKey: false,
@@ -257,6 +258,7 @@ module.exports = {
       this.draggingExtension = false
     },
     hideContextMenus() {
+      this.menubarActive = false
       for (const key in this.menuData) {
         this.menuData[key].show = false
         for (let index = 0; index < this.menuData[key].embed.length; index++) {
@@ -275,11 +277,16 @@ module.exports = {
       style.top = event.clientY - this.top + 'px'
       this.menuData[key].show = true
     },
+    hoverMenu(index, event) {
+      if (this.menubarActive) this.showMenu(index, event)
+    },
     showMenu(index, event) {
       this.contextId = null
       const style = this.menuRef.menubar.style
       const last = this.menuData.menubar.embed.indexOf(true)
       if (last === index) {
+        this.menubarActive = false
+        this.menuData.menubar.show = false
         this.menuData.menubar.embed.splice(index, 1, false)
         return
       } else if (last === -1) {
@@ -294,6 +301,7 @@ module.exports = {
         style.left = event.currentTarget.offsetLeft + 'px'
       }
       style.top = event.currentTarget.offsetTop + event.currentTarget.offsetHeight + 'px'
+      this.menubarActive = true
       this.menuData.menubar.show = true
       this.menuData.menubar.embed.splice(index, 1, true)
     },
@@ -327,7 +335,7 @@ module.exports = {
   <div class="header" @contextmenu.stop="showContextMenu('header', $event)">
     <div class="menubar">
       <div v-for="(menu, index) in menuData.menubar.content" class="tm-top-menu"
-        @contextmenu.stop @click.stop="showMenu(index, $event)">
+        @contextmenu.stop @click.stop="showMenu(index, $event)" @mouseover.stop="hoverMenu(index, $event)">
         {{ $t('editor.menu.' + menu.key) }} (<span>{{ menu.bind }}</span>)
       </div>
     </div>
@@ -392,8 +400,8 @@ module.exports = {
       <button @click="toggleExtension()"><i class="icon-control"/></button>
     </div>
   </div>
-  <div class="context-menu" ref="menus">
-    <transition name="el-zoom-in-top" v-for="key in menuKeys">
+  <div class="menus" ref="menus">
+    <transition name="el-zoom-in-top" v-for="key in menuKeys" :key="key">
       <ul v-show="menuData[key].show" class="tm-menu">
         <tm-menu :data="menuData[key].content" :embed="menuData[key].embed" :move="menubarMove"/>
       </ul>

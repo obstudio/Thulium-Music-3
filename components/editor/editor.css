@@ -36,6 +36,7 @@
     line-height: 1em;
     font-size: 14px;
     display: inline;
+    transition: 0.3s;
 }
 
 .menubar .el-slider__button-wrapper { z-index: auto }
@@ -287,21 +288,21 @@ button:last-child .tm-tab { margin-right: 0px }
     text-align: center;
 }
 
-.tm-editor > .context-menu {
+.tm-editor > .menus {
     width: 0;
     height: 0;
     top: 0;
     left: 0;
 }
 
-.tm-editor > .context-menu ul {
+.tm-editor > .menus ul {
     z-index: 10;
     padding: 0px;
     margin: 0px;
 	outline: 0px;
     border: none;
     transition: 0.3s ease;
-	position: absolute;
+    position: absolute;
 	list-style-type: none;
 }
 
@@ -310,9 +311,7 @@ button:last-child .tm-tab { margin-right: 0px }
     position: absolute;
 }
 
-.tm-menu .content {
-    min-width: 200px;
-}
+.tm-menu .content { min-width: 200px }
 
 .tm-menu .menu-item {
     padding: 0px;

@@ -66,11 +66,11 @@ Vue.component('tm-menu', {
         </li>
       </div>
       <div v-else-if="item instanceof Object">
-        <transition name="tm-menu"
+        <!--transition :name="move !== 0 ? 'tm-menu' : ''"
           :leave-to-class="'transform-to-' + (move > 0 ? 'left' : move < 0 ? 'right' : 'none')"
-          :enter-class="'transform-to-' + (move > 0 ? 'right' : move < 0 ? 'left' : 'none')">
+          :enter-class="'transform-to-' + (move > 0 ? 'right' : move < 0 ? 'left' : 'none')"-->
           <tm-menu v-show="embed[index]" :data="item.content" :move="0"/>
-        </transition>
+        <!--/transition-->
       </div>
       <div v-else class="menu-item" v-show="getContext(item)"
         @click="execute('executeCommand', item)">
