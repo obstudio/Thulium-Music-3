@@ -32,6 +32,10 @@ module.exports = {
       } else if (this.current.id === id) {
         this.switchTabByIndex(index === 0 ? 0 : index - 1)
       }
+      this.$nextTick(() => {
+        this.refreshAddTagLeft()
+        // this.adjustTabsScroll()
+      })
     }
     if (this.tabs[index].changed) {
       this.$confirm(this.$t('editor.close-tab-msg'), this.$t('message.tip'), {
@@ -42,10 +46,6 @@ module.exports = {
     } else {
       close()
     }
-    this.$nextTick(() => {
-      this.refreshAddTagLeft()
-      this.adjustTabsScroll()
-    })
   },
 
   closeAllTabs() {
@@ -99,6 +99,7 @@ module.exports = {
     })
     newTab.checkChange()
     this.$nextTick(() => {
+      newTab.node = this.$refs.tabs.$el.querySelector(`[identifier=tab-${newTab.id}]`)
       this.refreshAddTagLeft()
     })
   },

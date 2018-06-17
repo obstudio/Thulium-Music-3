@@ -39,7 +39,9 @@ module.exports = {
     const tabState = {
       dragOptions: {
         animation: 150,
-        ghostClass: 'drag-ghost'
+        ghostClass: 'drag-ghost',
+        scroll: false,
+        scrollFn: () => {}
       },
       draggingTab: false,
       addTagLeft: 0
@@ -80,8 +82,7 @@ module.exports = {
     },
     settings: () => global.user.state.Settings,
     tabsWidth() {
-      this.adjustTabsScroll()
-      return this.addTagLeft < this.width - 34 ? `100%` : `${this.width - 34}px`
+      return `${this.width - 34}px`
     }
   },
 
@@ -105,8 +106,12 @@ module.exports = {
     'settings.lineEnding'() {
       this.tabs.map(tab => this.refresh(tab))
     },
-    current() {
-      this.adjustTabsScroll()
+    current(newTab, oldTab) {
+      if (this.tabs[this.tabs.length - 1] === newTab) {
+        setTimeout(() => this.$refs.tabs.$el.scrollLeft = this.$refs.tabs.$el.scrollWidth - this.$refs.tabs.$el.clientWidth, 1000)
+      } else {
+        this.adjustTabsScroll()
+      }
     }
   },
 
@@ -134,6 +139,11 @@ module.exports = {
     this.registerGlobalEvents()
     window.monaco.editor.setTheme(global.user.state.Settings.theme)
     this.activate()
+    this.$nextTick(()=> {
+      this.tabs.forEach(tab => {
+        tab.node = this.$refs.tabs.$el.querySelector(`[identifier=tab-${tab.id}]`)
+      })
+    })
   },
 
   methods: {
@@ -151,14 +161,6 @@ module.exports = {
     refresh(tab, event) {
       tab.latestVersionId = event.versionId
       tab.checkChange()
-    },
-    refreshAddTagLeft() {
-      requestAnimationFrame(() => {
-        const left = this.tabs.reduce((pre, cur, index) => {
-          return pre + this.$refs.tabs.$el.children[index].clientWidth
-        }, 0)
-        this.addTagLeft = Math.min(this.width - 34, left)
-      })
     },
     layout(time = 0) {
       const now = performance.now(), self = this
@@ -234,12 +236,19 @@ module.exports = {
         this.stopDrag(e)
       })
     },
+    refreshAddTagLeft() {
+      requestAnimationFrame(() => {
+        const left = this.tabs.reduce((pre, cur, index) => {
+          return pre + cur.node.clientWidth
+        }, 0)
+        this.addTagLeft = Math.min(this.width - 34, left)
+      })
+    },
     adjustTabsScroll() {
       requestAnimationFrame((p) => {
-        const index = this.tabs.indexOf(this.current)
         const tabsNode = this.$refs.tabs.$el
-        const left = tabsNode.children[index].offsetLeft
-        const width = tabsNode.children[index].clientWidth
+        const left = this.current.node.offsetLeft
+        const width = this.current.node.clientWidth
         const scroll = tabsNode.scrollLeft
         if (scroll < left + width - tabsNode.clientWidth) {
           tabsNode.scrollLeft = left + width - tabsNode.clientWidth
@@ -274,6 +283,10 @@ module.exports = {
           this.menuShowed[key] = false
         }
       }
+    },
+    test(el) {
+      el.style.left=`${el.offsetLeft-el.parentElement.scrollLeft}px`
+      el.style.position="absolute"
     },
     showContextMenu(key, event) {
       const style = this.menu[key].style
@@ -337,9 +350,9 @@ module.exports = {
       </div>
     </div>
     <div class="tm-tabs">
-      <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
-        <transition-group tag="div" ref="tabs" name="tm-tabs" :move-class="draggingTab ? 'dragged' : ''" class="tm-scroll-tabs" :style="{width: tabsWidth}" @wheel.prevent.stop.native="scrollTab">
-        <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id" class="tm-scroll-tab">
+      <!--<draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">-->
+        <transition-group ref="tabs" name="tm-tabs" class="tm-scroll-tabs" :style="{width: tabsWidth}" @wheel.prevent.stop.native="scrollTab" @beforeLeave="test">
+        <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id" :identifier="'tab-'+tab.id" class="tm-scroll-tab">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
             <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
@@ -349,7 +362,7 @@ module.exports = {
           </div>
         </button>
         </transition-group>
-      </draggable>
+      <!--</draggable>-->
       <button class="add-tag" @click="addTab(false)" :style="{ left: addTagLeft + 'px' }">
         <i class="icon-add"/>
       </button>

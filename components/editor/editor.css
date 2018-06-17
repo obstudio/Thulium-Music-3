@@ -53,7 +53,7 @@
 }
 
 .tm-editor .header button {
-    float: left;
+    /*float: left;*/
     border: none;
     outline: none;
     cursor: pointer;
@@ -68,9 +68,9 @@
     opacity: 0;
     transform: translateY(30px);
 }
-.tm-tabs-leave-active {
-    position: absolute;
-}
+/*.tm-tabs-leave-active {*/
+    /*position: absolute;*/
+/*}*/
 
 .tm-scroll-tabs {
     display: flex;
@@ -90,7 +90,6 @@
     top: 0px;
     padding: 0px;
     margin: 0px -4px;
-    float: left;
     transition: all 1s;
     position: relative;
 }
