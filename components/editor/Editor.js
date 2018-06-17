@@ -9,7 +9,6 @@ const extensions = require('../../extensions/extension')
 const TmCommand = require('./command')
 const TmMenu = require('./menu')
 const storage = require('./storage')
-const menus = require('./menu.json')
 
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
@@ -19,7 +18,6 @@ module.exports = {
   name: 'TmEditor',
 
   components: {
-    TmMenu,
     draggable
   },
   provide() {
@@ -52,18 +50,9 @@ module.exports = {
       extUnderlineWidth: '0px',
       extensionMoveToRight: false
     }
-    menuShowed = {}
-    for (const key in menus) {
-      menuShowed[key] = false
-    }
-    menuEmbedded = {}
-    for (const key in menus) {
-      menuEmbedded[key] = new Array(menus[key].length).fill(false)
-    }
     const menuState = {
-      menus,
-      menuShowed,
-      menuEmbedded,
+      menuData: TmMenu.menuData,
+      menuKeys: TmMenu.menuKeys,
       altKey: false,
       contextId: null
     }
@@ -117,16 +106,10 @@ module.exports = {
 
   mounted() {
     // properties added in mounted hook to prevent unnecessary reactivity
-    this.menu = {
-      header: this.$refs.menus.children[0],
-      tab: this.$refs.menus.children[1],
-      extension: this.$refs.menus.children[2],
-      menubar: this.$refs.menus.children[3]
-    }
-    this.player = undefined
-
     TmCommand.onMount.call(this)
+    TmMenu.onMount.call(this)
 
+    this.player = undefined
     this.tabs.forEach(tab => {
       tab.onModelChange((e) => {
         this.refresh(tab, e)
@@ -273,15 +256,12 @@ module.exports = {
       this.draggingExtension = false
     },
     hideContextMenus() {
-      for (const key in this.menuShowed) {
-        this.menuShowed[key] = false
-        for (const index in this.menuEmbedded[key]) {
-          this.menuEmbedded[key][index] = false
-        }
+      for (const key in this.menuData) {
+        this.menuData[key].show = false
       }
     },
     showContextMenu(key, event) {
-      const style = this.menu[key].style
+      const style = this.menuRef[key].style
       this.hideContextMenus()
       if (event.clientX + 200 > this.width) {
         style.left = event.clientX - 200 - this.left + 'px'
@@ -289,15 +269,15 @@ module.exports = {
         style.left = event.clientX - this.left + 'px'
       }
       style.top = event.clientY - this.top + 'px'
-      this.menuShowed[key] = true
+      this.menuData[key].show = true
     },
     showMenu(index, event) {
       this.contextId = null
-      if (this.menuEmbedded.menubar[index]) {
-        this.menuShowed.menubar = false
+      if (this.menuData.menubar.embed[index]) {
+        this.menuData.menubar.embed[index] = false
         return
       }
-      const style = this.menu.menubar.style
+      const style = this.menuRef.menubar.style
       this.hideContextMenus()
       if (event.currentTarget.offsetLeft + 200 > this.width) {
         style.left = event.currentTarget.offsetLeft + event.currentTarget.offsetWidth - 200 + 'px'
@@ -305,8 +285,8 @@ module.exports = {
         style.left = event.currentTarget.offsetLeft + 'px'
       }
       style.top = event.currentTarget.offsetTop + event.currentTarget.offsetHeight + 'px'
-      this.menuShowed.menubar = true
-      this.menuEmbedded.menubar[index] = true
+      this.menuData.menubar.show = true
+      this.menuData.menubar.embed[index] = true
     },
     scrollTab(e) {
       e.currentTarget.scrollLeft += e.deltaY
@@ -337,7 +317,7 @@ module.exports = {
     @click="hideContextMenus" @contextmenu="hideContextMenus">
   <div class="header" @contextmenu.stop="showContextMenu('header', $event)">
     <div class="menubar">
-      <div v-for="(menu, index) in menus.menubar" class="tm-top-menu"
+      <div v-for="(menu, index) in menuData.menubar.content" class="tm-top-menu"
         @contextmenu.stop @click.stop="showMenu(index, $event)">
         {{ $t('editor.menu.' + menu.key) }} (<span>{{ menu.bind }}</span>)
       </div>
@@ -401,10 +381,11 @@ module.exports = {
     </div>
   </div>
   <div class="context-menu" ref="menus">
-    <tm-menu :menu="menus.header" :show="menuShowed.header"/>
-    <tm-menu :menu="menus.tab" :show="menuShowed.tab"/>
-    <tm-menu :menu="menus.extension" :show="menuShowed.extension"/>
-    <tm-menu :menu="menus.menubar" :show="menuShowed.menubar" :embed="menuEmbedded.menubar"/>
+    <transition name="el-zoom-in-top" v-for="key in menuKeys">
+      <ul v-show="menuData[key].show" class="tm-menu">
+        <tm-menu :data="menuData[key].content" :embed="menuData[key].embed"/>
+      </ul>
+    </transition>
   </div>
 </div>`)
 }
