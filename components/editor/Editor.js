@@ -13,7 +13,30 @@ const storage = require('./storage')
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
 const StatusHeight = 28
+function SmoothScroll(target, speed, smooth) {
+  let moving = false
+  let pos = target.scrollLeft
 
+  function scrolled(deltaY) {
+    const delta = deltaY / 100
+
+    pos += delta * speed
+    pos = Math.max(-10, Math.min(pos, target.scrollWidth - target.clientWidth + 10)) // limit scrolling
+
+    if (!moving) update()
+  }
+
+  function update() {
+    moving = true
+    const delta = (pos - target.scrollLeft) / smooth
+    target.scrollLeft += delta
+    if (Math.abs(delta) > 0.5)
+      requestAnimationFrame(update)
+    else
+      moving = false
+  }
+  return scrolled
+}
 module.exports = {
   name: 'TmEditor',
 
@@ -76,8 +99,7 @@ module.exports = {
     },
     settings: () => global.user.state.Settings,
     tabsWidth() {
-      this.adjustTabsScroll()
-      return this.addTagLeft < this.width - 34 ? `100%` : `${this.width - 34}px`
+      return `${this.width - 34}px`
     }
   },
 
@@ -101,7 +123,7 @@ module.exports = {
     'settings.lineEnding'() {
       this.tabs.map(tab => this.refresh(tab))
     },
-    current() {
+    current(newTab) {
       this.adjustTabsScroll()
     }
   },
@@ -118,6 +140,8 @@ module.exports = {
       })
       tab.checkChange()
     })
+    this.doScroll = SmoothScroll(this.$refs.tabs.$el, 100, 10)
+
     this.refreshExtUnderline()
     this.refreshAddTagLeft()
     this.adjustTabsScroll()
@@ -125,6 +149,11 @@ module.exports = {
     this.registerGlobalEvents()
     window.monaco.editor.setTheme(global.user.state.Settings.theme)
     this.activate()
+    this.$nextTick(()=> {
+      this.tabs.forEach(tab => {
+        tab.node = this.$refs.tabs.$el.querySelector(`[identifier=tab-${tab.id}]`)
+      })
+    })
   },
 
   methods: {
@@ -142,14 +171,6 @@ module.exports = {
     refresh(tab, event) {
       tab.latestVersionId = event.versionId
       tab.checkChange()
-    },
-    refreshAddTagLeft() {
-      requestAnimationFrame(() => {
-        const left = this.tabs.reduce((pre, cur, index) => {
-          return pre + this.$refs.tabs.$el.children[index].clientWidth
-        }, 0)
-        this.addTagLeft = Math.min(this.width - 34, left)
-      })
     },
     layout(time = 0) {
       const now = performance.now(), self = this
@@ -225,22 +246,36 @@ module.exports = {
         this.stopDrag(e)
       })
     },
+    refreshAddTagLeft() {
+      requestAnimationFrame(() => {
+        const left = this.tabs.reduce((pre, cur, index) => {
+          return pre + cur.node.clientWidth
+        }, 0)
+        this.addTagLeft = Math.min(this.width - 34, left)
+      })
+    },
     adjustTabsScroll() {
       requestAnimationFrame((p) => {
-        const index = this.tabs.indexOf(this.current)
         const tabsNode = this.$refs.tabs.$el
-        const left = tabsNode.children[index].offsetLeft
-        const width = tabsNode.children[index].clientWidth
+        const left = this.current.node.offsetLeft
+        const width = this.current.node.clientWidth
         const scroll = tabsNode.scrollLeft
         if (scroll < left + width - tabsNode.clientWidth) {
-          tabsNode.scrollLeft = left + width - tabsNode.clientWidth
+          this.doScroll(left + width - tabsNode.clientWidth - scroll + 20)
         } else if (scroll > left) {
-          tabsNode.scrollLeft = left
+          this.doScroll(left - scroll - 20)
         }
       })
     },
 
     // event handlers
+    appendTabLeaveStyle(el) {
+      if (el.nextElementSibling === null) {
+        el.parentElement.animate({width: [`${this.width - el.clientWidth - 34}px`, `${this.width - 34}px`]}, 150)
+      }
+      el.style.left=`${el.offsetLeft-el.parentElement.scrollLeft}px`
+      el.style.position = 'absolute'
+    },
     loadFileDropped(event) {
       for (const file of event.dataTransfer.files) {
         this.loadFile(file.path)
@@ -315,7 +350,7 @@ module.exports = {
       this.menuData.menubar.embed.splice(index, 1, true)
     },
     scrollTab(e) {
-      e.currentTarget.scrollLeft += e.deltaY
+      this.doScroll(e.deltaY)
     },
     changeExtension(id) {
       if (this.activeExtension === id) return
@@ -351,19 +386,16 @@ module.exports = {
     </div>
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
-        <transition-group tag="div" ref="tabs" name="tm-tabs" class="tm-scroll-tabs"
-          :move-class="draggingTab ? 'dragged' : ''" :style="{width: tabsWidth}"
-          @wheel.prevent.stop.native="scrollTab">
-          <button v-for="tab in tabs" :key="tab.id" class="tm-scroll-tab"
-            @click.middle.prevent.stop="closeTab(tab.id)" @mousedown.left="switchTabById(tab.id)">
-            <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
-              <i v-if="tab.changed" class="icon-changed" @mousedown.stop @click.stop="closeTab(tab.id)"/>
-              <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
-              <div class="title" @contextmenu.stop="toggleTabMenu(tab.id, $event)">{{ tab.title }}</div>
-              <div class="left-border"/>
-              <div class="right-border"/>
-            </div>
-          </button>
+        <transition-group ref="tabs" name="tm-tabs" class="tm-scroll-tabs" :style="{width: tabsWidth}" :move-class="draggingTab ? 'dragged' : ''" @wheel.prevent.stop.native="scrollTab" @beforeLeave="appendTabLeaveStyle">
+        <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id" :identifier="'tab-'+tab.id" class="tm-scroll-tab">
+          <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
+            <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
+            <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
+            <div class="title" @contextmenu.stop="toggleTabMenu(tab.id, $event)">{{ tab.title }}</div>
+            <div class="left-border"/>
+            <div class="right-border"/>
+          </div>
+        </button>
         </transition-group>
       </draggable>
       <button class="add-tag" @click="addTab(false)" :style="{ left: addTagLeft + 'px' }">

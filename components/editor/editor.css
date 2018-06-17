@@ -71,9 +71,6 @@
     opacity: 0;
     transform: translateY(30px);
 }
-.tm-tabs-leave-active {
-    position: absolute;
-}
 
 .tm-scroll-tabs {
     display: flex;
@@ -152,10 +149,10 @@ button:last-child .tm-tab { margin-right: 0px }
     padding: 10px 12px;
     font-size: 10px;
     transition: 0.3s;
-    height: 30px;
+    height: 34px;
     position: absolute;
     line-height: 1em;
-    top: 30px;
+    top: 26px;
 }
 
 .tm-editor > .content {
