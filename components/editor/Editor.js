@@ -9,7 +9,6 @@ const extensions = require('../../extensions/extension')
 const TmCommand = require('./command')
 const TmMenu = require('./menu')
 const storage = require('./storage')
-const menus = require('./menu.json')
 
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
@@ -19,13 +18,12 @@ module.exports = {
   name: 'TmEditor',
 
   components: {
-    TmMenu,
     draggable
   },
   provide() {
     return {
       tabs: this.tabs,
-      tab: this.current,
+      current: this.current,
       contextId: this.contextId,
       execute: this.executeMethod
     }
@@ -53,13 +51,10 @@ module.exports = {
       extensionMoveToRight: false
     }
     const menuState = {
-      menus,
-      menuShowed: {
-        header: false,
-        tab: false,
-        extension: false,
-        top: new Array(menus.menubar.length).fill(false)
-      },
+      menubarMove: 0,
+      menubarActive: false,
+      menuData: TmMenu.menuData,
+      menuKeys: TmMenu.menuKeys,
       altKey: false,
       contextId: null
     }
@@ -113,16 +108,10 @@ module.exports = {
 
   mounted() {
     // properties added in mounted hook to prevent unnecessary reactivity
-    this.menu = {
-      header: this.$refs.menus.children[0],
-      tab: this.$refs.menus.children[1],
-      extension: this.$refs.menus.children[2],
-      top: this.$refs.menus.children[3]
-    }
-    this.player = undefined
-
     TmCommand.onMount.call(this)
+    TmMenu.onMount.call(this)
 
+    this.player = undefined
     this.tabs.forEach(tab => {
       tab.onModelChange((e) => {
         this.refresh(tab, e)
@@ -262,6 +251,7 @@ module.exports = {
       this.showContextMenu('tab', event)
     },
     startDrag(event) {
+      this.hideContextMenus()
       this.draggingExtension = true
       this.draggingLastY = event.clientY
     },
@@ -269,32 +259,50 @@ module.exports = {
       this.draggingExtension = false
     },
     hideContextMenus() {
-      for (const key in this.menuShowed) {
-        if (this.menuShowed[key] instanceof Array) {
-          this.menuShowed[key] = new Array(this.menuShowed[key].length).fill(false)
-        } else {
-          this.menuShowed[key] = false
+      this.menubarActive = false
+      for (const key in this.menuData) {
+        this.menuData[key].show = false
+        for (let index = 0; index < this.menuData[key].embed.length; index++) {
+          this.menuData[key].embed.splice(index, 1, false)
         }
       }
     },
     showContextMenu(key, event) {
-      const style = this.menu[key].style
+      const style = this.menuRef[key].style
       this.hideContextMenus()
       if (event.clientX + 200 > this.width) {
         style.left = event.clientX - 200 - this.left + 'px'
       } else {
         style.left = event.clientX - this.left + 'px'
       }
-      style.top = event.clientY - this.top + 'px'
-      this.menuShowed[key] = true
+      if (event.clientY - this.top > this.height / 2) {
+        style.top = ''
+        style.bottom = this.top + this.height - event.clientY + 'px'
+      } else {
+        style.top = event.clientY - this.top + 'px'
+        style.bottom = ''
+      }
+      this.menuData[key].show = true
+    },
+    hoverMenu(index, event) {
+      if (this.menubarActive && !this.menuData.menubar.embed[index]) {
+        this.showMenu(index, event)
+      }
     },
     showMenu(index, event) {
       this.contextId = null
-      if (this.menuShowed.top[index]) {
-        this.menuShowed.top.splice(index, 1, false)
+      const style = this.menuRef.menubar.style
+      const last = this.menuData.menubar.embed.indexOf(true)
+      if (last === index) {
+        this.menubarActive = false
+        this.menuData.menubar.show = false
+        this.menuData.menubar.embed.splice(index, 1, false)
         return
+      } else if (last === -1) {
+        this.menubarMove = 0
+      } else {
+        this.menubarMove = index - last
       }
-      const style = this.menu.top.children[index].children[0].style
       this.hideContextMenus()
       if (event.currentTarget.offsetLeft + 200 > this.width) {
         style.left = event.currentTarget.offsetLeft + event.currentTarget.offsetWidth - 200 + 'px'
@@ -302,7 +310,9 @@ module.exports = {
         style.left = event.currentTarget.offsetLeft + 'px'
       }
       style.top = event.currentTarget.offsetTop + event.currentTarget.offsetHeight + 'px'
-      this.menuShowed.top[index] = true
+      this.menubarActive = true
+      this.menuData.menubar.show = true
+      this.menuData.menubar.embed.splice(index, 1, true)
     },
     scrollTab(e) {
       e.currentTarget.scrollLeft += e.deltaY
@@ -333,23 +343,27 @@ module.exports = {
     @click="hideContextMenus" @contextmenu="hideContextMenus">
   <div class="header" @contextmenu.stop="showContextMenu('header', $event)">
     <div class="menubar">
-      <div v-for="(menu, index) in menus.menubar" class="tm-top-menu"
-        @contextmenu.stop @click.stop="showMenu(index, $event)">
+      <div v-for="(menu, index) in menuData.menubar.content" class="tm-top-menu"
+        @click.stop="showMenu(index, $event)" @mouseover.stop="hoverMenu(index, $event)"
+        :class="{ active: menuData.menubar.embed[index] }" @contextmenu.stop>
         {{ $t('editor.menu.' + menu.key) }} (<span>{{ menu.bind }}</span>)
       </div>
     </div>
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
-        <transition-group tag="div" ref="tabs" name="tm-tabs" :move-class="draggingTab ? 'dragged' : ''" class="tm-scroll-tabs" :style="{width: tabsWidth}" @wheel.prevent.stop.native="scrollTab">
-        <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id" class="tm-scroll-tab">
-          <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
-            <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
-            <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
-            <div class="title" @contextmenu.stop="toggleTabMenu(tab.id, $event)">{{ tab.title }}</div>
-            <div class="left-border"/>
-            <div class="right-border"/>
-          </div>
-        </button>
+        <transition-group tag="div" ref="tabs" name="tm-tabs" class="tm-scroll-tabs"
+          :move-class="draggingTab ? 'dragged' : ''" :style="{width: tabsWidth}"
+          @wheel.prevent.stop.native="scrollTab">
+          <button v-for="tab in tabs" :key="tab.id" class="tm-scroll-tab"
+            @click.middle.prevent.stop="closeTab(tab.id)" @mousedown.left="switchTabById(tab.id)">
+            <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
+              <i v-if="tab.changed" class="icon-changed" @mousedown.stop @click.stop="closeTab(tab.id)"/>
+              <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
+              <div class="title" @contextmenu.stop="toggleTabMenu(tab.id, $event)">{{ tab.title }}</div>
+              <div class="left-border"/>
+              <div class="right-border"/>
+            </div>
+          </button>
         </transition-group>
       </draggable>
       <button class="add-tag" @click="addTab(false)" :style="{ left: addTagLeft + 'px' }">
@@ -381,8 +395,8 @@ module.exports = {
     </div>
     <keep-alive>
       <transition name="tm-ext"
-        :leave-to-class="'tm-ext-to-' + (extensionMoveToRight ? 'left' : 'right')"
-        :enter-class="'tm-ext-to-' + (extensionMoveToRight ? 'right' : 'left')">
+        :leave-to-class="'transform-to-' + (extensionMoveToRight ? 'left' : 'right')"
+        :enter-class="'transform-to-' + (extensionMoveToRight ? 'right' : 'left')">
         <component :is="'tm-ext-' + extensions[activeExtension].name" class="tm-ext"
           :width="width" :height="extensionHeight - 36" :isFull="extensionFull"/>
       </transition>
@@ -396,15 +410,12 @@ module.exports = {
       <button @click="toggleExtension()"><i class="icon-control"/></button>
     </div>
   </div>
-  <div class="context-menu" ref="menus">
-    <tm-menu :menu="menus.header" :show="menuShowed.header"/>
-    <tm-menu :menu="menus.tab" :show="menuShowed.tab"/>
-    <tm-menu :menu="menus.extension" :show="menuShowed.extension"/>
-    <div>
-      <div v-for="(menu, index) in menus.menubar">
-        <tm-menu :menu="menu.content" :show="menuShowed.top[index]"/>
-      </div>
-    </div>
+  <div class="menus" ref="menus">
+    <transition name="el-zoom-in-top" v-for="key in menuKeys" :key="key">
+      <ul v-show="menuData[key].show" class="tm-menu">
+        <tm-menu :data="menuData[key].content" :embed="menuData[key].embed" :move="menubarMove"/>
+      </ul>
+    </transition>
   </div>
 </div>`)
 }

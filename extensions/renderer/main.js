@@ -4,7 +4,7 @@ module.exports = {
   name: 'renderer',
   data() {
     return {
-      tm: Thulium.$remote(this.tab.tm).adapt()
+      tm: Thulium.$remote(this.current.tm).adapt()
     }
   },
   mounted() {
@@ -14,7 +14,7 @@ module.exports = {
     this.tm.parse()
   },
   methods: {},
-  inject: ['tab'],
+  inject: ['current'],
   props: ['width', 'height', 'isFull'],
   render: VueCompile(`<div class="renderer">
     {{ tm }}

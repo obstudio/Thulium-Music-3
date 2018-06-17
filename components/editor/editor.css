@@ -1,4 +1,6 @@
 .dragged { transition: none !important }
+.transform-to-right { transform: translateX(100%); opacity: 0 }
+.transform-to-left { transform: translateX(-100%); opacity: 0 }
 
 .tm-editor > .header {
     height: 60px;
@@ -34,6 +36,7 @@
     line-height: 1em;
     font-size: 14px;
     display: inline;
+    transition: 0.3s;
 }
 
 .menubar .el-slider__button-wrapper { z-index: auto }
@@ -238,8 +241,6 @@ button:last-child .tm-tab { margin-right: 0px }
 }
 
 .tm-ext-enter-active, .tm-ext-leave-active { transition: .5s ease }
-.tm-ext-to-right { transform: translateX(100%); opacity: 0 }
-.tm-ext-to-left { transform: translateX(-100%); opacity: 0 }
 
 .tm-editor > .status {
     width: 100%;
@@ -287,24 +288,30 @@ button:last-child .tm-tab { margin-right: 0px }
     text-align: center;
 }
 
-.tm-editor > .context-menu {
+.tm-editor > .menus {
     width: 0;
     height: 0;
     top: 0;
     left: 0;
 }
 
-.tm-editor > .context-menu ul {
+.tm-editor > .menus ul {
     z-index: 10;
-	min-width: 200px;
     padding: 0px;
     margin: 0px;
 	outline: 0px;
     border: none;
     transition: 0.3s ease;
-	position: absolute;
+    position: absolute;
 	list-style-type: none;
 }
+
+.tm-menu-enter-active, .tm-menu-leave-active { 
+    transition: 0.3s ease;
+    position: absolute;
+}
+
+.tm-menu .content { min-width: 200px }
 
 .tm-menu .menu-item {
     padding: 0px;
@@ -325,6 +332,13 @@ button:last-child .tm-tab { margin-right: 0px }
 	display: inline-block;
 	-webkit-box-sizing:	border-box;
 	margin: 0px;
+}
+
+.tm-menu .menu-item .label.active { font-weight: bold }
+.tm-menu .menu-item .label i.icon-circle {
+    font-size: 6px;
+    padding-left: 4px;
+    vertical-align: 2px;
 }
 
 .tm-menu .menu-item .binding {

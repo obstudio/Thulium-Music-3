@@ -1,8 +1,9 @@
 const { keymap, commands } = require('./command')
+const menus = require('./menu.json')
+const Vue = require('vue')
 
-module.exports = {
+Vue.component('tm-menu', {
   name: 'TmMenu',
-
   methods: {
     displayKeyBinding(key) {
       let binding = keymap[key]
@@ -35,28 +36,71 @@ module.exports = {
       return this.$parent[data.slice(1)]
     }
   },
+  inject: ['tabs', 'execute', 'current'],
+  props: {
+    data: {
+      type: Array,
+      required: true
+    },
+    move: {
+      type: Number,
+      required: true
+    },
+    embed: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
+  },
+  render: VueCompile(`<div class="content">
+    <li v-for="(item, index) in data">
+      <div v-if="item === '@separator'" class="menu-item disabled" @click.stop>
+        <a class="separator"/>
+      </div>
+      <div v-else-if="item === '@tabs'">
+        <li v-for="tab in tabs" :key="tab.id">
+          <div class="menu-item" @click="execute('switchTabById', tab.id)">
+            <a class="label" :class="{ active: tab.id === current.id }">
+              {{ tab.title }}
+              <i v-if="tab.changed" class="icon-circle"/>
+            </a>
+          </div>
+        </li>
+      </div>
+      <div v-else-if="item instanceof Object">
+        <!--transition :name="move !== 0 ? 'tm-menu' : ''"
+          :leave-to-class="'transform-to-' + (move > 0 ? 'left' : move < 0 ? 'right' : 'none')"
+          :enter-class="'transform-to-' + (move > 0 ? 'right' : move < 0 ? 'left' : 'none')"-->
+          <tm-menu v-show="embed[index]" :data="item.content" :move="0"/>
+        <!--/transition-->
+      </div>
+      <div v-else class="menu-item" v-show="getContext(item)"
+        @click="execute('executeCommand', item)">
+        <a class="label">{{ getCaption(item) }}</a>
+        <span class="binding">{{ displayKeyBinding(item) }}</span>
+      </div>
+    </li>
+  </div>`)
+})
 
-  props: ['menu', 'show'],
-  inject: ['tabs', 'execute'],
-  render: VueCompile(`<transition name="el-zoom-in-top">
-    <ul v-show="show" class="tm-menu">
-      <li v-for="item in menu">
-        <div v-if="item === '@separator'" class="menu-item disabled" @click.stop>
-          <a class="separator"/>
-        </div>
-        <div v-else-if="item === '@tabs'">
-          <li v-for="tab in tabs">
-            <div class="menu-item" @click="execute('switchTabById', tab.id)">
-              <a class="label">{{ tab.title }}</a>
-            </div>
-          </li>
-        </div>
-        <div v-else class="menu-item" v-show="getContext(item)"
-          @click="execute('executeCommand', item)">
-          <a class="label">{{ getCaption(item) }}</a>
-          <span class="binding">{{ displayKeyBinding(item) }}</span>
-        </div>
-      </li>
-    </ul>
-  </transition>`)
+const menuData = {}
+const menuKeys = Object.keys(menus)
+for (const key of menuKeys) {
+  menuData[key] = {
+    show: false,
+    content: menus[key],
+    embed: new Array(menus[key].length).fill(false)
+  }
+}
+
+module.exports = {
+  menuData,
+  menuKeys,
+  onMount() {
+    this.menuRef = {}
+    for (let index = 0; index < menuKeys.length; index++) {
+      this.menuRef[menuKeys[index]] = this.$refs.menus.children[index]
+    }
+  }
 }
