@@ -5,8 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "pack-win-64": "electron-packager . \"Thulium Music 3\" --win --arch=x64 --out=./dist --app-version=3.0.0 --overwrite --icon=./assets/icon.ico",
-    "pack-win-86": "electron-packager . \"Thulium Music 3\" --win --arch=x86 --out=./dist --app-version=3.0.0 --overwrite --icon=./assets/icon.ico"
+    "pack-win-x64": "electron-packager . \"Thulium Music 3\" --win --arch=x64 --out=./dist --app-version=3.0.0 --overwrite --icon=./assets/icon.ico",
+    "pack-win-x86": "electron-packager . \"Thulium Music 3\" --win --arch=ia32 --out=./dist --app-version=3.0.0 --overwrite --icon=./assets/icon.ico"
   },
   "build": {
     "appId": "Thulium"
@@ -41,6 +41,5 @@
   "bugs": {
     "url": "https://github.com/obstudio/Thulium-Music-3/issues"
   },
-  "homepage": "https://github.com/obstudio/Thulium-Music-3#readme",
-  "postinstall": "electron-builder install-app-deps"
+  "homepage": "https://github.com/obstudio/Thulium-Music-3#readme"
 }
