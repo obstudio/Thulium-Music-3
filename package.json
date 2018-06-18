@@ -5,9 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder",
-    "packager": "electron-packager . Thulium --win --arch=x64 --out=./build --app-version=3.0.0 --overwrite --icon=./build/icon.ico"
+    "pack-win-64": "electron-packager . \"Thulium Music 3\" --win --arch=x64 --out=./dist --app-version=3.0.0 --overwrite --icon=./assets/icon.ico",
+    "pack-win-86": "electron-packager . \"Thulium Music 3\" --win --arch=x86 --out=./dist --app-version=3.0.0 --overwrite --icon=./assets/icon.ico"
   },
   "build": {
     "appId": "Thulium"
@@ -17,7 +16,6 @@
   "devDependencies": {
     "@vue/devtools": "^1.1.0",
     "electron": "^2.0.0",
-    "electron-builder": "^20.15.1",
     "eslint": "^4.19.1"
   },
   "dependencies": {

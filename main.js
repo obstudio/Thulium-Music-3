@@ -7,7 +7,7 @@ const {
 const path = require('path')
 const url = require('url')
 
-const icon = nativeImage.createFromPath('./build/icon.ico')
+const icon = nativeImage.createFromPath(path.resolve(__dirname, './assets/icon.ico'))
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

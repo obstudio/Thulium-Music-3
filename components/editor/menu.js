@@ -36,8 +36,11 @@ Vue.component('tm-menu', {
       return this.$parent[data.slice(1)]
     }
   },
-  inject: ['tabs', 'execute', 'current'],
+  inject: ['tabs', 'execute'],
   props: {
+    current: {
+      type: Object
+    },
     data: {
       type: Array,
       required: true
@@ -73,7 +76,7 @@ Vue.component('tm-menu', {
         <!--transition :name="move !== 0 ? 'tm-menu' : ''"
           :leave-to-class="'transform-to-' + (move > 0 ? 'left' : move < 0 ? 'right' : 'none')"
           :enter-class="'transform-to-' + (move > 0 ? 'right' : move < 0 ? 'left' : 'none')"-->
-          <tm-menu v-show="embed[index]" :data="item.content" :move="0"/>
+          <tm-menu v-show="embed[index]" :data="item.content" :move="0" :current="current"/>
         <!--/transition-->
       </div>
       <div v-else-if="getContext(item)" class="menu-item disabled" @click.stop>

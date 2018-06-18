@@ -390,7 +390,7 @@ module.exports = {
   <div class="menus" ref="menus">
     <transition name="el-zoom-in-top" v-for="key in menuKeys" :key="key">
       <ul v-show="menuData[key].show" class="tm-menu">
-        <tm-menu :data="menuData[key].content" :embed="menuData[key].embed" :move="menubarMove"/>
+        <tm-menu :data="menuData[key].content" :embed="menuData[key].embed" :move="menubarMove" :current="current"/>
       </ul>
     </transition>
   </div>
