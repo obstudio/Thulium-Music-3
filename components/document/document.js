@@ -114,7 +114,7 @@ module.exports = {
   },
   render: VueCompile(`<el-row class="tm-document" style="background-color: white;">
     <el-col :span="7" :style="{height: docHeight}">
-      <el-menu style="height: 100%" @select="switchDoc" :unique-opened="true">
+      <el-menu style="height: 100%; overflow-x: hidden;overflow-y: auto;" @select="switchDoc" :unique-opened="true">
         <tm-doc-variant v-for="item in items" :item="item" base=""></tm-doc-variant>
       </el-menu>
     </el-col>
