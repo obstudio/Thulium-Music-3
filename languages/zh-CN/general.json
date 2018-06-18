@@ -53,7 +53,8 @@
         }
     },
     "homepage": {
-        "title": "铥铥音乐"
+        "title": "铥铥音乐",
+        "welcome": "欢迎使用铥铥音乐"
     },
     "documents": {
         "title": "文档"

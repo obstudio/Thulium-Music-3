@@ -122,7 +122,7 @@ new Vue({
         <div v-if="sidebar"><i class="icon-arrow-left"/></div>
         <div v-else><i class="icon-arrow-right"/></div>
       </button>
-      <div class="title">{{ title }}</div>
+      <div class="title" v-html="title"></div>
       <div class="top-right">
         <button @click="browser.minimize()" class="minimize"><i class="icon-window-minimize"/></button>
         <button @click="toggleMaximize()" class="maximize"><i class="icon-window-maximize"/></button>

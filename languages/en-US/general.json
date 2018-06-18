@@ -53,7 +53,8 @@
         }
     },
     "homepage": {
-        "title": "Thulium Music"
+        "title": "Thulium Music",
+        "welcome": "Welcome to Thulium Music Player"
     },
     "documents": {
         "title": "Documents"
