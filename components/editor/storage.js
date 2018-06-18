@@ -15,7 +15,7 @@ module.exports = {
     let state, tabs
     try {
       const tabsData = JSON.parse(tabString)
-      if (tabsData.length === 0) {
+      if (!tabsData || tabsData.length === 0) {
         tabs = [ new TmTab() ]
       } else {
         tabs = tabsData.map(tab => new TmTab(tab))
@@ -25,13 +25,14 @@ module.exports = {
       tabs = [ new TmTab() ]
     }
     try {
-      state = JSON.parse(stateString)
+      state = JSON.parse(stateString) || {}
     } catch (e) {
       console.error('The state information is malformed.')
       console.error(e)
       state = {}
     }
     const current = tabs.find(tab => tab.id === state.currentId)
+    delete state.currentId
     return Object.assign(defaultState, state, {
       tabs: tabs,
       current: current ? current : tabs[0]

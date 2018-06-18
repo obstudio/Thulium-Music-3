@@ -16,11 +16,8 @@
 .dark .tm-editor > .header { background-color: #181915 }
 .dark .tm-editor > .header button { background-color: transparent; color: #181915 }
 .dark .tm-editor > .header button:hover { background-color: #252525 }
-.dark .tm-editor > .header button.active { background-color: #474842 }
 .dark .tm-editor > .header button > i { color: #cccccc }
 .dark .tm-editor > .header button:hover > i { color: #fafaf5 }
-
-.dark .tm-top-menu:hover { background-color: #3A3A3A }
 
 .dark .tm-tabs button:not(.add-tag) { background-color: transparent !important }
 .dark .tm-tab > .title { background-color: #181915; color: #bbbbb7 }
@@ -35,28 +32,33 @@
 .dark .tm-tab > i { color: #a5a6a4 !important }
 .dark .tm-tab > i:hover { color: #fafaf5 !important }
 
-.dark .tm-editor .menubar { background-color: #181915 }
-
 .dark .tm-editor > .extension { background-color: #272822; color: #fafaf5 }
 .dark .tm-editor > .extension > div.top-border { background-color: #474842 }
-.dark .tm-editor > .extension .nav-right button { background-color: #272822; color: #f6f8fa }
-.dark .tm-editor > .extension .nav-right button:hover { background-color: #272822; color: #fafaf5 }
-.dark .tm-editor > .extension .el-tabs__nav-wrap::after { background-color: #272822 }
-.dark .tm-editor > .extension .el-tabs__active-bar { background-color: #409EFF }
-.dark .tm-editor > .extension .el-tabs__item { color: #dddddd }
-.dark .tm-editor > .extension .el-tabs__item:hover { color: #f6f8fa }
-.dark .tm-editor > .extension .el-tabs__item.is-active { color: #409EFF }
+.dark .tm-editor > .extension button { background-color: #272822; color: #f6f8fa }
+.dark .tm-editor > .extension button:hover i { background-color: #3A3A3A; color: #fafaf5 }
+.dark .tm-editor > .extension .underline { background-color: #409EFF }
+.dark .tm-editor > .extension .nav-left button { color: #c6cbd1 }
+.dark .tm-editor > .extension .nav-left button:hover { color: #fafaf5 }
+.dark .tm-editor > .extension .nav-left button.active { color: #409EFF }
 
 .dark .tm-editor > .status { background-color: #181915; color: #fafaf5 }
 .dark .tm-editor > .status button { background-color: #181915; color: #f6f8fa }
 .dark .tm-editor > .status button:hover { background-color: #252525; color: #ffffff }
 
+.dark .tm-editor .menubar { background-color: #181915 }
+.dark .tm-top-menu:hover { background-color: #3A3A3A }
+.dark .tm-top-menu.active { background-color: #252525 }
 .dark .tm-menu { background-color: #2D2F31; box-shadow: 0 2px 8px #000000 }
 .dark .tm-menu .menu-item .label { color: #bbbbbb }
 .dark .tm-menu .menu-item .binding { color: #a5a5a5 }
+.dark .tm-menu .menu-item .binding i:hover { color: #fafaf5 }
 .dark .tm-menu .menu-item .separator { border-bottom-color: #888888 }
-.dark .tm-menu .menu-item:hover:not(.disabled) { background-color: #3A3A3A; color: #dddddd }
+.dark .tm-menu .menu-item:hover:not(.disabled) { background-color: #3A3A3A }
+.dark .tm-menu .menu-item:hover .label { color: #e1e4e8 }
+.dark .tm-menu .menu-item:hover .binding { color: #c6cbd1 }
 .dark .tm-menu .menu-item.active .label { color: #ACDDFF; text-shadow: 0px 0px 0.15px #ACDDFF }
+.dark .tm-menu .menu-item.disabled .label { color: #777777 !important }
+.dark .tm-menu .menu-item.disabled .binding { color: #666666 !important }
 
 /* document */
 .dark .tm-doc { color: #24292e }
@@ -79,3 +81,10 @@
 .dark .tm-settings .el-radio-button:last-child .el-radio-button__inner { border-right-color: #dcdfe6 }
 .dark .tm-settings .el-radio-button__orig-radio:checked + .el-radio-button__inner { background-color: #409EFF; color: #ffffff; border-color: #409EFF !important }
 
+/* dialog */
+.dark ~ div > .el-message-box { background-color: #faebd7; border-color: #dacbaf }
+.dark ~ div > .el-message-box .el-message-box__content { color: #223355 }
+.dark ~ div > .el-message-box .el-message-box__status.el-icon-warning { color: #f7a747 }
+.dark ~ div > .el-message-box .el-button { background: #fffff0; color: #000000; border-color: #f5f5dc }
+.dark ~ div > .el-message-box .el-button:hover { color: #409eff; border-color: #c6e2ff; background: #ecf5ff }
+.dark ~ div > .el-message-box .el-button--primary { color: #fff; background-color: #409EFF; border-color: #409EFF }

@@ -34,12 +34,13 @@ const cmdCompletions = ['include', 'notation', 'function', 'chord', 'end'].map(c
 })
 
 let commandId = ''
+
 function registerPlayCommand(editor) {
   commandId = editor.addCommand(window.monaco.KeyCode.NumLock, (_, result, Index, Tracks) => {
     if (Tracks === undefined) {
-      new Player(result, Index).play()
+      Player.update(result, {spec: Index}).play()
     } else {
-      new Player(result, { Index, Tracks }).play()
+      Player.update(result, {spec: {Index, Tracks}}).play()
     }
   }, '')
 }
@@ -58,6 +59,7 @@ function codeLensAt(model, line, id, command) {
 }
 
 let $defined = false
+
 function defineLanguage() {
   if ($defined) return
   window.monaco.languages.register({
@@ -91,7 +93,7 @@ function defineLanguage() {
       const content = model.getValue(1)
       const char = content.charAt(offset - 1)
       const line = model.getLineContent(position.lineNumber)
-      const song = new Thulium(content, { useFile: false })
+      const song = new Thulium(content, {useFile: false})
       if (song.matchScope('inst', offset)) {
         return instCompletions
       } else if (song.matchScope('pack', offset)) {
@@ -115,7 +117,7 @@ function defineLanguage() {
     provideCodeLenses(model, token) {
       model.setEOL(0)
       const content = model.getValue(1)
-      const song = new Thulium(content, { useFile: false })
+      const song = new Thulium(content, {useFile: false})
       const index = song.Index
       return [].concat(...index.sections.map((section, sIndex) => {
         if (song.parse().every(sect => sect.Index !== sIndex)) return []
@@ -124,7 +126,7 @@ function defineLanguage() {
         const result = [codeLensAt(model, index.base + section.start, `Section ${sIndex + 1}`, {
           id: commandId,
           title: `Section ${sIndex + 1}`,
-          arguments: [ content, sectionIndex ]
+          arguments: [content, sectionIndex]
         })]
         section.tracks.forEach((track, tIndex) => {
           if (sectionData.every(trac => trac.Index !== tIndex)) return
@@ -132,7 +134,7 @@ function defineLanguage() {
           result.push(codeLensAt(model, index.base + track, `Section ${sIndex + 1} Track ${tIndex + 1}`, {
             id: commandId,
             title: `Track ${tIndex + 1}`,
-            arguments: [ content, sectionIndex, [ trackIndex ] ]
+            arguments: [content, sectionIndex, [trackIndex]]
           }))
         })
         return result
@@ -145,4 +147,4 @@ function defineLanguage() {
   $defined = true
 }
 
-module.exports = { defineLanguage, registerPlayCommand }
+module.exports = {defineLanguage, registerPlayCommand}

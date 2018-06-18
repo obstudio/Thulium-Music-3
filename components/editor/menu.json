@@ -1,0 +1,84 @@
+{
+    "header": [
+        "add-tab",
+        "open-file",
+        "@separator",
+        "toggle-menubar",
+        "@separator",
+        "@tabs"
+    ],
+    "tab": [
+        "save",
+        "save-as",
+        "@separator",
+        "close-tab",
+        "close-others",
+        "close-right",
+        "@separator",
+        "start-play",
+        "stop-play",
+        "toggle-play"
+    ],
+    "extension": [
+        "toggle-extension",
+        "toggle-full-ext"
+    ],
+    "menubar": [
+        {
+            "key": "file",
+            "bind": "F",
+            "content": [
+                "add-tab",
+                "open-file",
+                "@separator",
+                "save",
+                "save-as",
+                "save-all",
+                "@separator",
+                "close-tab",
+                "close-others",
+                "close-right",
+                "close-all"
+            ]
+        },
+        {
+            "key": "edit",
+            "bind": "E",
+            "content": [
+                "undo",
+                "redo",
+                "@separator",
+                "cut",
+                "copy",
+                "paste",
+                "@separator",
+                "find",
+                "find-next",
+                "find-previous"
+            ]
+        },
+        {
+            "key": "view",
+            "bind": "V",
+            "content": [
+                "toggle-menubar",
+                "toggle-extension",
+                "toggle-full-ext",
+                "command-palette",
+                "@separator",
+                "@tabs"
+            ]
+        },
+        {
+            "key": "play",
+            "bind": "P",
+            "content": [
+                "start-play",
+                "stop-play",
+                "toggle-play",
+                "@separator",
+                "output"
+            ]
+        }
+    ]
+}

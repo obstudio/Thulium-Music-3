@@ -1,26 +1,21 @@
-[
-    {
-        "name": "openFile",
-        "bind": "ctrl+o"
-    },
-    {
-        "name": "addTab",
-        "bind": "ctrl+n"
-    },
-    {
-        "name": "closeTab",
-        "bind": "ctrl+f1"
-    },
-    {
-        "name": "save",
-        "bind": "ctrl+s"
-    },
-    {
-        "name": "saveAs",
-        "bind": "ctrl+shift+s"
-    },
-    {
-        "name": "toggleMenubar",
-        "bind": "ctrl+m"
-    }
-]
+{
+    "open-file": "ctrl+o",
+    "add-tab": "ctrl+n",
+    "close-tab": "ctrl+f4",
+    "save": "ctrl+s",
+    "save-as": "ctrl+shift+s",
+    "toggle-menubar": "ctrl+k ctrl+m",
+    "toggle-extension": "ctrl+k ctrl+e",
+    "toggle-full-ext": "ctrl+k ctrl+f",
+    "command-palette": "f1",
+    "undo": "!ctrl+z",
+    "redo": "!ctrl+y",
+    "cut": "!ctrl+x",
+    "copy": "!ctrl+c",
+    "paste": "!ctrl+v",
+    "find": "!ctrl+f",
+    "replace": "!ctrl+h",
+    "find-next": "!f3",
+    "find-previous": "!shift+f3",
+    "toggle-play": "ctrl+p"
+}

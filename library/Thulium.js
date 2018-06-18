@@ -68,7 +68,7 @@ class Thulium {
     return this.MusicClips;
   }
 
-  adapt(form = 'MIDI', spec) {
+  adapt(spec = undefined, form = 'MIDI') {
     return new Adapter(this.parse(), spec).adapt(form)
   }
 
@@ -111,6 +111,10 @@ class Thulium {
 }
 
 Thulium.$library = library;
+Thulium.$remote = function(source) {
+  const thulium = new Thulium('', {useFile: false})
+  return Object.assign(thulium, source)
+}
 
 module.exports = Thulium;
 

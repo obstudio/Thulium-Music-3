@@ -148,7 +148,7 @@ class Lexer {
       if (cap = this.rules.blockquote.exec(src)) {
         src = src.substring(cap[0].length)
         const length = this.tokens.length
-        cap = cap[0].replace(/^ *> ?/gm, '')
+        cap = cap[0].replace(/^ *[>?] ?/gm, '')
 
         // Pass `top` to keep the current
         // "toplevel" state. This is exactly

@@ -17,7 +17,7 @@ module.exports = class TmTab {
     changed = false
   } = {}) {
     this.type = type
-    this.value = value
+    this._value = value
     this.volume = volume
     this.start = start
     this.end = end
@@ -37,8 +37,16 @@ module.exports = class TmTab {
       configurable: false,
       value: new Thulium(value, { useFile: false })
     })
+    this.currentVersionId = this.model.getVersionId()
+    this.latestVersionId = this.currentVersionId
     this.model.tab = this
     this.thulium.tab = this
+  }
+
+  get value() {
+    if (this.currentVersionId === this.latestVersionId) return this._value
+    this.currentVersionId = this.latestVersionId
+    return this._value = this.model.getValue(global.user.state.Settings.lineEnding === 'LF' ? 1 : 2)
   }
 
   onModelChange(listener) {

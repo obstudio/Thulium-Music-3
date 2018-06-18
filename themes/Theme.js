@@ -1,11 +1,12 @@
 const yaml = require('js-yaml')
 const fs = require('fs')
+const _path = require('path')
 
 class TmTheme {
   constructor(loadBuffer = false, saveBuffer = false) {
     for (const theme of global.library.Themes) {
       const name = theme.key
-      const path = './themes/' + name
+      const path = _path.resolve(__dirname, name)
       if (loadBuffer) {
         this[name] = require(path + '.buffer.json')
       } else {

@@ -18,10 +18,43 @@
         "section": "乐章",
         "thulium": "铥铥音乐",
         "title": "编辑器",
-        "track": "音轨"
+        "track": "音轨",
+        "close-tab-msg": "文件尚未保存，是否继续？",
+        "menu": {
+            "file": "文件",
+            "edit": "编辑",
+            "view": "查看",
+            "play": "播放",
+            "add-tab": "新建",
+            "open-file": "打开 ...",
+            "save": "保存",
+            "save-as": "另存为 ...",
+            "save-all": "全部保存",
+            "close-tab": "关闭标签",
+            "close-all": "关闭所有标签",
+            "close-others": "关闭其他标签",
+            "close-right": "关闭右侧标签",
+            "undo": "撤销",
+            "redo": "恢复",
+            "cut": "剪切",
+            "copy": "复制",
+            "paste": "粘贴",
+            "find": "查找 ...",
+            "find-next": "查找下一个",
+            "find-previous": "查找上一个",
+            "toggle-menubar": [ "隐藏菜单栏", "显示菜单栏" ],
+            "toggle-extension": [ "隐藏扩展", "显示扩展" ],
+            "toggle-full-ext": [ "取消全屏扩展", "全屏显示扩展" ],
+            "command-palette": "命令面板 ...",
+            "start-play": "开始播放",
+            "stop-play": "停止播放",
+            "toggle-play": "切换播放",
+            "output": "输出到 wav"
+        }
     },
     "homepage": {
-        "title": "铥铥音乐"
+        "title": "铥铥音乐",
+        "welcome": "欢迎使用铥铥音乐"
     },
     "documents": {
         "title": "文档"
@@ -34,5 +67,10 @@
         "minimap": "显示小地图",
         "theme": "主题",
         "title": "设置"
+    },
+    "message": {
+        "tip": "提示",
+        "confirm": "确认",
+        "cancel": "取消"
     }
 }

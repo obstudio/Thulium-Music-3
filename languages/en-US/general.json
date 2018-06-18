@@ -18,10 +18,43 @@
         "section": "Section",
         "thulium": "Thulium Music",
         "title": "Editor",
-        "track": "Track"
+        "track": "Track",
+        "close-tab-msg": "The file has not been saved, sure to continue?",
+        "menu": {
+            "file": "File",
+            "edit": "Edit",
+            "view": "View",
+            "play": "play",
+            "add-tab": "New Tab",
+            "open-file": "Open ...",
+            "save": "Save",
+            "save-as": "Save As ...",
+            "save-all": "Save All",
+            "close-tab": "Close Tab",
+            "close-all": "Close All Tabs",
+            "close-others": "Close Other Tabs",
+            "close-right": "Close Tabs to the Right",
+            "undo": "Undo",
+            "redo": "Redo",
+            "cut": "Cut",
+            "copy": "Copy",
+            "paste": "Paste",
+            "find": "Find ...",
+            "find-next": "Find Next",
+            "find-previous": "Find Previous",
+            "toggle-menubar": [ "Hide Menu Bar", "Show Menu Bar" ],
+            "toggle-extension": [ "Hide Extension", "Show Extension" ],
+            "toggle-full-ext": [ "Hide Full Extension", "Show Full Extension" ],
+            "command-palette": "Command Palette ...",
+            "start-play": "Start Playing",
+            "stop-play": "Stop playing",
+            "toggle-play": "Toggle playing",
+            "output": "Output to wav"
+        }
     },
     "homepage": {
-        "title": "Thulium Music"
+        "title": "Thulium Music",
+        "welcome": "Welcome to Thulium Music Player"
     },
     "documents": {
         "title": "Documents"
@@ -34,5 +67,10 @@
         "minimap": "Show Minimap",
         "theme": "Theme",
         "title": "Settings"
+    },
+    "message": {
+        "tip": "Tip",
+        "confirm": "Comfirm",
+        "cancel": "Cancel"
     }
 }

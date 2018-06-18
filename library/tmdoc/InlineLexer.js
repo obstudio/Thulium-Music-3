@@ -195,7 +195,7 @@ InlineLexer.rules = {
   code: /^(`+)\s*([\s\S]*?[^`]?)\s*\1(?!`)/,
   br: /^ {2,}\n(?!\s*$)/,
   del: /^-(?=\S)([\s\S]*?\S)-/,
-  text: /^[\s\S]+?(?=[\\<!\[`*]|\b_| {2,}\n|$)/
+  text: /^[\s\S]+?(?=[\\<!\[`*(]|\b_| {2,}\n|$)/
 }
 
 module.exports = InlineLexer

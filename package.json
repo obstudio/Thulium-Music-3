@@ -5,8 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "pack-win-64": "electron-packager . \"Thulium Music 3\" --win --arch=x64 --out=./dist --app-version=3.0.0 --overwrite --icon=./assets/icon.ico",
+    "pack-win-86": "electron-packager . \"Thulium Music 3\" --win --arch=x86 --out=./dist --app-version=3.0.0 --overwrite --icon=./assets/icon.ico"
   },
   "build": {
     "appId": "Thulium"
@@ -16,22 +16,22 @@
   "devDependencies": {
     "@vue/devtools": "^1.1.0",
     "electron": "^2.0.0",
-    "electron-builder": "^20.15.1",
     "eslint": "^4.19.1"
   },
   "dependencies": {
-    "acorn": "^5.6.2",
+    "acorn": "^5.7.1",
     "element-ui": "^2.4.1",
     "js-yaml": "^3.12.0",
     "monaco-editor": "^0.13.1",
     "mousetrap": "^1.6.2",
     "vue": "^2.5.16",
-    "vue-awesome": "^3.0.0",
     "vue-i18n": "^7.8.0",
     "vue-router": "^3.0.1",
     "vue-template-compiler": "^2.5.16",
     "vuedraggable": "^2.16.0",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "wafd-tm3": "^1.0.1",
+    "audiobuffer-to-wav": "^1.0.0"
   },
   "license": "ISC",
   "repository": {

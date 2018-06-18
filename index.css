@@ -4,6 +4,8 @@
 @import "./components/settings/settings.css";
 @import "./assets/icons.css";
 
+@import "./extensions/renderer/main.css";
+
 body {
     margin: 0;
     padding: 0;
@@ -16,6 +18,8 @@ body {
     font-family: source-san-sans-CN;
     -webkit-font-smoothing: antialiased;
 }
+
+body button { font-family: source-san-sans-CN }
 
 .navbar {
     height: 48px;

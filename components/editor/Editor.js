@@ -6,21 +6,50 @@ const draggable = require('vuedraggable')
 global.define.amd = tempAmd
 
 const extensions = require('../../extensions/extension')
+const TmCommand = require('./command')
+const TmMenu = require('./menu')
 const storage = require('./storage')
-const keymap = require('./keymap.json')
-const Mousetrap = require('mousetrap')
-// TODO: improve this pattern maybe. Cause: firing event inside textarea is blocked by mousetrap by default.
-Mousetrap.prototype.stopCallback = () => false
 
-const MenubarHeight = 30
-const TabHeight = 34
-const StatusHeight = 24
+const HalfTitleHeight = 34
+const FullTitleHeight = 60
+const StatusHeight = 28
+function SmoothScroll(target, speed, smooth) {
+  let moving = false
+  let pos = target.scrollLeft
 
+  function scrolled(deltaY) {
+    const delta = deltaY / 100
+
+    pos += delta * speed
+    pos = Math.max(-10, Math.min(pos, target.scrollWidth - target.clientWidth + 10)) // limit scrolling
+
+    if (!moving) update()
+  }
+
+  function update() {
+    moving = true
+    const delta = (pos - target.scrollLeft) / smooth
+    target.scrollLeft += delta
+    if (Math.abs(delta) > 0.5)
+      requestAnimationFrame(update)
+    else
+      moving = false
+  }
+  return scrolled
+}
 module.exports = {
   name: 'TmEditor',
 
   components: {
     draggable
+  },
+  provide() {
+    return {
+      tabs: this.tabs,
+      current: this.current,
+      contextId: this.contextId,
+      execute: this.executeMethod
+    }
   },
   data() {
     const storageState = storage.load()
@@ -33,25 +62,31 @@ module.exports = {
         animation: 150,
         ghostClass: 'drag-ghost'
       },
-      draggingTab: false
+      draggingTab: false,
+      addTagLeft: 0
     }
     const extensionState = {
       extensions,
-      activeExtension: extensions[0],
+      activeExtension: 0,
       draggingExtension: false,
+      extUnderlineLeft: '0px',
+      extUnderlineWidth: '0px',
+      extensionMoveToRight: false
     }
-    const contextMenuState = {
-      menuShowed: {
-        tabs: false,
-        tab: false
-      }
+    const menuState = {
+      menubarMove: 0,
+      menubarActive: false,
+      menuData: TmMenu.menuData,
+      menuKeys: TmMenu.menuKeys,
+      altKey: false,
+      contextId: null
     }
     return {
       ...storageState,
       ...editorState,
       ...tabState,
       ...extensionState,
-      ...contextMenuState
+      ...menuState
     }
   },
 
@@ -60,20 +95,23 @@ module.exports = {
       return String(this.remainHeight - (this.extensionShowed ? this.extensionHeight : 0)) + 'px'
     },
     remainHeight() {
-      return this.height - TabHeight - StatusHeight - (this.menubar ? MenubarHeight : 0)
+      return this.height - StatusHeight - (this.menubar ? FullTitleHeight : HalfTitleHeight)
     },
-    settings: () => global.user.state.Settings
+    settings: () => global.user.state.Settings,
+    tabsWidth() {
+      return `${this.width - 34}px`
+    }
   },
 
   watch: {
     width() {
-      this.layout(300)
+      this.layout(500)
     },
     menubar() {
-      this.layout(300)
+      this.layout(500)
     },
     extensionShowed() {
-      this.layout(300)
+      this.layout(500)
     },
     'settings.minimap'() {
       if (this.editor) {
@@ -84,20 +122,17 @@ module.exports = {
     },
     'settings.lineEnding'() {
       this.tabs.map(tab => this.refresh(tab))
+    },
+    current(newTab) {
+      this.adjustTabsScroll()
     }
   },
 
   mounted() {
-    this.menu = {
-      tabs: this.$el.children[4].children[0],
-      tab: this.$el.children[4].children[1]
-    }
-    keymap.forEach(command => {
-      Mousetrap.bind(command.bind, () => {
-        this[command.name]()
-        return false
-      })
-    })
+    // properties added in mounted hook to prevent unnecessary reactivity
+    TmCommand.onMount.call(this)
+    TmMenu.onMount.call(this)
+
     this.player = undefined
     this.tabs.forEach(tab => {
       tab.onModelChange((e) => {
@@ -105,30 +140,36 @@ module.exports = {
       })
       tab.checkChange()
     })
+    this.doScroll = SmoothScroll(this.$refs.tabs.$el, 100, 10)
+
+    this.refreshExtUnderline()
+    this.refreshAddTagLeft()
+    this.adjustTabsScroll()
     this.showEditor()
     this.registerGlobalEvents()
-    if (global.user) {
-      window.monaco.editor.setTheme(global.user.state.Settings.theme)
-    }
+    window.monaco.editor.setTheme(global.user.state.Settings.theme)
     this.activate()
+    this.$nextTick(()=> {
+      this.tabs.forEach(tab => {
+        tab.node = this.$refs.tabs.$el.querySelector(`[identifier=tab-${tab.id}]`)
+      })
+    })
   },
 
   methods: {
     // commands
-    ...require('./command'),
-
+    ...require('./method'),
     activate() {
       this.editor.setModel(this.current.model)
+      if (this.current.viewState) this.editor.restoreViewState(this.current.viewState)
       const position = this.editor.getPosition()
       this.row = position.lineNumber
       this.column = position.column
       global.user.state.Prefix.editor = this.current.title + ' - '
       this.layout()
     },
-    refresh(tab) {
-      tab.value = tab.model.getValue(
-        global.user.state.Settings.lineEnding === 'LF' ? 1 : 2
-      )
+    refresh(tab, event) {
+      tab.latestVersionId = event.versionId
       tab.checkChange()
     },
     layout(time = 0) {
@@ -141,9 +182,21 @@ module.exports = {
         }
       })
     },
-
+    executeAction(id) {
+      const action = this.editor.getAction(id)
+      if (action) action.run(this.editor)
+    },
+    executeTrigger(id) {
+      this.editor.trigger(id, id)
+    },
+    executeCommand(key) {
+      TmCommand.executeCommand.call(this, key)
+    },
+    executeMethod(method, ...args) {
+      if (method in this) this[method](...args)
+    },
     showEditor() {
-      const editor = window.monaco.editor.create(this.$el.children[1], {
+      const editor = window.monaco.editor.create(this.$refs.content, {
         model: null,
         language: 'tm',
         theme: 'tm',
@@ -154,13 +207,12 @@ module.exports = {
       this.editor = editor
       editor.vue = this
       registerPlayCommand(editor)
-      require('./action').forEach(action => editor.addAction(action))
       editor.onDidChangeCursorPosition(event => {
         this.row = event.position.lineNumber
         this.column = event.position.column
       })
       editor.onDidChangeModel(() => {
-        editor.focus()
+        this.$nextTick(() => editor.focus())
       })
     },
     registerGlobalEvents() {
@@ -168,7 +220,7 @@ module.exports = {
         if (this.extensionShowed && this.extensionHeight > this.remainHeight) {
           this.extensionHeight = this.remainHeight
         }
-        this.layout(300)
+        this.layout(500)
       }, {passive: true})
       addEventListener('mouseup', (e) => {
         this.layout()
@@ -178,7 +230,9 @@ module.exports = {
         if (this.draggingExtension) {
           this.layout()
           event.stopPropagation()
-          if (this.extensionHeight <= this.remainHeight || this.draggingLastY < event.clientY) {
+          const toMax = this.extensionHeight <= this.remainHeight || this.draggingLastY < event.clientY
+          const toMin = this.extensionHeight >= 36 || this.draggingLastY > event.clientY
+          if (toMax && toMin) {
             this.extensionHeight += this.draggingLastY - event.clientY
             this.draggingLastY = event.clientY
           }
@@ -192,56 +246,93 @@ module.exports = {
         this.stopDrag(e)
       })
     },
+    refreshAddTagLeft() {
+      requestAnimationFrame(() => {
+        const left = this.tabs.reduce((pre, cur, index) => {
+          return pre + cur.node.clientWidth
+        }, 0)
+        this.addTagLeft = Math.min(this.width - 34, left)
+      })
+    },
+    adjustTabsScroll() {
+      requestAnimationFrame((p) => {
+        const tabsNode = this.$refs.tabs.$el
+        const left = this.current.node.offsetLeft
+        const width = this.current.node.clientWidth
+        const scroll = tabsNode.scrollLeft
+        if (scroll < left + width - tabsNode.clientWidth) {
+          this.doScroll(left + width - tabsNode.clientWidth - scroll + 20)
+        } else if (scroll > left) {
+          this.doScroll(left - scroll - 20)
+        }
+      })
+    },
 
     // event handlers
+    appendTabLeaveStyle(el) {
+      if (el.nextElementSibling === null) {
+        el.parentElement.animate({width: [`${this.width - el.clientWidth - 34}px`, `${this.width - 34}px`]}, 150)
+      }
+      el.style.left=`${el.offsetLeft-el.parentElement.scrollLeft}px`
+      el.style.position = 'absolute'
+    },
     loadFileDropped(event) {
       for (const file of event.dataTransfer.files) {
         this.loadFile(file.path)
       }
     },
     toggleTabMenu(id, event) {
-      event.stopPropagation()
-      this.menuTabId = id
-      this.showTopContextMenu('tab', event)
+      this.contextId = id
+      this.showContextMenu('tab', event)
     },
     startDrag(event) {
+      this.hideContextMenus()
       this.draggingExtension = true
       this.draggingLastY = event.clientY
     },
-    stopDrag(event) {
+    stopDrag() {
       this.draggingExtension = false
     },
-    hideContextMenus() {
-      for (const key in this.menuShowed) {
-        this.menuShowed[key] = false
+    scrollTab(e) {
+      this.doScroll(e.deltaY)
+    },
+    changeExtension(id) {
+      if (this.activeExtension === id) return
+      this.extensionMoveToRight = id > this.activeExtension
+      this.activeExtension = id
+      this.refreshExtUnderline()
+    },
+    refreshExtUnderline() {
+      const current = this.$refs.exts.children[this.activeExtension]
+      this.extUnderlineLeft = current.offsetLeft + 8 + 'px'
+      this.extUnderlineWidth = current.offsetWidth - 16 + 'px'
+    },
+    getExtensionName(ext) {
+      if (global.user.state.Settings.language in ext.i18n) {
+        return ext.i18n[global.user.state.Settings.language]
+      } else {
+        return ext.i18n.default
       }
     },
-    showTopContextMenu(key, event) {
-      const style = this.menu[key].style
-      this.hideContextMenus()
-      if (event.clientX + 200 > this.width) {
-        style.left = event.clientX - 200 - this.left + 'px'
-      } else {
-        style.left = event.clientX - this.left + 'px'
-      }
-      style.top = event.clientY - this.top + 'px'
-      this.menuShowed[key] = true
-    }
+    ...TmMenu.methods
   },
 
   props: ['width', 'height', 'left', 'top'],
   render: VueCompile(`<div class="tm-editor" :class="{'show-menubar': menubar}"
-  @dragover.stop.prevent @drop.stop.prevent="loadFileDropped" @click="hideContextMenus" @contextmenu="hideContextMenus">
-  <div class="header" @contextmenu.stop="showTopContextMenu('tabs', $event)">
+    @dragover.stop.prevent @drop.stop.prevent="loadFileDropped"
+    @click="hideContextMenus" @contextmenu="hideContextMenus">
+  <div class="header" @contextmenu.stop="showContextMenu('header', $event)">
     <div class="menubar">
-      <div class="tm-top-menu" @click="addTab(false)">
-        File(<span>F</span>)
+      <div v-for="(menu, index) in menuData.menubar.content" class="tm-top-menu"
+        @click.stop="showMenu(index, $event)" @mouseover.stop="hoverMenu(index, $event)"
+        :class="{ active: menuData.menubar.embed[index] }" @contextmenu.stop>
+        {{ $t('editor.menu.' + menu.key) }} (<span>{{ menu.bind }}</span>)
       </div>
     </div>
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
-        <transition-group name="tm-tabs" :move-class="draggingTab ? 'dragged' : ''">
-        <button v-for="tab in tabs" @mousedown="switchTabById(tab.id, $event)" :key="tab.id">
+        <transition-group ref="tabs" name="tm-tabs" class="tm-scroll-tabs" :style="{width: tabsWidth}" :move-class="draggingTab ? 'dragged' : ''" @wheel.prevent.stop.native="scrollTab" @beforeLeave="appendTabLeaveStyle">
+        <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id" :identifier="'tab-'+tab.id" class="tm-scroll-tab">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
             <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
@@ -252,82 +343,54 @@ module.exports = {
         </button>
         </transition-group>
       </draggable>
-      <button class="add-tag" @click="addTab(false)"><i class="icon-add"/></button>
+      <button class="add-tag" @click="addTab(false)" :style="{ left: addTagLeft + 'px' }">
+        <i class="icon-add"/>
+      </button>
     </div>
-    <button class="menubar-toggler" @click="toggleMenubar()"><i class="icon-control"/></button>
   </div>
-  <div class="content" :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
+  <div class="content" ref="content"
+    :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
   <div class="extension" :class="{ dragged: draggingExtension }" :style="{
       height: (extensionShowed && extensionFull ? '100%' : extensionHeight + 'px'),
-      bottom: (extensionShowed ? extensionFull ? 0 : 24 : 24 - extensionHeight) + 'px'
+      bottom: (extensionShowed ? extensionFull ? 0 : 28 : 28 - extensionHeight) + 'px'
     }">
-    <div class="top-border" @mousedown="startDrag"/>
-    <el-tabs v-model="activeExtension" @tab-click="">
-      <el-tab-pane v-for="ext in extensions" :label="ext" :key="ext" :name="ext">
-        <component :is="'tm-ext-' + ext" :full="extensionFull" :line="row" :col="column"
-                   :height="extensionFull ? height : extensionHeight"/>
-      </el-tab-pane>
-    </el-tabs>
+    <div class="top-border" v-show="!extensionFull" @mousedown="startDrag"/>
+    <div class="nav-left" ref="exts" @contextmenu.stop="showContextMenu('extension', $event)">
+      <button v-for="(ext, index) in extensions" @click="changeExtension(index)"
+        :key="ext.name" :class="{ active: activeExtension === index }">
+        {{ getExtensionName(ext) }}
+      </button>
+    </div>
+    <div class="underline" :style="{ left: extUnderlineLeft, width: extUnderlineWidth }"/>
     <div class="nav-right">
-      <button @click="extensionFull = !extensionFull">
+      <button @click="toggleFullExt()">
         <i :class="extensionFull ? 'icon-down' : 'icon-up'"/>
       </button>
       <button @click="extensionShowed = false">
         <i class="icon-close"/>
       </button>
     </div>
+    <keep-alive>
+      <transition name="tm-ext"
+        :leave-to-class="'transform-to-' + (extensionMoveToRight ? 'left' : 'right')"
+        :enter-class="'transform-to-' + (extensionMoveToRight ? 'right' : 'left')">
+        <component :is="'tm-ext-' + extensions[activeExtension].name" class="tm-ext"
+          :width="width" :height="extensionHeight - 36" :isFull="extensionFull"/>
+      </transition>
+    </keep-alive>
   </div>
-  <div class="status" :style="{ bottom: extensionShowed && extensionFull ? '-24px' : '0px' }">
+  <div class="status" :style="{ bottom: extensionShowed && extensionFull ? '-28px' : '0px' }">
     <div class="left">
       <div class="text">{{ $t('editor.line-col', { line: row, col: column }) }}</div>
     </div>
     <div class="right">
-      <button @click="extensionShowed = !extensionShowed"><i class="el-icon-menu"/></button>
+      <button @click="toggleExtension()"><i class="icon-control"/></button>
     </div>
   </div>
-  <div class="context-menu">
-    <transition name="el-zoom-in-top">
-      <ul v-show="menuShowed.tabs" class="tm-menu">
-        <div class="menu-item" @click="addTab(false)">
-          <a class="label">New File</a>
-          <span class="binding">Ctrl+N</span>
-        </div>
-        <div class="menu-item" @click="openFile()">
-          <a class="label">Open File</a>
-          <span class="binding">Ctrl+O</span>
-        </div>
-        <div class="menu-item" @click="saveAll()">
-          <a class="label">Save All Files</a>
-        </div>
-        <div class="menu-item disabled" @click.stop><a class="label separator"/></div>
-        <li v-for="tab in tabs">
-          <div class="menu-item" @click="switchTabById(tab.id, $event)">
-            <a class="label">{{ tab.title }}</a>
-          </div>
-        </li>
-      </ul>
-    </transition>
-    <transition name="el-zoom-in-top">
-      <ul v-show="menuShowed.tab" class="tm-menu">
-        <div class="menu-item" @click="save(menuTabId)">
-          <a class="label">Save</a>
-          <span class="binding">Ctrl+S</span>
-        </div>
-        <div class="menu-item" @click="saveAs(menuTabId)">
-          <a class="label">Save As</a>
-          <span class="binding">Ctrl+Shift+S</span>
-        </div>
-        <div class="menu-item disabled" @click.stop><a class="label separator"/></div>
-        <div class="menu-item" @click="closeTab(menuTabId)">
-          <a class="label">Close</a>
-          <span class="binding">Ctrl+F4</span>
-        </div>
-        <div class="menu-item" @click="closeOtherTabs(menuTabId)">
-          <a class="label">Close Other Tabs</a>
-        </div>
-        <div class="menu-item" @click="closeTabsToRight(menuTabId)">
-          <a class="label">Close Tabs to the Right</a>
-        </div>
+  <div class="menus" ref="menus">
+    <transition name="el-zoom-in-top" v-for="key in menuKeys" :key="key">
+      <ul v-show="menuData[key].show" class="tm-menu">
+        <tm-menu :data="menuData[key].content" :embed="menuData[key].embed" :move="menubarMove" :current="current"/>
       </ul>
     </transition>
   </div>
