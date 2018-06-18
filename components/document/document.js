@@ -112,13 +112,13 @@ module.exports = {
       this.setContent()
     }
   },
-  render: VueCompile(`<el-row class="tm-document" style="background-color: white;">
-    <el-col :span="7" :style="{height: docHeight}">
-      <el-menu style="height: 100%; overflow-x: hidden;overflow-y: auto;" @select="switchDoc" :unique-opened="true">
+  render: VueCompile(`<el-row class="tm-document">
+    <el-col :lg="4" :md="5" :sm="7" :xs="8" :style="{height: docHeight}">
+      <el-menu background-color="#363636" text-color="#fff" style="height: 100%; overflow-x: hidden;overflow-y: auto;" @select="switchDoc" :unique-opened="true">
         <tm-doc-variant v-for="item in items" :item="item" base=""></tm-doc-variant>
       </el-menu>
     </el-col>
-    <el-col :span="16" :offset="1" style="overflow: auto;" :style="{height: docHeight}">
+    <el-col :lg="19" :md="18" :sm="16" :xs="15" :offset="1" style="overflow: auto;" :style="{height: docHeight}">
       <Document :content="root"></Document>
     </el-col>
   </el-row>`)

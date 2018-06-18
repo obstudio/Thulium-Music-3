@@ -61,19 +61,19 @@
 .dark .tm-menu .menu-item.disabled .binding { color: #666666 !important }
 
 /* document */
-.dark .tm-doc { color: #24292e }
-.dark .tm-doc blockquote { color: #6a737d; border-left: 0.25em solid #dfe2e5 }
-.dark .tm-doc pre { background-color: #f6f8fa }
-.dark .tm-doc h1 { border-bottom: 1px solid #eaecef }
-.dark .tm-doc h2 { border-bottom: 1px solid #eaecef }
-.dark .tm-doc hr { border-bottom: 1px solid #dfe2e5; background-color: #e1e4e8 }
-.dark .tm-doc table th, .dark .tm-doc table td { border: 1px solid #dfe2e5 }
-.dark .tm-doc table tr { background-color: #fff; border-top: 1px solid #c6cbd1 }
-.dark .tm-doc table tr :nth-child(2n) { background-color: #f6f8fa }
+.dark .tm-doc { color: #fafaf5; background-color: #282828 }
+.dark .tm-doc blockquote { color: #c0c0c0; border-left: 0.25em solid #c0c0c0 }
+.dark .tm-doc pre { background-color: #202020 }
+.dark .tm-doc h1 { border-bottom: 1px solid #282828 }
+.dark .tm-doc h2 { border-bottom: 1px solid #282828 }
+.dark .tm-doc hr { border-bottom: 1px solid #202020; background-color: #282828 }
+.dark .tm-doc table th, .dark .tm-doc table td { border: 1px solid #a0a0a0 }
+.dark .tm-doc table tr { background-color: #282828; border-top: 1px solid #a0a0a0 }
+.dark .tm-doc table tr :nth-child(2n) { background-color: #202020 }
 .dark .tm-doc a { background-color: transparent; color: #0366d6 }
-.dark .tm-doc img { background-color: #fff }
-.dark .tm-doc code {  background-color: rgba(27, 31, 35, 0.05) }
-.dark .tm-grey { color: grey }
+.dark .tm-doc img { background-color: #000000 }
+.dark .tm-doc code { background-color: rgba(255, 255, 255, 0.1) }
+.dark .tm-grey { color: #c0c0c0 }
 
 /* settings */
 .dark .tm-settings .el-radio-button__inner { background-color: #fafaf5; border-color: #dcdfe6; color: #606266 }
