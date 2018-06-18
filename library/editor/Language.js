@@ -1,5 +1,6 @@
 const yaml = require('js-yaml')
 const fs = require('fs')
+const path = require('path')
 
 class TmLanguage {
   constructor(path, loadBuffer = false, saveBuffer = false) {
@@ -79,7 +80,7 @@ class TmLanguage {
 
 class TmExtension extends TmLanguage {
   constructor(name) {
-    super('./packages/' + name, false, false)
+    super(path.resolve(__dirname, '../../packages', name), false, false)
     if (!this.source.alias) this.source.alias = {}
     if (!this.source.notation) this.source.notation = []
     if (!this.source.variables) this.source.variables = {}
@@ -119,5 +120,4 @@ class TmExtension extends TmLanguage {
     return result
   }
 }
-  
-module.exports = new TmLanguage('./library/editor').definition()
+module.exports = new TmLanguage(__dirname).definition()
