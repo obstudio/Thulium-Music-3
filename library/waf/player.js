@@ -73,10 +73,10 @@ class Player {
     var zone = this.findZone(preset, pitch)
     if (!(zone.buffer)) {
       console.log('empty buffer ', zone)
-      return
+      return null
     }
     var baseDetune = zone.originalPitch - 100.0 * zone.coarseTune - zone.fineTune
-    var playbackRate = 1.0 * Math.pow(2, (100.0 * pitch - baseDetune) / 1200.0)
+    var playbackRate = Math.pow(2, (100.0 * pitch - baseDetune) / 1200.0)
     // var sampleRatio = zone.sampleRate / audioContext.sampleRate
     var startWhen = when
     if (startWhen < ctx.currentTime) {
@@ -99,7 +99,7 @@ class Player {
     if (slides && slides.length > 0) {
       envelope.audioBufferSourceNode.playbackRate.setValueAtTime(playbackRate, when)
       for (var i = 0; i < slides.length; i++) {
-        var newPlaybackRate = 1.0 * Math.pow(2, (100.0 * slides[i].pitch - baseDetune) / 1200.0)
+        var newPlaybackRate = Math.pow(2, (100.0 * slides[i].pitch - baseDetune) / 1200.0)
         var newWhen = when + slides[i].when
         envelope.audioBufferSourceNode.playbackRate.linearRampToValueAtTime(newPlaybackRate, newWhen)
       }

@@ -5,19 +5,20 @@
 .tm-editor > .header {
     height: 60px;
     top: -26px;
-    left: 0px;
+    left: 0;
     width: 100%;
     transition: 0.5s;
     position: absolute;
     overflow: hidden;
 }
 
-.tm-editor.show-menubar > .header { top: 0px }
+.tm-editor.show-menubar > .header { top: 0
+}
 
 .tm-editor > .header > .menubar {
     overflow: hidden;
     height: 30px;
-    left: 0px;
+    left: 0;
     width: 100%;
     visibility: hidden;
     position: relative;
@@ -42,7 +43,7 @@
 .menubar .el-slider__button-wrapper { z-index: auto }
 
 .menubar .volume-slider {
-    top: 0px;
+    top: 0;
     width: 100px;
     height: 34px;
     left: 40px;
@@ -61,7 +62,7 @@
     outline: none;
     cursor: pointer;
     transition: 0.3s;
-    padding: 0px;
+    padding: 0;
 }
 
 .tm-tabs { height: 30px }
@@ -86,16 +87,18 @@
 
 .tm-tab {
     height: 30px;
-    top: 0px;
-    padding: 0px;
-    margin: 0px -4px;
+    top: 0;
+    padding: 0;
+    margin: 0 -4px;
     float: left;
     transition: all 1s;
     position: relative;
 }
 
-button:first-child .tm-tab { margin-left: 0px }
-button:last-child .tm-tab { margin-right: 0px }
+button:first-child .tm-tab { margin-left: 0
+}
+button:last-child .tm-tab { margin-right: 0
+}
 .tm-tab.active { z-index: 2 }
 .tm-tab:hover { z-index: 1 }
 .drag-ghost { visibility: hidden }
@@ -105,7 +108,7 @@ button:last-child .tm-tab { margin-right: 0px }
     font-size: 12px;
     text-align: center;
     transition: 0.3s;
-    margin-top: 0px;
+    margin-top: 0;
     user-select: none;
 }
 
@@ -119,7 +122,7 @@ button:last-child .tm-tab { margin-right: 0px }
 .tm-tab > i {
     display: none;
     float: right;
-    padding: 11px 22px 11px 0px;
+    padding: 11px 22px 11px 0;
     text-align: center;
     font-size: 8px;
     transition: 0.3s;
@@ -133,16 +136,16 @@ button:last-child .tm-tab { margin-right: 0px }
 
 .tm-tab > div[class$=-border] {
     position: absolute;
-    bottom: 0px;
-    height: 0px;
-    width: 0px;
+    bottom: 0;
+    height: 0;
+    width: 0;
     transition: 0.3s;
     border-style: solid;
-    border-width: 30px 0px 0px 0px;
+    border-width: 30px 0 0 0;
 }
 
-.tm-tab > div.left-border { left: 0px; border-right-width: 15px }
-.tm-tab > div.right-border { right: 0px; border-left-width: 15px }
+.tm-tab > div.left-border { left: 0; border-right-width: 15px }
+.tm-tab > div.right-border { right: 0; border-left-width: 15px }
 
 .tm-editor button.add-tag {
     padding: 10px 12px;
@@ -157,7 +160,7 @@ button:last-child .tm-tab { margin-right: 0px }
 .tm-editor > .content {
     overflow: hidden;
     top: 34px;
-    left: 0px;
+    left: 0;
     width: 100%;
     position: absolute;
     transition: 0.5s;
@@ -175,7 +178,7 @@ button:last-child .tm-tab { margin-right: 0px }
 }
 
 .tm-editor > .extension > div.top-border {
-    top: 0px;
+    top: 0;
     height: 2px;
     width: 100%;
     position: absolute;
@@ -188,7 +191,7 @@ button:last-child .tm-tab { margin-right: 0px }
     outline: none;
     cursor: pointer;
     transition: 0.3s;
-    padding: 0px;
+    padding: 0;
 }
 
 .tm-editor > .extension > .nav-left {
@@ -216,9 +219,9 @@ button:last-child .tm-tab { margin-right: 0px }
 
 .tm-editor > .extension > .nav-right {
     position: absolute;
-    right: 0px;
+    right: 0;
     height: 34px;
-    top: 0px;
+    top: 0;
     float: right;
 }
 
@@ -231,9 +234,9 @@ button:last-child .tm-tab { margin-right: 0px }
 .tm-ext {
     position: absolute;
     top: 36px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 .tm-ext-enter-active, .tm-ext-leave-active { transition: .5s ease }
@@ -241,8 +244,8 @@ button:last-child .tm-tab { margin-right: 0px }
 .tm-editor > .status {
     width: 100%;
     height: 28px;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     position: absolute;
     transition: 0.5s;
     -webkit-user-select: none;
@@ -251,10 +254,10 @@ button:last-child .tm-tab { margin-right: 0px }
 }
 
 .tm-editor > .status > div {
-    top: 0px;
+    top: 0;
     height: 100%;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     position: absolute;
 }
 
@@ -293,9 +296,9 @@ button:last-child .tm-tab { margin-right: 0px }
 
 .tm-editor > .menus ul {
     z-index: 10;
-    padding: 0px;
-    margin: 0px;
-	outline: 0px;
+    padding: 0;
+    margin: 0;
+	outline: 0;
     border: none;
     transition: 0.3s ease;
     position: absolute;
@@ -310,7 +313,7 @@ button:last-child .tm-tab { margin-right: 0px }
 .tm-menu .content { min-width: 200px }
 
 .tm-menu .menu-item {
-    padding: 0px;
+    padding: 0;
     -webkit-user-select: none;
     display: -webkit-flex;
     cursor: pointer;
@@ -327,7 +330,7 @@ button:last-child .tm-tab { margin-right: 0px }
     font-size: 12px;
 	display: inline-block;
 	-webkit-box-sizing:	border-box;
-	margin: 0px;
+	margin: 0;
 }
 
 .tm-menu .menu-item .label.active { font-weight: bold }

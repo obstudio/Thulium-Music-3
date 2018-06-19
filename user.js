@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const process = require('process')
 const defaultSettings = require('./default.json')
 
 class TmUser {

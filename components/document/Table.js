@@ -9,14 +9,14 @@ module.exports = {
   methods: {
     align(al) {
       switch (al) {
-      case 1:
-        return 'left'
-      case 2:
-        return 'center'
-      case 3:
-        return 'right'
-      default:
-        return 'left'
+        case 1:
+          return 'left'
+        case 2:
+          return 'center'
+        case 3:
+          return 'right'
+        default:
+          return 'left'
       }
     }
   },

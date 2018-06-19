@@ -24,16 +24,16 @@ module.exports = {
       },
       render: (createElement, context) => {
         return createElement('div', {
-            class: {
-              'tm-doc': true
-            }
+          class: {
+            'tm-doc': true
+          }
+        },
+        context.props.content.map((comp, index) => createElement(comp.type, {
+          props: {
+            node: comp
           },
-          context.props.content.map((comp, index) => createElement(comp.type, {
-            props: {
-              node: comp
-            },
-            key: index
-          }))
+          key: index
+        }))
         )
       }
     },
@@ -51,18 +51,18 @@ module.exports = {
         const base = context.props.base
         const index = `${base}/${item.name || item}`
         return typeof item === 'object' ? createElement('el-submenu', {
-            props: {
-              index
-            }
-          }, [createElement('template', {
-            slot: 'title'
-          }, item.name
-          ), ...item.content.map((sub) => createElement('tm-doc-variant', {
-            props: {
-              item: sub,
-              base: index
-            }
-          }))]
+          props: {
+            index
+          }
+        }, [createElement('template', {
+          slot: 'title'
+        }, item.name
+        ), ...item.content.map((sub) => createElement('tm-doc-variant', {
+          props: {
+            item: sub,
+            base: index
+          }
+        }))]
         ) : createElement('el-menu-item', {
           props: {
             index
