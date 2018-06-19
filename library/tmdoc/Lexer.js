@@ -72,7 +72,7 @@ class Lexer {
         src = src.substring(cap[0].length)
         this.tokens.push({
           type: 'Code',
-          lang: cap[2],
+          lang: cap[2] || 'tm',
           code: cap[3] || ''
         })
         continue

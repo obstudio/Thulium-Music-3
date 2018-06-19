@@ -62,17 +62,18 @@
 
 /* document */
 .dark .tm-doc { color: #fafaf5; background-color: #282828 }
-.dark .tm-doc blockquote { color: #c0c0c0; border-left: 0.25em solid #c0c0c0 }
+.dark .tm-doc blockquote { color: #c0c0c0; border-left: 0.25em solid #c0c0c0; background-color: #3d3d3d }
 .dark .tm-doc pre { background-color: #202020 }
-.dark .tm-doc h1 { border-bottom: 1px solid #282828 }
-.dark .tm-doc h2 { border-bottom: 1px solid #282828 }
+.dark .tm-doc h1 { border-bottom: 4px solid #454545 }
+.dark .tm-doc h2 { border-bottom: 2px solid #454545 }
 .dark .tm-doc hr { border-bottom: 1px solid #202020; background-color: #282828 }
 .dark .tm-doc table th, .dark .tm-doc table td { border: 1px solid #a0a0a0 }
 .dark .tm-doc table tr { background-color: #282828; border-top: 1px solid #a0a0a0 }
 .dark .tm-doc table tr :nth-child(2n) { background-color: #202020 }
 .dark .tm-doc a { background-color: transparent; color: #0366d6 }
 .dark .tm-doc img { background-color: #000000 }
-.dark .tm-doc code { background-color: rgba(255, 255, 255, 0.1) }
+.dark .tm-doc code { background-color: #3d3d3d }
+.dark .tm-doc .codeblock { background-color: #383933 }
 .dark .tm-grey { color: #c0c0c0 }
 
 /* settings */

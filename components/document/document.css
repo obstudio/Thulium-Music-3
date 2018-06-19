@@ -1,14 +1,18 @@
 .tm-doc blockquote {
-  margin: 0 0 16px;
-  padding: 0 1em;
+    margin: 0 0 16px;
+    padding: 4px 1em;
+    border-left: 0.25em solid;
 }
 
-.tm-doc blockquote>:first-child {
-  margin-top: 0;
-}
+.tm-doc blockquote > :first-child { margin-top: 0 }
+.tm-doc blockquote > :last-child { margin-bottom: 0 }
 
-.tm-doc blockquote>:last-child {
-  margin-bottom: 0;
+.tm-doc .codeblock {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 88%;
+    margin-bottom: 16px;
 }
 
 .tm-doc pre {
@@ -27,11 +31,6 @@
 .tm-doc h1 {
   font-size: 2em;
   margin: 0.67em 0;
-}
-
-.tm-doc h1, h2, h3, h4, h5, h6 {
-  margin-top: 0;
-  margin-bottom: 0;
 }
 
 .tm-doc h1 {
@@ -64,11 +63,16 @@
   font-weight: 600;
 }
 
-.tm-doc h1, h2, h3, h4, h5, h6 {
-  margin-top: 24px;
-  margin-bottom: 16px;
-  font-weight: 600;
-  line-height: 1.25;
+.tm-doc h1,
+.tm-doc h2,
+.tm-doc h3,
+.tm-doc h4,
+.tm-doc h5,
+.tm-doc h6 {
+    margin-top: 24px;
+    margin-bottom: 12px;
+    font-weight: bold;
+    line-height: 1.25;
 }
 
 .tm-doc h1 {
@@ -98,13 +102,11 @@
 }
 
 .tm-doc .tm-horizontal {
-  list-style: none;
-  padding-top: 20px;
+    list-style: none;
+    padding: 8px;
 }
 
-.tm-doc .tm-horizontal li {
-  display: inline;
-}
+.tm-doc .tm-horizontal li { display: inline }
 
 .tm-doc ul, ol {
   padding-left: 0;
@@ -112,26 +114,28 @@
   margin-bottom: 0;
 }
 
-.tm-doc ol ol, ul ol {
-  list-style-type: lower-roman;
+.tm-doc ul ul ol,
+.tm-doc ul ol ol,
+.tm-doc ol ul ol,
+.tm-doc ol ol ol {
+    list-style-type: lower-alpha;
 }
 
-.tm-doc ul ul ol, ul ol ol, ol ul ol, ol ol ol {
-  list-style-type: lower-alpha;
+.tm-doc ul,
+.tm-doc ol {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-left: 2em;
 }
 
-.tm-doc ul, ol {
-  margin-top: 0;
-  margin-bottom: 16px;
-}
-
-.tm-doc ul, ol {
-  padding-left: 2em;
-}
-
-.tm-doc ul ul, ul ol, ol ol, ol ul {
-  margin-top: 0;
-  margin-bottom: 0;
+.tm-doc ul ul,
+.tm-doc ul ol,
+.tm-doc ol ol,
+.tm-doc ol ul {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 1.2em;
+    list-style-type: lower-roman;
 }
 
 .tm-doc li {
@@ -211,12 +215,13 @@
 .tm-doc {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: source-san-sans-CN;
   font-size: 16px;
   line-height: 1.5;
   word-wrap: break-word;
   padding: 20px 20px 20px 0;
 }
+
 .tm-doc::before {
   display: table;
   content: "";
@@ -226,12 +231,13 @@
   clear: both;
   content: "";
 }
-.tm-doc>*:first-child {
+.tm-doc > :first-child {
   margin-top: 0 !important;
 }
-.tm-doc>*:last-child {
+.tm-doc > :last-child {
   margin-bottom: 0 !important;
 }
+
 .tm-doc * {
   box-sizing: border-box;
 }
@@ -278,10 +284,11 @@
 }
 
 .tm-doc code {
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-  padding: 0.2em 0.4em;
-  margin: 0;
-  font-size: 85%;
-  border-radius: 3px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    padding: 0.2em 0.4em;
+    margin: 0px 2px;
+    font-size: 85%;
+    border-radius: 3px;
+    vertical-align: text-bottom;
 }
 
