@@ -57,7 +57,6 @@ function createMainWindow() {
     center: true,
     minWidth: 480,
     minHeight: 320,
-    transparent: true,
     icon: icon,
     show: false,
     frame: false
