@@ -10,6 +10,8 @@ parserOptions:
   sourceType: module
   ecmaFeatures:
     jsx: true
+globals:
+  VueCompile: true
 rules:
   indent:
     - warn
