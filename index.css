@@ -85,7 +85,7 @@ body button { font-family: source-san-sans-CN }
     width: 48px;
     font-size: 20px;
     float: left;
-    padding: 14px 12px;
+    padding: 12px;
 }
 
 .show-sidebar .navbar button.sidebar-toggler {
@@ -145,11 +145,10 @@ div.main {
     transition: 0.3s;
 }
 
-.show-sidebar div.main {
-    left: 64px;
-}
-
+.show-sidebar div.main { left: 64px }
 div.main > div { transition: 0.3s }
+
+.el-message-box .el-message-box__headerbtn { line-height: 1em }
 
 @font-face {
     font-family: source-san-sans-CN;

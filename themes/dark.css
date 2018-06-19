@@ -1,4 +1,5 @@
 
+.dark body { background-color: #272822 }
 .dark .main > div { background-color: #272822; color: #f8f8f2 }
 
 /* navbar */
@@ -83,9 +84,10 @@
 .dark .tm-settings .el-radio-button__orig-radio:checked + .el-radio-button__inner { background-color: #409EFF; color: #ffffff; border-color: #409EFF !important }
 
 /* dialog */
-.dark ~ div > .el-message-box { background-color: #faebd7; border-color: #dacbaf }
-.dark ~ div > .el-message-box .el-message-box__content { color: #223355 }
+.dark ~ div > .el-message-box { background-color: #f0f8ff; border-color: #f0ffff; color: #223355 }
+/*.dark ~ div > .el-message-box .el-message-box__content { color: #223355 }*/
 .dark ~ div > .el-message-box .el-message-box__status.el-icon-warning { color: #f7a747 }
-.dark ~ div > .el-message-box .el-button { background: #fffff0; color: #000000; border-color: #f5f5dc }
-.dark ~ div > .el-message-box .el-button:hover { color: #409eff; border-color: #c6e2ff; background: #ecf5ff }
-.dark ~ div > .el-message-box .el-button--primary { color: #fff; background-color: #409EFF; border-color: #409EFF }
+.dark ~ div > .el-message-box .el-button { color: #606266; border-color: #dcdfe6; background-color: #ffffff }
+.dark ~ div > .el-message-box .el-button:hover { color: #409eff; border-color: #c6e2ff; background-color: #ecf5ff }
+.dark ~ div > .el-message-box .el-button--primary { color: #ffffff; border-color: #6495ed; background-color: #409EFF }
+.dark ~ div > .el-message-box .el-button--primary:hover { color: #fff; border-color: #c6e2ff; background-color: #66b1ff }
