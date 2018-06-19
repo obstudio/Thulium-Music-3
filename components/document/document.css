@@ -1,3 +1,6 @@
+.tm-document ::-webkit-scrollbar { width: 12px }
+.tm-document ::-webkit-scrollbar-thumb { border-radius: 2px }
+
 .tm-doc blockquote {
     margin: 0 0 16px;
     padding: 4px 1em;
@@ -13,7 +16,12 @@
     padding: 4px 8px;
     font-size: 88%;
     margin-bottom: 16px;
+    overflow-x: auto;
 }
+
+.tm-doc .codeblock span { white-space: nowrap }
+.tm-doc .codeblock::-webkit-scrollbar { height: 8px }
+.tm-doc .codeblock::-webkit-scrollbar-thumb { border-radius: 4px }
 
 .tm-doc pre {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
@@ -220,6 +228,7 @@
   line-height: 1.5;
   word-wrap: break-word;
   padding: 20px 20px 20px 0;
+  overflow-y: auto;
 }
 
 .tm-doc::before {
@@ -231,12 +240,9 @@
   clear: both;
   content: "";
 }
-.tm-doc > :first-child {
-  margin-top: 0 !important;
-}
-.tm-doc > :last-child {
-  margin-bottom: 0 !important;
-}
+
+.tm-doc > :first-child { margin-top: 0 !important }
+.tm-doc > :last-child { margin-bottom: 0 !important }
 
 .tm-doc * {
   box-sizing: border-box;
@@ -291,4 +297,3 @@
     border-radius: 3px;
     vertical-align: text-bottom;
 }
-
