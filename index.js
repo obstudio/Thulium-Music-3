@@ -126,8 +126,8 @@ new Vue({
       <div class="top-right">
         <button @click="browser.minimize()" class="minimize"><i class="icon-window-minimize"/></button>
         <button @click="toggleMaximize()" class="maximize">
-          <div v-if="browser.isMaximized()"><i class="icon-window-maximize"/></div>
-          <div v-else><i class="icon-window-maximize"/></div>
+          <i v-if="browser.isMaximized()" class="icon-window-restore"/>
+          <i v-else class="icon-window-maximize"/>
         </button>
         <button @click="browser.close()" class="close"><i class="icon-window-close"/></button>
       </div>
