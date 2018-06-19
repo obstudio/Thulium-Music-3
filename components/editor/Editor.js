@@ -106,6 +106,8 @@ module.exports = {
   watch: {
     width() {
       this.layout(500)
+      this.refreshAddTagLeft()
+      this.adjustTabsScroll()
     },
     menubar() {
       this.layout(500)
