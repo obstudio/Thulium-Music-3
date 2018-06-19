@@ -30,6 +30,9 @@ module.exports = {
     if (!id) id = this.current.id
     const index = this.tabs.findIndex(tab => tab.id === id)
     const close = () => {
+      if (this.tabs[index].id === Player.tabId) {
+        Player.close()
+      }
       this.tabs.splice(index, 1)
       if (this.tabs.length === 0) {
         this.addTab()
@@ -53,6 +56,9 @@ module.exports = {
   },
 
   closeAllTabs() {
+    if (this.tabs.some(tab => tab.id === Player.tabId)) {
+      Player.close()
+    }
     const newTab = new TmTab()
     this.tabs.splice(0, Infinity, newTab)
     this.switchTabByIndex(0)
@@ -65,6 +71,9 @@ module.exports = {
     if (!id) id = this.current.id
     const index = this.tabs.findIndex(tab => tab.id === id)
     this.switchTabByIndex(index)
+    if (id != Player.tabId && this.tabs.some(tab => tab.id === Player.tabId)) {
+      Player.close()
+    }
     this.tabs.splice(index + 1, Infinity)
     this.tabs.splice(0, index)
     this.refreshAddTagLeft()
@@ -75,6 +84,9 @@ module.exports = {
     const index = this.tabs.findIndex(tab => tab.id === id)
     if (this.tabs.findIndex(tab => tab.id === this.current.id) > index) {
       this.switchTabByIndex(index)
+    }
+    if (this.tabs.slice(index + 1, Infinity).some(tab => tab.id === Player.tabId)) {
+      Player.close()
     }
     this.tabs.splice(index + 1, Infinity)
     this.refreshAddTagLeft()
@@ -106,6 +118,10 @@ module.exports = {
       newTab.node = this.$refs.tabs.$el.querySelector(`[identifier=tab-${newTab.id}]`)
       this.refreshAddTagLeft()
     })
+  },
+
+  getCurrentId() {
+    return this.current.id
   },
 
   loadFile(filepath) {
@@ -197,7 +213,7 @@ module.exports = {
       case 'output': {
         const value = this.tabs.find(tab => tab.id === id).value
         if (targetStatus === 'play') {
-          Player.update(value).play()
+          Player.update(value, {tabId: id}).play()
         } else {
           Player.update(value, {offline: true}).play().then(() => {
             return Player.ctx.startRendering()
