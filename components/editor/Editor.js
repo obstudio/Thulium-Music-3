@@ -9,34 +9,12 @@ const extensions = require('../../extensions/extension')
 const TmCommand = require('./command')
 const TmMenu = require('./menu')
 const storage = require('./storage')
+const SmoothScroll = require('../../library/SmoothScroll')
 
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
 const StatusHeight = 28
-function SmoothScroll(target, speed, smooth) {
-  let moving = false
-  let pos = target.scrollLeft
 
-  function scrolled(deltaY) {
-    const delta = deltaY / 100
-
-    pos += delta * speed
-    pos = Math.max(-10, Math.min(pos, target.scrollWidth - target.clientWidth + 10)) // limit scrolling
-
-    if (!moving) update()
-  }
-
-  function update() {
-    moving = true
-    const delta = (pos - target.scrollLeft) / smooth
-    target.scrollLeft += delta
-    if (Math.abs(delta) > 0.5)
-      requestAnimationFrame(update)
-    else
-      moving = false
-  }
-  return scrolled
-}
 module.exports = {
   name: 'TmEditor',
 
@@ -142,7 +120,7 @@ module.exports = {
       })
       tab.checkChange()
     })
-    this.doScroll = SmoothScroll(this.$refs.tabs.$el, 100, 10)
+    this.doScroll = SmoothScroll(this.$refs.tabs.$el, 100, 10, false)
 
     this.refreshExtUnderline()
     this.refreshAddTagLeft()

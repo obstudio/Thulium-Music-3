@@ -1,5 +1,5 @@
 const Vue = require('vue')
-const path = require('path')
+const SmoothScroll = require('../../library/SmoothScroll')
 
 Vue.component('Code', require('./Code'))
 Vue.component('List', require('./List'))
@@ -63,6 +63,10 @@ module.exports = {
     window.monaco.editor.setTheme(global.user.state.Settings.theme)
     this.setContent()
   },
+  mounted() {
+    this.docScroll = SmoothScroll(this.$refs.doc, 100, 10)
+
+  },
   methods: {
     setContent() {
       (async () => {
@@ -70,10 +74,12 @@ module.exports = {
           const doc = await fetch(`./documents${this.doc}.tmd`)
           const text = await doc.text()
           this.root = this.$markdown(text)
-          global.user.state.Prefix.documents = this.root[0].text + ' - '
         } catch (e) {
           this.switchDoc(this.lastDoc)
         }
+        global.user.state.Prefix.documents = this.root[0].text + ' - '
+
+        this.docScroll(-this.$refs.doc.scrollTop)
       })()
     },
     switchDoc(index) {
@@ -89,14 +95,9 @@ module.exports = {
       } else {
         const upPart = /^(?:\.\.\/)+/.exec(url)
         const docParts = this.doc.split('/')
-        if (upPart === null) {
-          docParts.splice(-1, 1, url)
-          this.switchDoc(docParts.join('/'))
-        } else {
-          const up = upPart[0].length / 3 + 1
-          docParts.splice(- up, up, url.slice(upPart[0].length))
-          this.switchDoc(docParts.join('/'))
-        }
+        const up = upPart === null ? 1 : upPart[0].length / 3 + 1
+        docParts.splice(- up, up, upPart === null ? url : url.slice(upPart[0].length))
+        this.switchDoc(docParts.join('/'))
       }
     }
   },
@@ -112,7 +113,7 @@ module.exports = {
         </span>
       </div>
       <div class="right">
-        <button @click="">
+        <button @click="docScroll(-$refs.doc.scrollTop)">
           <i class="icon-up"/>
         </button>
         <button @click="search = true">
@@ -138,7 +139,7 @@ module.exports = {
         left: catalog ? catalogWidth + 'px' : '0px',
         width: width - (catalog ? catalogWidth : 0) + 'px'
       }">
-      <div class="tm-doc" @click.stop="navigate">
+      <div class="tm-doc" @click.stop="navigate" ref="doc" @mousewheel.prevent.stop="docScroll($event.deltaY)">
         <component v-for="(comp, index) in root" :is="comp.type" :node="comp" :key="index"/>
       </div>
     </div>

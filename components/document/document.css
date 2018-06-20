@@ -40,6 +40,7 @@
 
 .tm-document > .catalog {
     overflow-y: auto;
+    overflow-x: hidden;
     position: absolute;
     top: 36px;
     user-select: none;
