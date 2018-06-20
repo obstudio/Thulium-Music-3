@@ -13,30 +13,6 @@ Vue.component('Blockquote', require('./Blockquote'))
 module.exports = {
   name: 'TmDoc',
   components: {
-    Document: {
-      name: 'Document',
-      functional: true,
-      props: {
-        content: {
-          type: Array,
-          required: true
-        }
-      },
-      render: (createElement, context) => {
-        return createElement('div', {
-          class: {
-            'tm-doc': true
-          }
-        },
-        context.props.content.map((comp, index) => createElement(comp.type, {
-          props: {
-            node: comp
-          },
-          key: index
-        }))
-        )
-      }
-    },
     TmDocVariant: {
       name: 'TmDocVariant',
       functional: true,
@@ -80,22 +56,20 @@ module.exports = {
     }
   },
   computed: {
-    docHeight() {
-      return `${this.height}px`
-    }
+    styles: () => global.user.state.Styles
   },
   props: {
     height: {
       type: Number,
       required: true
     },
-    initial: {
-      type: String,
-      default: '/overview'
+    width: {
+      type: Number,
+      required: true
     }
   },
   created() {
-    this.doc = this.initial
+    this.doc = '/overview'
     this.setContent()
   },
   methods: {
@@ -112,14 +86,19 @@ module.exports = {
       this.setContent()
     }
   },
-  render: VueCompile(`<el-row class="tm-document">
-    <el-col :lg="4" :md="5" :sm="7" :xs="8" :style="{height: docHeight}">
-      <el-menu background-color="#363636" text-color="#fff" style="height: 100%; overflow-x: hidden;overflow-y: auto;" @select="switchDoc" :unique-opened="true">
-        <tm-doc-variant v-for="item in items" :item="item" base=""></tm-doc-variant>
+  render: VueCompile(`<div class="tm-document">
+    <div class="index" :style="{height: height + 'px', top: '0px', left: '0px', width: '200px'}">
+      <el-menu @select="switchDoc" :unique-opened="true"
+        :background-color="styles.documents.navBackground"
+        :text-color="styles.documents.navForeground"
+        :active-text-color="styles.documents.navActive">
+        <tm-doc-variant v-for="item in items" :item="item" base=""/>
       </el-menu>
-    </el-col>
-    <el-col :lg="19" :md="18" :sm="16" :xs="15" :offset="1" style="overflow: auto;" :style="{height: docHeight}">
-      <Document :content="root"></Document>
-    </el-col>
-  </el-row>`)
+    </div>
+    <div class="content" :style="{height: height + 'px', top: '0px', left: '200px', width: width - 200 + 'px'}">
+      <div class="tm-doc">
+        <component v-for="(comp, index) in root" :is="comp.type" :node="comp" :key="index"/>
+      </div>
+    </div>
+  </div>`)
 }
