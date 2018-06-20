@@ -2,6 +2,11 @@
 sidebar:
   background: 2f353a
 
+documents:
+  navBackground: '#c9c9c9'
+  navForeground: '#07070d'
+  navActive: '#bf6100'
+
 basetheme: vs
 
 editor:
