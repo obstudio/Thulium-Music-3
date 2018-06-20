@@ -88,8 +88,8 @@ new Vue({
 
   data() {
     return {
-      height: 600 - 48, // initial height
-      width: 800 - 64, // initial width
+      height: document.body.clientHeight - 48, // initial height
+      width: document.body.clientWidth - 64, // initial width
       sidebar: true,
       browser: global.remote.getCurrentWindow()
     }

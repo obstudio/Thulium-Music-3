@@ -65,7 +65,7 @@ module.exports = {
   },
   mounted() {
     this.docScroll = SmoothScroll(this.$refs.doc, 100, 10)
-
+    this.menuScroll = SmoothScroll(this.$refs.menu, 100, 10)
   },
   methods: {
     setContent() {
@@ -125,7 +125,7 @@ module.exports = {
         height: height - 36 + 'px',
         left: catalog ? '0px' : - catalogWidth + 'px',
         width: catalogWidth + 'px'
-      }">
+      }" ref="menu" @mousewheel.prevent.stop="menuScroll($event.deltaY)">
       <el-menu @select="switchDoc" :unique-opened="true"
         :background-color="styles.documents.navBackground"
         :text-color="styles.documents.navForeground"
