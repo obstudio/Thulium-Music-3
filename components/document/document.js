@@ -1,4 +1,5 @@
 const Vue = require('vue')
+const path = require('path')
 
 Vue.component('Code', require('./Code'))
 Vue.component('List', require('./List'))
@@ -35,6 +36,8 @@ module.exports = {
   data() {
     return {
       items: require('../../documents/structure.json'),
+      doc: '/overview',
+      lastDoc: '/overview',
       root: [],
       catalog: false,
       search: false
@@ -57,21 +60,44 @@ module.exports = {
     }
   },
   created() {
-    this.doc = '/overview'
+    window.monaco.editor.setTheme(global.user.state.Settings.theme)
     this.setContent()
   },
   methods: {
     setContent() {
       (async () => {
-        const doc = await fetch(`./documents${this.doc}.tmd`)
-        const text = await doc.text()
-        this.root = this.$markdown(text)
-        global.user.state.Prefix.documents = this.root[0].text + ' - '
+        try {
+          const doc = await fetch(`./documents${this.doc}.tmd`)
+          const text = await doc.text()
+          this.root = this.$markdown(text)
+          global.user.state.Prefix.documents = this.root[0].text + ' - '
+        } catch (e) {
+          this.switchDoc(this.lastDoc)
+        }
       })()
     },
     switchDoc(index) {
+      this.lastDoc = this.doc
       this.doc = index
       this.setContent()
+    },
+    navigate(e) {
+      const url = e.srcElement.dataset.rawUrl
+      if (!url) return
+      if (url.startsWith('/')) {
+        this.switchDoc(url)
+      } else {
+        const upPart = /^(?:\.\.\/)+/.exec(url)
+        const docParts = this.doc.split('/')
+        if (upPart === null) {
+          docParts.splice(-1, 1, url)
+          this.switchDoc(docParts.join('/'))
+        } else {
+          const up = upPart[0].length / 3 + 1
+          docParts.splice(- up, up, url.slice(upPart[0].length))
+          this.switchDoc(docParts.join('/'))
+        }
+      }
     }
   },
   render: VueCompile(`<div class="tm-document">
@@ -102,7 +128,8 @@ module.exports = {
       <el-menu @select="switchDoc" :unique-opened="true"
         :background-color="styles.documents.navBackground"
         :text-color="styles.documents.navForeground"
-        :active-text-color="styles.documents.navActive">
+        :active-text-color="styles.documents.navActive"
+        :default-active="doc">
         <tm-doc-variant v-for="item in items" :item="item" base=""/>
       </el-menu>
     </div>
@@ -111,7 +138,7 @@ module.exports = {
         left: catalog ? catalogWidth + 'px' : '0px',
         width: width - (catalog ? catalogWidth : 0) + 'px'
       }">
-      <div class="tm-doc">
+      <div class="tm-doc" @click.stop="navigate">
         <component v-for="(comp, index) in root" :is="comp.type" :node="comp" :key="index"/>
       </div>
     </div>

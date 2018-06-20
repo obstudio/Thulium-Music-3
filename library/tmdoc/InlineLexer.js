@@ -38,18 +38,27 @@ class InlineLexer {
         continue
       }
 
-      // reflink, nolink
-      if ((cap = this.rules.reflink.exec(src)) ||
-        (cap = this.rules.nolink.exec(src))) {
+      // // reflink, nolink
+      // if ((cap = this.rules.reflink.exec(src)) ||
+      //   (cap = this.rules.nolink.exec(src))) {
+      //   src = src.substring(cap[0].length)
+      //   link = (cap[2] || cap[1]).replace(/\s+/g, ' ')
+      //   link = this.links[link.toLowerCase()]
+      //   if (!link || !link.href) {
+      //     out += cap[0].charAt(0)
+      //     src = cap[0].substring(1) + src
+      //     continue
+      //   }
+      //   out += this.outputLink(cap, link)
+      //   continue
+      // }
+
+      // tmlink
+      if ((cap = this.rules.tmlink.exec(src))) {
         src = src.substring(cap[0].length)
-        link = (cap[2] || cap[1]).replace(/\s+/g, ' ')
-        link = this.links[link.toLowerCase()]
-        if (!link || !link.href) {
-          out += cap[0].charAt(0)
-          src = cap[0].substring(1) + src
-          continue
-        }
-        out += this.outputLink(cap, link)
+        const displayName = cap[1] || cap[2]
+        const path = cap[2]
+        out += this.link(path, displayName, displayName)
         continue
       }
 
@@ -140,8 +149,7 @@ class InlineLexer {
       if (this.options.baseUrl && !originIndependentUrl.test(href)) {
         href = resolveUrl(this.options.baseUrl, href)
       }
-      href = encodeURI(href).replace(/%25/g, '%')
-      return `<a href="${escape(href)}" title="${title || ''}">${text}</a>`
+      return `<a href="#" data-raw-url="${href}" title="${title || ''}" onclick="event.preventDefault()"'>${text}</a>`
     } catch (e) {
       return text
     }
@@ -188,6 +196,7 @@ InlineLexer.rules = {
   link: /^!?\[((?:\[[^\[\]]*\]|\\[\[\]]?|`[^`]*`|[^\[\]\\])*?)\]\(\s*(<(?:\\[<>]?|[^\s<>\\])*>|(?:\\[()]?|\([^\s\x00-\x1f()\\]*\)|[^\s\x00-\x1f()\\])*?)(?:\s+("(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)))?\s*\)/,
   reflink: /^!?\[((?:\[[^\[\]]*\]|\\[\[\]]?|`[^`]*`|[^\[\]\\])*?)\]\[(?!\s*\])((?:\\[\[\]]?|[^\[\]\\])+)\]/,
   nolink: /^!?\[(?!\s*\])((?:\[[^\[\]]*\]|\\[\[\]]|[^\[\]])*)\](?:\[\])?/,
+  tmlink: /^\[(?:([^\]|]+)\|)?([^\]]+)\]/,
   strong: /^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)|^\*\*([^\s])\*\*(?!\*)/,
   em: /^\*([^\s][\s\S]*?[^\s*])\*(?!\*)|^\*([^\s*][\s\S]*?[^\s])\*(?!\*)|^\*([^\s*])\*(?!\*)/,
   underline: /^_([^\s][\s\S]*?[^\s_])_(?!_)|^_([^\s*])_(?!_)/,

@@ -56,23 +56,12 @@ class Lexer {
         // }
       }
 
-      // code
-      // if (cap = this.rules.code.exec(src)) {
-      //   src = src.substring(cap[0].length)
-      //   cap = cap[0].replace(/^ {4}/gm, '')
-      //   this.tokens.push({
-      //     type: 'code',
-      //     text: cap.replace(/\n+$/, '')
-      //   })
-      //   continue
-      // }
-
       // fences (gfm)
       if (cap = this.rules.fences.exec(src)) {
         src = src.substring(cap[0].length)
         this.tokens.push({
           type: 'Code',
-          lang: cap[2] || 'tm',
+          lang: cap[2] || this.options.defaultLanguage,
           code: cap[3] || ''
         })
         continue
@@ -98,40 +87,6 @@ class Lexer {
         })
         continue
       }
-
-      // table no leading pipe (gfm)
-      // if (top && (cap = this.rules.nptable.exec(src))) {
-      //   item = {
-      //     type: 'table',
-      //     header: splitCells(cap[1].replace(/^ *| *\| *$/g, '')),
-      //     align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
-      //     cells: cap[3] ? cap[3].replace(/\n$/, '').split('\n') : []
-      //   }
-      //
-      //   if (item.header.length === item.align.length) {
-      //     src = src.substring(cap[0].length)
-      //
-      //     for (i = 0; i < item.align.length; i++) {
-      //       if (/^ *-+: *$/.test(item.align[i])) {
-      //         item.align[i] = 'right'
-      //       } else if (/^ *:-+: *$/.test(item.align[i])) {
-      //         item.align[i] = 'center'
-      //       } else if (/^ *:-+ *$/.test(item.align[i])) {
-      //         item.align[i] = 'left'
-      //       } else {
-      //         item.align[i] = null
-      //       }
-      //     }
-      //
-      //     for (i = 0; i < item.cells.length; i++) {
-      //       item.cells[i] = splitCells(item.cells[i], item.header.length)
-      //     }
-      //
-      //     this.tokens.push(item)
-      //
-      //     continue
-      //   }
-      // }
 
       // hr
       if (cap = this.rules.hr.exec(src)) {
@@ -231,7 +186,7 @@ class Lexer {
       if (cap = this.rules.inlinelist.exec(src)) {
         src = src.substring(cap[0].length)
         const all = cap[0].trim().replace(/\n/g, '').slice(1)
-        const r = /^((?:[^\\+]|\\.)+)(?:\+|$)/g
+        const r = /((?:[^\\+]|\\.)+)(?:\+|$)/g
         let match
         const items = []
         while ((match = r.exec(all)) !== null) items.push(match[1])
@@ -242,20 +197,6 @@ class Lexer {
         })
         continue
       }
-
-      // html
-      // if (cap = this.rules.html.exec(src)) {
-      //   src = src.substring(cap[0].length)
-      //   this.tokens.push({
-      //     type: this.options.sanitize
-      //       ? 'paragraph'
-      //       : 'html',
-      //     pre: !this.options.sanitizer &&
-      //     (cap[1] === 'pre' || cap[1] === 'script' || cap[1] === 'style'),
-      //     text: cap[0]
-      //   })
-      //   continue
-      // }
 
       // def
       if (top && (cap = this.rules.def.exec(src))) {
@@ -305,17 +246,6 @@ class Lexer {
         this.tokens.push(item)
         continue
       }
-
-      // lheading
-      // if (cap = this.rules.lheading.exec(src)) {
-      //   src = src.substring(cap[0].length)
-      //   this.tokens.push({
-      //     type: 'heading',
-      //     depth: cap[2] === '=' ? 1 : 2,
-      //     text: cap[1]
-      //   })
-      //   continue
-      // }
 
       // top-level paragraph
       if (top && (cap = this.rules.paragraph.exec(src))) {

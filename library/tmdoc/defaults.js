@@ -1,6 +1,7 @@
 module.exports = {
   baseUrl: null,
   breaks: false,
+  defaultLanguage: 'tm',
   gfm: true,
   headerIds: true,
   headerPrefix: '',
@@ -8,7 +9,6 @@ module.exports = {
   langPrefix: 'lang-',
   mangle: true,
   pedantic: false,
-  // renderer: new Renderer(),
   sanitize: false,
   sanitizer: null,
   silent: false,
