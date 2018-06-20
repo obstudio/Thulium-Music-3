@@ -176,6 +176,8 @@ module.exports = {
     },
     layout(time = 0) {
       const now = performance.now(), self = this
+      self.editor._configuration.observeReferenceElement()
+      self.editor._view._actualRender()
       window.requestAnimationFrame(function layout(newTime) {
         self.editor._configuration.observeReferenceElement()
         self.editor._view._actualRender()
@@ -222,7 +224,9 @@ module.exports = {
         if (this.extensionShowed && this.extensionHeight > this.remainHeight) {
           this.extensionHeight = this.remainHeight
         }
+        this.$refs.content.classList.add('no-transition')
         this.layout(500)
+        this.$refs.content.classList.remove('no-transition')
       }, {passive: true})
       addEventListener('mouseup', (e) => {
         this.layout()
@@ -333,7 +337,7 @@ module.exports = {
     </div>
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
-        <transition-group ref="tabs" name="tm-tabs" class="tm-scroll-tabs" :style="{width: tabsWidth}" :move-class="draggingTab ? 'dragged' : ''" @wheel.prevent.stop.native="scrollTab" @beforeLeave="appendTabLeaveStyle">
+        <transition-group ref="tabs" name="tm-tabs" class="tm-scroll-tabs" :style="{width: tabsWidth}" :move-class="draggingTab ? 'no-transition' : ''" @wheel.prevent.stop.native="scrollTab" @beforeLeave="appendTabLeaveStyle">
         <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id" :identifier="'tab-'+tab.id" class="tm-scroll-tab">
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
@@ -351,8 +355,8 @@ module.exports = {
     </div>
   </div>
   <div class="content" ref="content"
-    :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
-  <div class="extension" :class="{ dragged: draggingExtension }" :style="{
+    :class="{ 'no-transition': draggingExtension }" :style="{ height: contentHeight }"/>
+  <div class="extension" :class="{ 'no-transition': draggingExtension }" :style="{
       height: (extensionShowed && extensionFull ? '100%' : extensionHeight + 'px'),
       bottom: (extensionShowed ? extensionFull ? 0 : 28 : 28 - extensionHeight) + 'px'
     }">
