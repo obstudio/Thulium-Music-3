@@ -109,7 +109,7 @@ body button { font-family: source-san-sans-CN }
     width: 64px;
     left: -64px;
     position: absolute;
-    transition: 0.3s;
+    transition: 0.5s;
 }
 
 .show-sidebar .sidebar {
@@ -144,7 +144,7 @@ div.main {
     left: 0;
     right: 0;
     height: 100%;
-    transition: 0.3s;
+    transition: 0.5s;
 }
 
 .show-sidebar div.main { left: 64px }

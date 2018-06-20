@@ -15,48 +15,36 @@ module.exports = {
   components: {
     TmDocVariant: {
       name: 'TmDocVariant',
-      functional: true,
       props: ['item', 'base'],
       computed: {
         index() {
-          return `${this.base}/${this.item.name || this.item}`
+          return this.base + '/' + 
+            (this.item instanceof Array ? this.item : this.item.name)[0]
         }
       },
-      render: (createElement, context) => {
-        const item = context.props.item
-        const base = context.props.base
-        const index = `${base}/${item.name || item}`
-        return typeof item === 'object' ? createElement('el-submenu', {
-          props: {
-            index
-          }
-        }, [createElement('template', {
-          slot: 'title'
-        }, item.name
-        ), ...item.content.map((sub) => createElement('tm-doc-variant', {
-          props: {
-            item: sub,
-            base: index
-          }
-        }))]
-        ) : createElement('el-menu-item', {
-          props: {
-            index
-          }
-        }, [createElement('span', {
-          slot: 'title'
-        }, item)])
-      }
+      render: VueCompile(`
+      <el-menu-item v-if="item instanceof Array" :index="index">
+        <span slot="title">{{ item[1] }}</span>
+      </el-menu-item>
+      <el-submenu v-else :index="index">
+        <template slot="title">{{ item.name[1] }}</template>
+        <tm-doc-variant v-for="sub in item.content" :item="sub" :base="index"/>
+      </el-submenu>`)
     }
   },
   data() {
     return {
       items: require('../../documents/structure.json'),
-      root: []
+      root: [],
+      catalog: false,
+      search: false
     }
   },
   computed: {
-    styles: () => global.user.state.Styles
+    styles: () => global.user.state.Styles,
+    catalogWidth() {
+      return Math.min(Math.max(this.width / 3, 160), 200)
+    }
   },
   props: {
     height: {
@@ -87,7 +75,30 @@ module.exports = {
     }
   },
   render: VueCompile(`<div class="tm-document">
-    <div class="index" :style="{height: height + 'px', top: '0px', left: '0px', width: '200px'}">
+    <div class="toolbar" :style="{ width: width + 'px' }">
+      <div class="left">
+        <button @click="catalog = !catalog" :class="{ active: catalog }">
+          <i class="icon-menu"/>
+        </button>
+        <span v-for="(part, index) in doc.split('/')">
+          <i v-if="index > 1" class="el-icon-arrow-right"/>
+          {{ part }}
+        </span>
+      </div>
+      <div class="right">
+        <button @click="">
+          <i class="icon-up"/>
+        </button>
+        <button @click="search = true">
+          <i class="icon-search"/>
+        </button>
+      </div>
+    </div>
+    <div class="catalog" :style="{
+        height: height - 36 + 'px',
+        left: catalog ? '0px' : - catalogWidth + 'px',
+        width: catalogWidth + 'px'
+      }">
       <el-menu @select="switchDoc" :unique-opened="true"
         :background-color="styles.documents.navBackground"
         :text-color="styles.documents.navForeground"
@@ -95,7 +106,11 @@ module.exports = {
         <tm-doc-variant v-for="item in items" :item="item" base=""/>
       </el-menu>
     </div>
-    <div class="content" :style="{height: height + 'px', top: '0px', left: '200px', width: width - 200 + 'px'}">
+    <div class="content" :style="{
+        height: height - 36 + 'px',
+        left: catalog ? catalogWidth + 'px' : '0px',
+        width: width - (catalog ? catalogWidth : 0) + 'px'
+      }">
       <div class="tm-doc">
         <component v-for="(comp, index) in root" :is="comp.type" :node="comp" :key="index"/>
       </div>

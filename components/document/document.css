@@ -1,29 +1,69 @@
 .tm-document ::-webkit-scrollbar { width: 12px }
 .tm-document ::-webkit-scrollbar-thumb { border-radius: 2px }
 
-.tm-document > .index {
-    overflow-y: auto;
+.tm-document > .toolbar {
+    top: 0;
+    height: 36px;
+    left: 0;
+    width: 100%;
+    user-select: none;
     position: absolute;
+    transition: 0.5s ease;
+}
+
+.tm-document > .toolbar > .left {
+    left: 0px;
+    height: 100%;
+    position: absolute;
+}
+
+.tm-document > .toolbar > .right {
+    right: 0px;
+    height: 100%;
+    position: absolute;
+}
+
+.tm-document > .toolbar button {
+    top: 0;
+    height: 100%;
+    font-size: 18px;
+    line-height: 1em;
+    text-align: center;
+    padding: 0px 8px;
+    border: none;
+    outline: none;
+    cursor: pointer;
     transition: 0.3s;
 }
 
-.tm-document > .index .el-menu { border-right: none }
+.tm-document > .toolbar button > i { vertical-align: text-bottom }
 
-.tm-document > .index .el-menu > ul { 
+.tm-document > .catalog {
+    overflow-y: auto;
+    position: absolute;
+    top: 36px;
+    user-select: none;
+    transition: 0.5s ease;
+}
+
+.tm-document > .catalog .el-menu { border-right: none }
+
+.tm-document > .catalog .el-menu > ul { 
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-.tm-document > .index .el-menu .el-menu-item,
-.tm-document > .index .el-menu .el-submenu__title {
+.tm-document > .catalog .el-menu .el-menu-item,
+.tm-document > .catalog .el-menu .el-submenu__title {
     height: 32px;
     line-height: 32px;
 }
 
 .tm-document > .content {
     position: absolute;
-    transition: 0.3s;
+    top: 36px;
+    transition: 0.5s ease;
 }
 
 .tm-doc {
