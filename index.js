@@ -119,15 +119,15 @@ new Vue({
     <div :class="{'show-sidebar': sidebar}">
     <div class="navbar">
       <button class="sidebar-toggler" @click="sidebar = !sidebar">
-        <div v-if="sidebar"><i class="icon-arrow-left"/></div>
-        <div v-else><i class="icon-arrow-right"/></div>
+        <i v-if="sidebar" class="icon-arrow-left"/>
+        <i v-else class="icon-arrow-right"/>
       </button>
       <div class="title" v-html="title"></div>
       <div class="top-right">
         <button @click="browser.minimize()" class="minimize"><i class="icon-window-minimize"/></button>
         <button @click="toggleMaximize()" class="maximize">
-          <div v-if="browser.isMaximized()"><i class="icon-window-maximize"/></div>
-          <div v-else><i class="icon-window-maximize"/></div>
+          <i v-if="browser.isMaximized()" class="icon-window-restore"/>
+          <i v-else class="icon-window-maximize"/>
         </button>
         <button @click="browser.close()" class="close"><i class="icon-window-close"/></button>
       </div>

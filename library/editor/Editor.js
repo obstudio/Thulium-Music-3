@@ -38,9 +38,9 @@ let commandId = ''
 function registerPlayCommand(editor) {
   commandId = editor.addCommand(window.monaco.KeyCode.NumLock, (_, result, Index, Tracks) => {
     if (Tracks === undefined) {
-      Player.update(result, {spec: Index}).play()
+      Player.update(result, {spec: Index, tabId: editor.vue.getCurrentId()}).play()
     } else {
-      Player.update(result, {spec: {Index, Tracks}}).play()
+      Player.update(result, {spec: {Index, Tracks}, tabId: editor.vue.getCurrentId()}).play()
     }
   }, '')
 }
