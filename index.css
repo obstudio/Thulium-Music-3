@@ -127,8 +127,7 @@ body button { font-family: source-san-sans-CN }
     -webkit-app-region: no-drag;
 }
 
-.sidebar .el-menu { border-right: 0
-}
+.sidebar .el-menu { border-right: 0 }
 .sidebar .el-menu-item {
     font-size: 20px;
     text-align: center;

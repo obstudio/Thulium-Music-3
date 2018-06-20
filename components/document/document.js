@@ -1,5 +1,23 @@
 const Vue = require('vue')
-const SmoothScroll = require('../../library/SmoothScroll')
+const SmoothScroll = require('../SmoothScroll')
+const index = require('../../documents/structure.json')
+const dictionary = {}
+const defaultDoc = {}
+
+function walk(index, base = '') {
+  for (const item of index) {
+    if (item instanceof Array) {
+      dictionary[base + '/' + item[0]] = item[1]
+    } else {
+      const path = base + '/' + item.name[0]
+      walk(item.content, path)
+      dictionary[path] = item.name[1]
+      defaultDoc[path] = path + '/' + item.default
+    }
+  }
+}
+
+walk(index)
 
 Vue.component('Code', require('./Code'))
 Vue.component('List', require('./List'))
@@ -35,7 +53,7 @@ module.exports = {
   },
   data() {
     return {
-      items: require('../../documents/structure.json'),
+      items: index,
       doc: '/overview',
       lastDoc: '/overview',
       root: [],
@@ -47,6 +65,9 @@ module.exports = {
     styles: () => global.user.state.Styles,
     catalogWidth() {
       return Math.min(Math.max(this.width / 3, 160), 200)
+    },
+    contentWidth() {
+      return this.width - (this.catalog ? this.catalogWidth : 0)
     }
   },
   props: {
@@ -84,7 +105,7 @@ module.exports = {
     },
     switchDoc(index) {
       this.lastDoc = this.doc
-      this.doc = index
+      this.doc = defaultDoc[index] ? defaultDoc[index] : index
       this.setContent()
     },
     navigate(e) {
@@ -99,6 +120,24 @@ module.exports = {
         docParts.splice(- up, up, upPart === null ? url : url.slice(upPart[0].length))
         this.switchDoc(docParts.join('/'))
       }
+    },
+    getPath(route) {
+      const result = []
+      let pointer = 0, index
+      while ((index = route.slice(pointer + 1).search('/')) !== -1) {
+        pointer += index + 1
+        const base = route.slice(0, pointer)
+        result.push({
+          route: base,
+          title: dictionary[base]
+        })
+      }
+      result.push({
+        route: route,
+        title: dictionary[route]
+      })
+      console.log(result, dictionary)
+      return result
     }
   },
   render: VueCompile(`<div class="tm-document">
@@ -107,15 +146,20 @@ module.exports = {
         <button @click="catalog = !catalog" :class="{ active: catalog }">
           <i class="icon-menu"/>
         </button>
-        <span v-for="(part, index) in doc.split('/')">
-          <i v-if="index > 1" class="el-icon-arrow-right"/>
-          {{ part }}
-        </span>
+        <button @click="">
+          <i class="icon-arrow-left"/>
+        </button>
+        <button @click="">
+          <i class="icon-arrow-right"/>
+        </button>
+        <ul class="route">
+          <li v-for="(part, index) in getPath(doc)" :key="index">
+            <span v-if="index > 0">/</span>
+            <a @click="switchDoc(part.route)">{{ part.title }}</a>
+          </li>
+        </ul>
       </div>
       <div class="right">
-        <button @click="docScroll(-$refs.doc.scrollTop)">
-          <i class="icon-up"/>
-        </button>
         <button @click="search = true">
           <i class="icon-search"/>
         </button>
@@ -137,9 +181,14 @@ module.exports = {
     <div class="content" :style="{
         height: height - 36 + 'px',
         left: catalog ? catalogWidth + 'px' : '0px',
-        width: width - (catalog ? catalogWidth : 0) + 'px'
+        width: contentWidth + 'px'
       }">
-      <div class="tm-doc" @click.stop="navigate" ref="doc" @mousewheel.prevent.stop="docScroll($event.deltaY)">
+      <div class="tm-doc" ref="doc" @click.stop="navigate"
+        @mousewheel.prevent.stop="docScroll($event.deltaY)"
+        :style="{
+          'padding-left': Math.max(24, contentWidth / 8) + 'px',
+          'padding-right': Math.max(24, contentWidth / 8) + 'px'
+        }">
         <component v-for="(comp, index) in root" :is="comp.type" :node="comp" :key="index"/>
       </div>
     </div>

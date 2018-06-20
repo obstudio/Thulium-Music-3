@@ -6,6 +6,7 @@
     height: 36px;
     left: 0;
     width: 100%;
+    cursor: default;
     user-select: none;
     position: absolute;
     transition: 0.5s ease;
@@ -14,12 +15,14 @@
 .tm-document > .toolbar > .left {
     left: 0px;
     height: 100%;
+    float: left;
     position: absolute;
 }
 
 .tm-document > .toolbar > .right {
     right: 0px;
     height: 100%;
+    float: right;
     position: absolute;
 }
 
@@ -37,6 +40,26 @@
 }
 
 .tm-document > .toolbar button > i { vertical-align: text-bottom }
+
+.tm-document > .toolbar .route {
+    padding: 6px 8px;
+    border-radius: 6px;
+    position: relative;
+    line-height: 16px;
+    text-align: center;
+    display: inline;
+}
+.tm-document > .toolbar .route > li { display: inline }
+.tm-document > .toolbar .route > li:not(:first-child) { padding-left: 4px }
+.tm-document > .toolbar .route a {
+    padding: 2px;
+    cursor: pointer;
+    text-decoration: none;
+}
+.tm-document > .toolbar .route a:hover {
+    outline-width: 0;
+    text-decoration: underline;
+}
 
 .tm-document > .catalog {
     overflow-y: auto;
@@ -74,7 +97,8 @@
     font-size: 16px;
     line-height: 1.5;
     word-wrap: break-word;
-    padding: 40px 32px;
+    padding: 40px;
+    transition: 0.5s ease;
     overflow-y: auto;
 }
 
