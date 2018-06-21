@@ -28,3 +28,5 @@ rules:
     - off
   no-console:
     - warn
+  no-cond-assign:
+    - warn

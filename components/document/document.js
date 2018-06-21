@@ -28,6 +28,7 @@ Vue.component('Paragraph', require('./Paragraph'))
 Vue.component('Heading', require('./Heading'))
 Vue.component('Section', require('./Section'))
 Vue.component('Blockquote', require('./Blockquote'))
+Vue.component('Usage', require('./Usage'))
 
 module.exports = {
   name: 'TmDoc',

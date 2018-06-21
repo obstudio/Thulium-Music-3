@@ -128,6 +128,23 @@
 .tm-doc blockquote > :last-child { margin-bottom: 0 }
 .tm-doc blockquote code { background-color: inherit }
 
+.tm-doc .usage blockquote {
+    border: 1px solid !important;
+    margin-bottom: -1px;
+    padding: 8px 1em;
+}
+
+.tm-doc .usage blockquote:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.tm-doc .usage blockquote:last-child {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    margin-bottom: 16px;
+}
+
 .tm-doc .codeblock {
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
     border-radius: 6px;
@@ -154,47 +171,7 @@
   border-radius: 3px;
 }
 
-.tm-doc h1 {
-  font-size: 2em;
-  margin: 0.67em 0;
-}
-
-.tm-doc h1 {
-  font-size: 32px;
-  font-weight: 600;
-}
-
-.tm-doc h2 {
-  font-size: 24px;
-  font-weight: 600;
-}
-
-.tm-doc h3 {
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.tm-doc h4 {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.tm-doc h5 {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.tm-doc h6 {
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.tm-doc h1,
-.tm-doc h2,
-.tm-doc h3,
-.tm-doc h4,
-.tm-doc h5,
-.tm-doc h6 {
+.tm-doc h1, .tm-doc h2, .tm-doc h3, .tm-doc h4 {
     margin-top: 24px;
     margin-bottom: 12px;
     font-weight: bold;
@@ -202,30 +179,21 @@
 }
 
 .tm-doc h1 {
-  padding-bottom: 0.3em;
-  font-size: 2em;
+    font-size: 2em;
+    margin-top: 48px;
+    padding-bottom: 0.3em;
 }
 
 .tm-doc h2 {
-  padding-bottom: 0.3em;
-  font-size: 1.5em;
+    font-size: 1.5em;
+    margin-top: 32px;
+    padding-bottom: 0.3em;
 }
 
-.tm-doc h3 {
-  font-size: 1.25em;
-}
+.tm-doc h3 { font-size: 1.25em }
+.tm-doc h4 { font-size: 1em }
 
-.tm-doc h4 {
-  font-size: 1em;
-}
-
-.tm-doc h5 {
-  font-size: 0.875em;
-}
-
-.tm-doc h6 {
-  font-size: 0.85em;
-}
+.tm-doc span.comment { font-size: 0.75em }
 
 .tm-doc .tm-horizontal {
     list-style: none;
@@ -234,34 +202,23 @@
 
 .tm-doc .tm-horizontal li { display: inline }
 
-.tm-doc ul, ol {
-  padding-left: 0;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.tm-doc ul ul ol,
-.tm-doc ul ol ol,
-.tm-doc ol ul ol,
-.tm-doc ol ol ol {
-    list-style-type: lower-alpha;
-}
-
-.tm-doc ul,
-.tm-doc ol {
+.tm-doc ul, .tm-doc ol {
     margin-top: 0;
     margin-bottom: 16px;
     padding-left: 2em;
 }
 
-.tm-doc ul ul,
-.tm-doc ul ol,
-.tm-doc ol ol,
-.tm-doc ol ul {
+.tm-doc ul ul, .tm-doc ul ol,
+.tm-doc ol ol, .tm-doc ol ul {
     margin-top: 0;
     margin-bottom: 0;
     padding-left: 1.2em;
     list-style-type: lower-roman;
+}
+
+.tm-doc ul ul ol, .tm-doc ul ol ol,
+.tm-doc ol ul ol, .tm-doc ol ol ol {
+    list-style-type: lower-alpha;
 }
 
 .tm-doc li {
