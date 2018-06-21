@@ -137,7 +137,6 @@ module.exports = {
         route: route,
         title: dictionary[route]
       })
-      console.log(result, dictionary)
       return result
     }
   },
