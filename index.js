@@ -88,8 +88,8 @@ new Vue({
 
   data() {
     return {
-      height: 600 - 48, // initial height
-      width: 800 - 64, // initial width
+      height: document.body.clientHeight - 48, // initial height
+      width: document.body.clientWidth - 64, // initial width
       sidebar: true,
       browser: global.remote.getCurrentWindow()
     }
@@ -136,7 +136,7 @@ new Vue({
     <div class="window">
       <div class="sidebar">
         <el-menu default-active="/" :collapse="true" :router="true"
-          :backgroundColor="'#' + styles.sidebar.background">
+          :backgroundColor="styles.sidebar.background">
           <el-menu-item index="/" @click="switchRoute('homepage')">
             <i class="icon-home"></i>
             <span slot="title">{{ $t('window.homepage') }}</span>
@@ -158,7 +158,7 @@ new Vue({
       </div>
       <div class="main">
         <keep-alive>
-          <router-view :height="height" :width="width" :left="this.sidebar ? 64 : 0" :top="48"/>
+          <router-view :height="height" :top="48" :width="width" :left="this.sidebar ? 64 : 0"/>
         </keep-alive>
       </div>
     </div>

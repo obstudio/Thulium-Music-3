@@ -1,6 +1,122 @@
 .tm-document ::-webkit-scrollbar { width: 12px }
 .tm-document ::-webkit-scrollbar-thumb { border-radius: 2px }
 
+.tm-document > .toolbar {
+    top: 0;
+    height: 36px;
+    left: 0;
+    width: 100%;
+    cursor: default;
+    user-select: none;
+    position: absolute;
+    transition: 0.5s ease;
+}
+
+.tm-document > .toolbar > .left {
+    left: 0px;
+    height: 100%;
+    float: left;
+    position: absolute;
+}
+
+.tm-document > .toolbar > .right {
+    right: 0px;
+    height: 100%;
+    float: right;
+    position: absolute;
+}
+
+.tm-document > .toolbar button {
+    top: 0;
+    height: 100%;
+    font-size: 18px;
+    line-height: 1em;
+    text-align: center;
+    padding: 0px 8px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.tm-document > .toolbar button > i { vertical-align: text-bottom }
+
+.tm-document > .toolbar .route {
+    padding: 6px 8px;
+    border-radius: 6px;
+    position: relative;
+    line-height: 16px;
+    text-align: center;
+    display: inline;
+}
+.tm-document > .toolbar .route > li { display: inline }
+.tm-document > .toolbar .route > li:not(:first-child) { padding-left: 4px }
+.tm-document > .toolbar .route a {
+    padding: 2px;
+    cursor: pointer;
+    text-decoration: none;
+}
+.tm-document > .toolbar .route a:hover {
+    outline-width: 0;
+    text-decoration: underline;
+}
+
+.tm-document > .catalog {
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: absolute;
+    top: 36px;
+    user-select: none;
+    transition: 0.5s ease;
+}
+
+.tm-document > .catalog .el-menu { border-right: none }
+
+.tm-document > .catalog .el-menu > ul { 
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.tm-document > .catalog .el-menu .el-menu-item,
+.tm-document > .catalog .el-menu .el-submenu__title {
+    height: 32px;
+    line-height: 32px;
+}
+
+.tm-document > .content {
+    position: absolute;
+    top: 36px;
+    transition: 0.5s ease;
+}
+
+.tm-doc {
+    -webkit-text-size-adjust: 100%;
+    height: -webkit-fill-available;
+    font-family: source-san-sans-CN;
+    font-size: 16px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    padding: 40px;
+    transition: 0.5s ease;
+    overflow-y: auto;
+}
+
+/* .tm-doc::before {
+    display: table;
+    content: "";
+}
+
+.tm-doc::after {
+    display: table;
+    clear: both;
+    content: "";
+} */
+
+.tm-doc * { box-sizing: border-box }
+.tm-doc > :first-child { margin-top: 0 !important }
+.tm-doc > :last-child { margin-bottom: 0 !important }
+
 .tm-doc blockquote {
     margin: 0 0 16px;
     padding: 4px 1em;
@@ -218,34 +334,6 @@
 
 .tm-doc td, th {
   padding: 0;
-}
-
-.tm-doc {
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  font-family: source-san-sans-CN;
-  font-size: 16px;
-  line-height: 1.5;
-  word-wrap: break-word;
-  padding: 20px 20px 20px 0;
-  overflow-y: auto;
-}
-
-.tm-doc::before {
-  display: table;
-  content: "";
-}
-.tm-doc::after {
-  display: table;
-  clear: both;
-  content: "";
-}
-
-.tm-doc > :first-child { margin-top: 0 !important }
-.tm-doc > :last-child { margin-bottom: 0 !important }
-
-.tm-doc * {
-  box-sizing: border-box;
 }
 
 .tm-doc a {
