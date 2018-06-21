@@ -1,6 +1,6 @@
 const Vue = require('vue')
 const SmoothScroll = require('../SmoothScroll')
-const index = require('../../documents/structure.json')
+const index = require('../../documents/index.json')
 const dictionary = {}
 const defaultDoc = {}
 

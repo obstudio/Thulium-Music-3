@@ -71,6 +71,7 @@
 }
 
 .tm-document > .catalog .el-menu { border-right: none }
+.tm-document > .catalog > .el-menu { padding: 12px 0px }
 
 .tm-document > .catalog .el-menu > ul { 
     height: 100%;
@@ -383,5 +384,5 @@
     margin: 0 2px;
     font-size: 85%;
     border-radius: 3px;
-    vertical-align: text-bottom;
+    vertical-align: 0.1em;
 }
