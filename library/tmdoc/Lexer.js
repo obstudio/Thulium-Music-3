@@ -103,14 +103,14 @@ class Lexer {
       if (cap = this.rules.blockquote.exec(src)) {
         src = src.substring(cap[0].length)
         const length = this.tokens.length
-        cap = cap[0].replace(/^ *[>?] ?/gm, '')
 
         // Pass `top` to keep the current
         // "toplevel" state. This is exactly
         // how markdown.pl works.
-        this.token(cap, top)
+        this.token(cap[0].replace(/^ *[>?]\w* +/gm, ''), top)
         this.tokens.push({
           type: 'Blockquote',
+          mode: cap[0].match(/^ *[>?](\w*)/)[1],
           content: this.tokens.splice(length, this.tokens.length - length)
         })
         continue
@@ -317,7 +317,7 @@ const block = {
   section: /^ *(\^{1,6}) *([^\n]+?) *(?:\^+ *)?(?:\n+|$)/,
   heading: /^ *(#{1,6}) +([^\n]+?) *(#*) *(?:\n+|$)/,
   // nptable: /^ *([^|\n ].*\|.*)\n *([-:]+ *\|[-| :]*)(?:\n((?:.*[^>\n ].*(?:\n|$))*)\n*|$)/,
-  blockquote: /^( {0,3}[>?] ?(paragraph|[^\n]*)(?:\n|$))+/,
+  blockquote: /^( {0,3}[>?]\w* (paragraph|[^\n]*)(?:\n|$))+/,
   list: /^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
   inlinelist: /^(?: *\+[^\n]*[^+\n]\n(?= *\+))*(?: *\+[^\n]+\+?(?:\n+|$))/,
   def: /^ {0,3}\[((?!\s*])(?:\\[\[\]]|[^\[\]])+)]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)((?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))))? *(?:\n+|$)/,

@@ -126,6 +126,7 @@
 
 .tm-doc blockquote > :first-child { margin-top: 0 }
 .tm-doc blockquote > :last-child { margin-bottom: 0 }
+.tm-doc blockquote code { background-color: inherit }
 
 .tm-doc .codeblock {
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;

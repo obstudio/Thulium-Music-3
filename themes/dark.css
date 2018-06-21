@@ -74,7 +74,10 @@
 .dark .tm-document > .catalog { background-color: #363636 }
 
 .dark .tm-doc { color: #fafaf5; background-color: #282828 }
-.dark .tm-doc blockquote { color: #c0c0c0; border-left: 0.25em solid #c0c0c0; background-color: #3d3d3d }
+.dark .tm-doc blockquote { color: #c6cbd1; border-left-color: #c0c0c0; background-color: #3d3d3d }
+.dark .tm-doc blockquote.r { border-left-color: #F92672; background-color: #423939 }
+.dark .tm-doc blockquote.g { border-left-color: #96E22E; background-color: #394239 }
+.dark .tm-doc blockquote.b { border-left-color: #66D9EF; background-color: #393942 }
 .dark .tm-doc pre { background-color: #202020 }
 .dark .tm-doc h1 { border-bottom: 4px solid #454545 }
 .dark .tm-doc h2 { border-bottom: 2px solid #454545 }
