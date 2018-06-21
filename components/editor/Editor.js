@@ -9,7 +9,7 @@ const extensions = require('../../extensions/extension')
 const TmCommand = require('./command')
 const TmMenu = require('./menu')
 const storage = require('./storage')
-const SmoothScroll = require('../../library/SmoothScroll')
+const SmoothScroll = require('../SmoothScroll')
 
 const HalfTitleHeight = 34
 const FullTitleHeight = 60

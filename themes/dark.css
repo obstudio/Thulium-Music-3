@@ -69,6 +69,8 @@
 .dark .tm-document > .toolbar button { background-color: #393939; color: #a5a5a5 }
 .dark .tm-document > .toolbar button:hover { background-color: #555555; color: #fafaf5 }
 .dark .tm-document > .toolbar button.active { color: #fafaf5 }
+.dark .tm-document > .toolbar .route { background-color: #282828 }
+.dark .tm-document > .toolbar .route a:hover { color: #7fcfff }
 .dark .tm-document > .catalog { background-color: #363636 }
 
 .dark .tm-doc { color: #fafaf5; background-color: #282828 }
@@ -80,7 +82,7 @@
 .dark .tm-doc table th, .dark .tm-doc table td { border: 1px solid #a0a0a0 }
 .dark .tm-doc table tr { background-color: #282828; border-top: 1px solid #a0a0a0 }
 .dark .tm-doc table tr :nth-child(2n) { background-color: #202020 }
-.dark .tm-doc a { background-color: transparent; color: #0366d6 }
+.dark .tm-doc a { background-color: transparent; color: #7fcfff }
 .dark .tm-doc img { background-color: #000000 }
 .dark .tm-doc code { background-color: #3d3d3d }
 .dark .tm-doc .codeblock { background-color: #383933 }
