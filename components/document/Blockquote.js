@@ -6,7 +6,7 @@ module.exports = {
       required: true
     }
   },
-  render: VueCompile(`<blockquote>
-    <component v-for="(comp, index) in node.content" :is="comp.type" :node="comp" :key="index"></component>
+  render: VueCompile(`<blockquote :class="node.mode">
+    <component v-for="(comp, index) in node.content" :is="comp.type" :node="comp" :key="index"/>
   </blockquote>`)
 }
