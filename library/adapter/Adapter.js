@@ -13,7 +13,7 @@ class TmAdapter {
           tracks.push(...data[section.Index].Tracks)
         } else {
           for (const track of section.Tracks) {
-            tracks.push(...data[section.Index].Tracks.filter(clip => clip.Index = track))
+            tracks.push(...data[section.Index].Tracks.filter(clip => clip.Index === track))
           }
         }
         this.source.push({

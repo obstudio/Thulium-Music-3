@@ -211,6 +211,7 @@ module.exports = {
         break
       case 'play':
       case 'output': {
+        if (!id) id = this.current.id
         const value = this.tabs.find(tab => tab.id === id).value
         if (targetStatus === 'play') {
           Player.update(value, {tabId: id}).play()

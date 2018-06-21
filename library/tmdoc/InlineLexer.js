@@ -56,9 +56,16 @@ class InlineLexer {
       // tmlink
       if ((cap = this.rules.tmlink.exec(src))) {
         src = src.substring(cap[0].length)
-        const displayName = cap[1] || cap[2]
+        let text = cap[1]
+        if (!text) {
+          if (cap[2].includes('#')) {
+            text = cap[2].match(/#([^#]+)$/)[1]
+          } else {
+            text = cap[2]
+          }
+        }
         const path = cap[2]
-        out += this.link(path, displayName, displayName)
+        out += this.link(path, text, text)
         continue
       }
 

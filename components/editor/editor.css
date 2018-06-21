@@ -1,4 +1,4 @@
-.dragged { transition: none !important }
+.no-transition { transition: none !important }
 .transform-to-right { transform: translateX(100%); opacity: 0 }
 .transform-to-left { transform: translateX(-100%); opacity: 0 }
 
