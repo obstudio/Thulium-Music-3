@@ -140,6 +140,11 @@
         background-color: #393942;
         &:not(:last-child) { border-bottom-color: #393952 }
         &:not(:first-child) { border-top-color: #393952 }
+
+        > span:first-child {
+          color: #e1e4e8;
+          em { color: #9697a8 }
+        }
       }
 
       pre { background-color: #202020 }
