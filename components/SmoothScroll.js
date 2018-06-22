@@ -11,7 +11,7 @@ module.exports = function SmoothScroll(target, speed, smooth, vertical = true) {
   }
 
   let moving = false
-  let pos = target[scrollLength]
+  let pos = target[scrollPosition]
 
   function scrolled(delta) {
     pos += delta / 100 * speed

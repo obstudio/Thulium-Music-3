@@ -1,6 +1,7 @@
 const Vue = require('vue')
 const SmoothScroll = require('../SmoothScroll')
 const index = require('../../documents/index.json')
+const History = require('./History')
 const dictionary = {}
 const defaultDoc = {}
 
@@ -55,8 +56,10 @@ module.exports = {
   data() {
     return {
       items: index,
-      doc: '/overview',
-      lastDoc: '/overview',
+      state: {
+        path: '/overview',
+        scroll: 0
+      },
       root: [],
       catalog: false,
       search: false
@@ -83,6 +86,11 @@ module.exports = {
   },
   created() {
     window.monaco.editor.setTheme(global.user.state.Settings.theme)
+    this.history = new History((state) => {
+      this.state = state
+      this.setContent()
+    })
+    this.history.pushState(this.state)
     this.setContent()
   },
   mounted() {
@@ -93,34 +101,59 @@ module.exports = {
     setContent() {
       (async () => {
         try {
-          const doc = await fetch(`./documents${this.doc}.tmd`)
+          const doc = await fetch(`./documents${this.state.path}.tmd`)
           const text = await doc.text()
           this.root = this.$markdown(text)
         } catch (e) {
-          this.switchDoc(this.lastDoc)
+          this.history.back()
+          return
         }
         global.user.state.Prefix.documents = this.root[0].text + ' - '
-
-        this.docScroll(-this.$refs.doc.scrollTop)
+        const scroll = this.$refs.doc.scrollTop
+        this.$nextTick(() => {
+          this.docScroll(this.state.scroll - scroll)
+        })
       })()
     },
+    saveScrollInfo() {
+      this.history.current.scroll = this.$refs.doc.scrollTop  // save scroll info, better way?
+    },
     switchDoc(index) {
-      this.lastDoc = this.doc
-      this.doc = defaultDoc[index] ? defaultDoc[index] : index
-      this.setContent()
+      this.saveScrollInfo()
+      const state = {
+        path: defaultDoc[index] || index,
+        scroll: 0
+      }
+      this.history.pushState(state)
+    },
+    back() {
+      this.saveScrollInfo()
+      this.history.back()
+    },
+    forward() {
+      this.saveScrollInfo()
+      this.history.forward()
     },
     navigate(e) {
       const url = e.srcElement.dataset.rawUrl
       if (!url) return
-      if (url.startsWith('/')) {
+      if (url.startsWith('#')) { // anchor
+        this.switchToAnchor(url.slice(1))
+      } else if (url.startsWith('/')) { // absolute path
         this.switchDoc(url)
-      } else {
+      } else {  // relative path
         const upPart = /^(?:\.\.\/)+/.exec(url)
-        const docParts = this.doc.split('/')
+        const docParts = this.state.path.split('/')
         const up = upPart === null ? 1 : upPart[0].length / 3 + 1
         docParts.splice(- up, up, upPart === null ? url : url.slice(upPart[0].length))
         this.switchDoc(docParts.join('/'))
       }
+    },
+    switchToAnchor(text) {
+      const nodes = this.$refs.doc.getElementsByTagName('h2')
+      const result = Array.prototype.find.call(nodes, (node) => node.textContent === text)
+      if (!result) return
+      this.docScroll(result.offsetTop - this.$refs.doc.scrollTop)
     },
     getPath(route) {
       const result = []
@@ -146,14 +179,14 @@ module.exports = {
         <button @click="catalog = !catalog" :class="{ active: catalog }">
           <i class="icon-menu"/>
         </button>
-        <button @click="">
+        <button @click="back">
           <i class="icon-arrow-left"/>
         </button>
-        <button @click="">
+        <button @click="forward">
           <i class="icon-arrow-right"/>
         </button>
         <ul class="route">
-          <li v-for="(part, index) in getPath(doc)" :key="index">
+          <li v-for="(part, index) in getPath(state.path)" :key="index">
             <span v-if="index > 0">/</span>
             <a @click="switchDoc(part.route)">{{ part.title }}</a>
           </li>
@@ -174,7 +207,7 @@ module.exports = {
         :background-color="styles.documents.navBackground"
         :text-color="styles.documents.navForeground"
         :active-text-color="styles.documents.navActive"
-        :default-active="doc">
+        :default-active="state.path">
         <tm-doc-variant v-for="item in items" :item="item" base=""/>
       </el-menu>
     </div>
