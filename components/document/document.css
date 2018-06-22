@@ -145,6 +145,8 @@
     margin-bottom: 16px;
 }
 
+.tm-doc .usage blockquote > br + span { padding-left: 16px }
+
 .tm-doc .codeblock {
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
     border-radius: 6px;
