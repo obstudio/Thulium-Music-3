@@ -1,43 +1,191 @@
+.simple {
+  $main-bg: #f0f1f2;
+  .main > div { background-color: $main-bg; color: #24292e }
 
-.simple .main > div { background-color: #f7f7f7 }
+  /* navbar */
+  .navbar { background-color: #ffffff; color: #24292e }
+  .navbar button { background-color: #ffffff; color: #586069 }
+  .navbar button:hover { background-color: #e5e5e5; color: #24292e }
+  .show-sidebar button.sidebar-toggler { background-color: #2f353a; color: #909399 }
+  .show-sidebar button.sidebar-toggler:hover { background-color: #484e55; color: #b3b2b2 }
 
-/* navbar */
-.simple .navbar { background-color: #ffffff; color: #333333 }
-.simple .navbar button { background-color: #ffffff; color: #333333 }
-.simple .navbar button:hover { background-color: #ededed }
-.simple .show-sidebar button.sidebar-toggler { background-color: #2f353a; color: #909399 }
-.simple .show-sidebar button.sidebar-toggler:hover { background-color: #545c64; color: #a6a6a6 }
+  /* sidebar */
+  .sidebar { background-color: #2f353a }
 
-/* sidebar */
-.simple .sidebar { background-color: #2f353a }
+  /* editor */
+  .tm-editor {
+    background-color: #1e1e1e;
 
-/* editor */
-.simple .tm-editor .editor-scrollable { border-left: 1px solid #e1e1e1 }
-.simple .tm-editor > .header { background-color: #f7f7f7 }
-.simple .tm-editor > .status { background-color: #cdcdcd; color: #525252 }
-.simple .tm-editor button.toolbar-toggler { background-color: #f7f7f7; color: #dddddd }
-.simple .tm-tabs button { background-color: #cdcdcd; color: #dddddd }
-.simple .tm-tabs button:hover { background-color: #252525 }
-.simple .tm-tabs button.active { background-color: #2c3e50 }
-/*.simple .monaco-editor .monaco-editor-background { background-color: #f7f7f7 }*/
-/*.simple .monaco-editor .margin { background-color: #f7f7f7; color: #525252 }*/
-/*.simple .monaco-editor .minimap div.minimap-slider { background-color: #e0e0e0 }*/
-/*.simple .monaco-editor .selectionHighlight { background-color: #e0e0e0 }*/
-/*.simple .monaco-editor .view-overlays .current-line { background-color: #ebeeef; border: none }*/
-/*.simple .monaco-editor .scrollbar > .slider { border-radius: 4px }*/
+    > .header {
+      background-color: #181915;
+      button { background-color: transparent; color: #181915 }
+      button:hover { background-color: #252525 }
+      button > i { color: #cccccc }
+      button:hover > i { color: #fafaf5 }
+    
+      .menubar { background-color: #181915 }
+      .tm-top-menu:hover { background-color: #3A3A3A }
+      .tm-top-menu.active { background-color: #252525 }
 
-/* document */
-.simple .tm-doc { color: #24292e }
-.simple .tm-doc blockquote { color: #6a737d; border-left: 0.25em solid #dfe2e5 }
-.simple .tm-doc pre { background-color: #f6f8fa }
-.simple .tm-doc h1 { border-bottom: 1px solid #eaecef }
-.simple .tm-doc h2 { border-bottom: 1px solid #eaecef }
-.simple .tm-doc hr { border-bottom: 1px solid #dfe2e5; background-color: #e1e4e8 }
-.simple .tm-doc table th, .tm-doc table td { border: 1px solid #dfe2e5 }
-.simple .tm-doc table tr { background-color: #fff; border-top: 1px solid #c6cbd1 }
-.simple .tm-doc table tr :nth-child(2n) { background-color: #f6f8fa }
-.simple .tm-doc a { background-color: transparent; color: #0366d6 }
-.simple .tm-doc img { background-color: #fff }
-.simple .tm-doc code {  background-color: rgba(27, 31, 35, 0.05) }
-.simple .tm-grey { color: grey }
+      .tm-tabs {
+        button:not(.add-tag) { background-color: transparent !important }
+        .tm-tab {
+          $bg: #181915;
+          > .title { background-color: $bg; color: #bbbbb7 }
+          > .left-border { border-right-color: $bg }
+          > .right-border { border-left-color: $bg }
+          > i { color: #a5a6a4 !important }
+          > i:hover { color: #fafaf5 !important }
 
+          &:hover {
+            $bg: #252525;
+            > .title { background-color: $bg; color: #dfe2e5 }
+            > .left-border { border-right-color: $bg }
+            > .right-border { border-left-color: $bg }
+          }
+
+          &.active {
+            $bg: #474842;
+            > .title { background-color: $bg; color: #fafaf5 }
+            > .left-border { border-right-color: $bg }
+            > .right-border { border-left-color: $bg }
+          }
+        }
+      }
+    }
+
+    > .extension {
+      background-color: $main-bg;
+      color: #fafaf5;
+      div.top-border { background-color: #474842 }
+      button { background-color: $main-bg; color: #f6f8fa }
+      button:hover i { background-color: #3A3A3A; color: #fafaf5 }
+      .underline { background-color: #409EFF }
+      .nav-left button { color: #c6cbd1 }
+      .nav-left button:hover { color: #fafaf5 }
+      .nav-left button.active { color: #409EFF }
+    }
+
+    > .status {
+      background-color: #181915;
+      color: #fafaf5;
+      button { background-color: #181915; color: #f6f8fa }
+      button:hover { background-color: #252525; color: #ffffff }
+    }
+  }
+
+  /* menu */
+  .tm-menu {
+    background-color: #2D2F31;
+    box-shadow: 0 2px 8px #000000;
+
+    .menu-item {
+      .label { color: #bbbbbb }
+      .binding { color: #a5a5a5 }
+      .binding i:hover { color: #fafaf5 }
+      .separator { border-bottom-color: #888888 }
+
+      &:hover {
+        &:not(.disabled) { background-color: #3A3A3A }
+        .label { color: #e1e4e8 }
+        .binding { color: #c6cbd1 }
+      }
+
+      &.active {
+        .label { color: #ACDDFF; text-shadow: 0 0 0.15px #ACDDFF }
+      }
+
+      &.disabled {
+        .label { color: #777777 !important }
+        .binding { color: #666666 !important }
+      }
+    }
+  }
+
+  /* document */
+  .tm-document {
+    ::-webkit-scrollbar-thumb {
+      background-color: #c0c0c0;
+      box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.5);
+      &:hover { background-color: #a1a1a1 }
+      &:window-inactive { background-color: #d6d6d6; box-shadow: none }
+    }
+
+    > .toolbar {
+      background-color: #e0e0e0;
+      button { background-color: #e0e0e0; color: #586069 }
+      button:hover { background-color: #c2c2c2; color: #24292e }
+      button.active { color: #24292e }
+      .route { background-color: #ffffff }
+      .route a:hover { color: #409eff }
+    }
+
+    > .catalog { background-color: #e6e6e6 }
+
+    .tm-doc {
+      color: #24292e;
+      background-color: #f0f1f2;
+
+      blockquote {
+        color: #606060;
+        border-left-color: #c0c0c0;
+        background-color: #e6e6e6;
+        &.r { border-left-color: #F92672; background-color: #eae3e3 }
+        &.g { border-left-color: #96E22E; background-color: #e3eae3 }
+        &.b { border-left-color: #66D9EF; background-color: #e3e3ea }
+      }
+
+      .usage blockquote {
+        border-color: #f6f6f6 !important;
+        background-color: #e0e0e0;
+        &:not(:last-child) { border-bottom-color: #e0e0e0 }
+        &:not(:first-child) { border-top-color: #e0e0e0 }
+      }
+
+      pre { background-color: #d0d0d0 }
+      h1 { border-bottom: 4px solid #bababa }
+      h2 { border-bottom: 2px solid #bababa }
+      hr { border-bottom: 1px solid #d0d0d0; background-color: #282828 }
+      
+      table {
+        th, td { border: 1px solid #636363 }
+        tr { background-color: #d8d8d8; border-top: 1px solid #636363 }
+        tr :nth-child(2n) { background-color: #d0d0d0 }
+      }
+
+      a { color: #409eff }
+      img { background-color: transparent }
+      code { background-color: #e0e0e0 }
+      span.comment { color: #454749 }
+
+      .codeblock {
+        background-color: #e0e0e0;
+        &::-webkit-scrollbar-thumb {
+          background-color: #c0c0c0;
+          box-shadow: inset 0 0 4px rgba(255,255,255,0.5);
+          &:hover { background-color: #a8a8a8 }
+          &:window-inactive { background-color: #d0d0d0; box-shadow: none }
+        }
+      }
+    }
+  }
+
+  /* settings */
+  .tm-settings .el-radio-button__inner { background-color: #fafaf5; border-color: #dcdfe6; color: #606266 }
+  .tm-settings .el-radio-button:first-child .el-radio-button__inner { border-left-color: #dcdfe6 }
+  .tm-settings .el-radio-button:last-child .el-radio-button__inner { border-right-color: #dcdfe6 }
+  .tm-settings .el-radio-button__orig-radio:checked + .el-radio-button__inner { background-color: #409EFF; color: #ffffff; border-color: #409EFF !important }
+
+  /* dialog */
+  .el-message-box {
+    background-color: #f0f8ff;
+    border-color: #f0ffff;
+    color: #223355;
+
+    .el-message-box__status.el-icon-warning { color: #f7a747 }
+    .el-button { color: #606266; border-color: #dcdfe6; background-color: #ffffff }
+    .el-button:hover { color: #409eff; border-color: #c6e2ff; background-color: #ecf5ff }
+    .el-button--primary { color: #ffffff; border-color: #6495ed; background-color: #409EFF }
+    .el-button--primary:hover { color: #fff; border-color: #c6e2ff; background-color: #66b1ff }
+  }
+}
