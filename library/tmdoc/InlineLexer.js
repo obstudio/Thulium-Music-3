@@ -83,10 +83,10 @@ class InlineLexer {
         continue
       }
 
-      // grey
-      if (cap = this.rules.grey.exec(src)) {
+      // comment
+      if (cap = this.rules.comment.exec(src)) {
         src = src.substring(cap[0].length)
-        out += `<span class="tmd-grey">${this.output(cap[2] || cap[1])}</span>`
+        out += `<span class="comment">${this.output(cap[2] || cap[1])}</span>`
         continue
       }
 
@@ -207,11 +207,11 @@ InlineLexer.rules = {
   strong: /^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)|^\*\*([^\s])\*\*(?!\*)/,
   em: /^\*([^\s][\s\S]*?[^\s*])\*(?!\*)|^\*([^\s*][\s\S]*?[^\s])\*(?!\*)|^\*([^\s*])\*(?!\*)/,
   underline: /^_([^\s][\s\S]*?[^\s_])_(?!_)|^_([^\s*])_(?!_)/,
-  grey: /^\(\(([^\s][\s\S]*?[^\s])\)\)(?!\))|^\(\(([^\s])\)\)(?!\))/,
+  comment: /^\(\(([^\s][\s\S]*?[^\s])\)\)(?!\))|^\(\(([^\s])\)\)(?!\))/,
   code: /^(`+)\s*([\s\S]*?[^`]?)\s*\1(?!`)/,
-  br: /^ {2,}\n(?!\s*$)/,
+  br: /^\n(?!\s*$)/,
   del: /^-(?=\S)([\s\S]*?\S)-/,
-  text: /^[\s\S]+?(?=[\\<!\[`*(]|\b_| {2,}\n|$)/
+  text: /^[\s\S]+?(?=[\\<!\[`*(]|\b_|\n|$)/
 }
 
 module.exports = InlineLexer

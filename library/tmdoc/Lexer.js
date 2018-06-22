@@ -107,11 +107,28 @@ class Lexer {
         // Pass `top` to keep the current
         // "toplevel" state. This is exactly
         // how markdown.pl works.
-        this.token(cap[0].replace(/^ *[>?]\w* +/gm, ''), top)
+        this.token(cap[0].replace(/^ *>\w* +/gm, ''), top)
         this.tokens.push({
           type: 'Blockquote',
-          mode: cap[0].match(/^ *[>?](\w*)/)[1],
+          mode: cap[0].match(/^ *>(\w*)/)[1],
           content: this.tokens.splice(length, this.tokens.length - length)
+        })
+        continue
+      }
+
+      // usage
+      if (cap = this.rules.usage.exec(src)) {
+        src = src.substring(cap[0].length)
+        const content = []
+
+        cap[0].split(/^ *\?\w* +/gm).slice(1).forEach(data => {
+          const length = this.tokens.length
+          this.token(data, false)
+          content.push(this.tokens.splice(length, this.tokens.length - length))
+        })
+        this.tokens.push({
+          type: 'Usage',
+          content: content
         })
         continue
       }
@@ -314,10 +331,11 @@ const block = {
   // code: /^( {4}[^\n]+\n*)+/,
   fences: /^ *(`{3,})[ .]*(\S+)? *\n([\s\S]*?)\n? *\1 *(?:\n+|$)/,
   hr: /^ {0,3}([-=])(\1|\.\1| \1)\2+ *(?:\n+|$)/,
-  section: /^ *(\^{1,6}) *([^\n]+?) *(?:\^+ *)?(?:\n+|$)/,
-  heading: /^ *(#{1,6}) +([^\n]+?) *(#*) *(?:\n+|$)/,
+  section: /^ *(\^{1,3}) *([^\n]+?) *(?:\^+ *)?(?:\n+|$)/,
+  heading: /^ *(#{1,4}) +([^\n]+?) *(#*) *(?:\n+|$)/,
   // nptable: /^ *([^|\n ].*\|.*)\n *([-:]+ *\|[-| :]*)(?:\n((?:.*[^>\n ].*(?:\n|$))*)\n*|$)/,
-  blockquote: /^( {0,3}[>?]\w* (paragraph|[^\n]*)(?:\n|$))+/,
+  blockquote: /^( *>\w* (paragraph|[^\n]*)(?:\n|$))+/,
+  usage: /^( *\? +(paragraph|[^\n]*)(?:\n|$))+/,
   list: /^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
   inlinelist: /^(?: *\+[^\n]*[^+\n]\n(?= *\+))*(?: *\+[^\n]+\+?(?:\n+|$))/,
   def: /^ {0,3}\[((?!\s*])(?:\\[\[\]]|[^\[\]])+)]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)((?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))))? *(?:\n+|$)/,
@@ -344,6 +362,10 @@ block.paragraph = edit(block.paragraph)
   .getRegex()
 
 block.blockquote = edit(block.blockquote)
+  .replace('paragraph', block.paragraph)
+  .getRegex()
+
+block.usage = edit(block.usage)
   .replace('paragraph', block.paragraph)
   .getRegex()
 
