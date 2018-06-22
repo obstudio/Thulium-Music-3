@@ -12,12 +12,13 @@ class TmTheme {
         this[name] = require(filepath + '.buffer.json')
       } else {
         this[name] = yaml.safeLoad(fs.readFileSync(filepath + '.yaml', { encoding: 'utf8' }))
+        this[name].css = sass.renderSync({ file: filepath + '.scss' }).css.toString()
         if (saveBuffer) {
           fs.writeFileSync(filepath + '.buffer.json', JSON.stringify(this[name]), { encoding: 'utf8' })
         }
       }
       const style = document.createElement('style')
-      style.innerHTML = sass.renderSync({ file: filepath + '.scss' }).css.toString()
+      style.innerHTML = this[name].css
       document.head.appendChild(style)
     }
   }
