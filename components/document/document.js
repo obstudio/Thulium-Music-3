@@ -1,4 +1,5 @@
 const Vue = require('vue')
+const Vuex = require('vuex')
 const SmoothScroll = require('../SmoothScroll')
 const index = require('../../documents/index.json')
 const History = require('./History')
@@ -37,27 +38,44 @@ module.exports = {
     TmDocVariant: {
       name: 'TmDocVariant',
       props: ['item', 'base'],
+      inject: ['switchDoc'],
       computed: {
         index() {
           return this.base + '/' + 
             (this.item instanceof Array ? this.item : this.item.name)[0]
+        },
+        path() {
+          return this.$store.state.path
         }
       },
       render: VueCompile(`
-      <el-menu-item v-if="item instanceof Array" :index="index">
-        <span slot="title">{{ item[1] }}</span>
-      </el-menu-item>
-      <el-submenu v-else :index="index">
+      <el-submenu v-if="!(item instanceof Array)" :index="index">
         <template slot="title">{{ item.name[1] }}</template>
         <tm-doc-variant v-for="sub in item.content" :item="sub" :base="index"/>
-      </el-submenu>`)
+      </el-submenu>
+      <el-submenu v-else-if="index === $store.state.path" :index="index">
+        <template slot="title">{{ item[1] }}</template>
+        <el-menu-item v-for="anchor in $store.state.anchors" :index="index + '#' + anchor">
+          <span slot="title">{{ anchor }}</span>
+        </el-menu-item>
+      </el-submenu>
+      <el-menu-item v-else :index="index">
+        <span slot="title">{{ item[1] }}</span>
+      </el-menu-item>`)
     }
   },
+  store: new Vuex.Store({
+    state: {
+      path: '/overview',
+      anchors: []
+    }
+  }),
   data() {
     return {
       items: index,
       state: {
         path: '/overview',
+        anchor: null,
         scroll: 0
       },
       root: [],
@@ -84,12 +102,21 @@ module.exports = {
       required: true
     }
   },
+  provide() {
+    return {
+      switchDoc: this.switchDoc
+    }
+  },
   created() {
     window.monaco.editor.setTheme(global.user.state.Settings.theme)
-    this.history = new History((state) => {
+    const onStateChange = state => {
       this.state = state
       this.setContent()
-    })
+      this.$store.state.path = state.path
+      const nodes = this.$refs.doc.getElementsByTagName('h2')
+      this.$store.state.anchors = Array.prototype.map.call(nodes, node => node.textContent)
+    }
+    this.history = new History(onStateChange)
     this.history.pushState(this.state)
     this.setContent()
   },
@@ -120,11 +147,15 @@ module.exports = {
     },
     switchDoc(index) {
       this.saveScrollInfo()
+      const anchor = index.match(/#(.+)$/)
+      if (anchor) index = index.slice(0, anchor.index)
       const state = {
         path: defaultDoc[index] || index,
+        anchor: anchor ? anchor[1] : null,
         scroll: 0
       }
       this.history.pushState(state)
+      this.switchToAnchor(state.anchor)
     },
     back() {
       this.saveScrollInfo()
@@ -134,26 +165,29 @@ module.exports = {
       this.saveScrollInfo()
       this.history.forward()
     },
-    navigate(e) {
-      const url = e.srcElement.dataset.rawUrl
+    navigate(event) {
+      let url = event.srcElement.dataset.rawUrl
       if (!url) return
-      if (url.startsWith('#')) { // anchor
-        this.switchToAnchor(url.slice(1))
-      } else if (url.startsWith('/')) { // absolute path
-        this.switchDoc(url)
-      } else {  // relative path
-        const upPart = /^(?:\.\.\/)+/.exec(url)
+      if (url.startsWith('#')) {
+        this.switchDoc(this.state.path + url)
+      } else {
         const docParts = this.state.path.split('/')
-        const up = upPart === null ? 1 : upPart[0].length / 3 + 1
-        docParts.splice(- up, up, upPart === null ? url : url.slice(upPart[0].length))
+        const back = /^(?:\.\.\/)*/.exec(url)[0].length
+        docParts.splice(-1 - back / 3, Infinity, url.slice(back))
         this.switchDoc(docParts.join('/'))
       }
     },
     switchToAnchor(text) {
+      if (!text) {
+        text = this.state.anchor
+      } else {
+        this.state.anchor = text
+      }
       const nodes = this.$refs.doc.getElementsByTagName('h2')
       const result = Array.prototype.find.call(nodes, (node) => node.textContent === text)
-      if (!result) return
-      this.docScroll(result.offsetTop - this.$refs.doc.scrollTop)
+      if (result) {
+        this.docScroll(result.offsetTop - this.$refs.doc.scrollTop)
+      }
     },
     getPath(route) {
       const result = []
@@ -189,6 +223,10 @@ module.exports = {
           <li v-for="(part, index) in getPath(state.path)" :key="index">
             <span v-if="index > 0">/</span>
             <a @click="switchDoc(part.route)">{{ part.title }}</a>
+          </li>
+          <li v-if="state.anchor" class="anchor">
+            <span>#</span>
+            <a @click="switchDoc(state.path + '#' + state.anchor)">{{ state.anchor }}</a>
           </li>
         </ul>
       </div>

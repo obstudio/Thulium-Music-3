@@ -26,17 +26,17 @@ class InlineLexer {
       }
 
       // link
-      if (cap = this.rules.link.exec(src)) {
-        src = src.substring(cap[0].length)
-        href = cap[2]
-        title = cap[3] ? cap[3].slice(1, -1) : ''
-        href = href.trim().replace(/^<([\s\S]*)>$/, '$1')
-        out += this.outputLink(cap, {
-          href: InlineLexer.escapes(href),
-          title: InlineLexer.escapes(title)
-        })
-        continue
-      }
+      // if (cap = this.rules.link.exec(src)) {
+      //   src = src.substring(cap[0].length)
+      //   href = cap[2]
+      //   title = cap[3] ? cap[3].slice(1, -1) : ''
+      //   href = href.trim().replace(/^<([\s\S]*)>$/, '$1')
+      //   out += this.outputLink(cap, {
+      //     href: InlineLexer.escapes(href),
+      //     title: InlineLexer.escapes(title)
+      //   })
+      //   continue
+      // }
 
       // // reflink, nolink
       // if ((cap = this.rules.reflink.exec(src)) ||
@@ -150,12 +150,12 @@ class InlineLexer {
       const prot = decodeURIComponent(unescape(href))
         .replace(/[^\w:]/g, '')
         .toLowerCase()
-      if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0 || prot.indexOf('data:') === 0) {
-        return text
-      }
-      if (this.options.baseUrl && !originIndependentUrl.test(href)) {
-        href = resolveUrl(this.options.baseUrl, href)
-      }
+      // if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0 || prot.indexOf('data:') === 0) {
+      //   return text
+      // }
+      // if (this.options.baseUrl && !originIndependentUrl.test(href)) {
+      //   href = resolveUrl(this.options.baseUrl, href)
+      // }
       return `<a href="#" data-raw-url="${href}" title="${title || ''}" onclick="event.preventDefault()"'>${text}</a>`
     } catch (e) {
       return text

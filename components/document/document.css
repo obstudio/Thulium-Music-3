@@ -50,7 +50,7 @@
     display: inline;
 }
 .tm-document > .toolbar .route > li { display: inline }
-.tm-document > .toolbar .route > li:not(:first-child) { padding-left: 4px }
+.tm-document > .toolbar .route > li:not(:first-child):not(.anchor) { padding-left: 4px }
 .tm-document > .toolbar .route a {
     padding: 2px;
     cursor: pointer;
