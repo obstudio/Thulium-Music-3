@@ -18,7 +18,7 @@ editor:
   list.dropBackground: '#414339'
   list.highlightForeground: '#f8f8f2'
   button.background: '#75715E'
-  editor.background: '#272822'
+  editor.background: '#ffffff'
   editor.foreground: '#f8f8f2'
   selection.background: '#ccccc7'
   editor.selectionHighlightBackground: '#575b6180'

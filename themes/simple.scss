@@ -14,39 +14,39 @@
 
   /* editor */
   .tm-editor {
-    background-color: #1e1e1e;
+    background-color: #ffffff;
 
     > .header {
-      background-color: #181915;
-      button { background-color: transparent; color: #181915 }
-      button:hover { background-color: #252525 }
-      button > i { color: #cccccc }
-      button:hover > i { color: #fafaf5 }
+      background-color: #f0f1f2;
+      button { background-color: transparent; color: #f0f1f2 }
+      button:hover { background-color: #e0e0e0 }
+      button > i { color: #a1a1a1 }
+      button:hover > i { color: #586069 }
     
-      .menubar { background-color: #181915 }
-      .tm-top-menu:hover { background-color: #3A3A3A }
-      .tm-top-menu.active { background-color: #252525 }
+      .menubar { background-color: #f0f1f2 }
+      .tm-top-menu:hover { background-color: #c0c0c0 }
+      .tm-top-menu.active { background-color: #e0e0e0 }
 
       .tm-tabs {
         button:not(.add-tag) { background-color: transparent !important }
         .tm-tab {
-          $bg: #181915;
-          > .title { background-color: $bg; color: #bbbbb7 }
+          $bg: #f0f1f2;
+          > .title { background-color: $bg; color: #606060 }
           > .left-border { border-right-color: $bg }
           > .right-border { border-left-color: $bg }
-          > i { color: #a5a6a4 !important }
-          > i:hover { color: #fafaf5 !important }
+          > i { color: #707070 !important }
+          > i:hover { color: #24292e !important }
 
           &:hover {
-            $bg: #252525;
-            > .title { background-color: $bg; color: #dfe2e5 }
+            $bg: #e0e0e0;
+            > .title { background-color: $bg; color: #24292e }
             > .left-border { border-right-color: $bg }
             > .right-border { border-left-color: $bg }
           }
 
           &.active {
-            $bg: #474842;
-            > .title { background-color: $bg; color: #fafaf5 }
+            $bg: #c0c0c0;
+            > .title { background-color: $bg; color: #000000 }
             > .left-border { border-right-color: $bg }
             > .right-border { border-left-color: $bg }
           }
@@ -56,48 +56,48 @@
 
     > .extension {
       background-color: $main-bg;
-      color: #fafaf5;
-      div.top-border { background-color: #474842 }
-      button { background-color: $main-bg; color: #f6f8fa }
-      button:hover i { background-color: #3A3A3A; color: #fafaf5 }
+      color: #24292e;
+      div.top-border { background-color: #bababa }
+      button { background-color: $main-bg; color: #585858 }
+      button:hover i { background-color: #d0d0d0; color: #505050 }
       .underline { background-color: #409EFF }
-      .nav-left button { color: #c6cbd1 }
-      .nav-left button:hover { color: #fafaf5 }
+      .nav-left button { color: #707070 }
+      .nav-left button:hover { color: #24292e }
       .nav-left button.active { color: #409EFF }
     }
 
     > .status {
-      background-color: #181915;
-      color: #fafaf5;
-      button { background-color: #181915; color: #f6f8fa }
-      button:hover { background-color: #252525; color: #ffffff }
+      background-color: #e0e0e0;
+      color: #24292e;
+      button { background-color: #e0e0e0; color: #484848 }
+      button:hover { background-color: #d0d0d0; color: #24292e }
     }
   }
 
   /* menu */
   .tm-menu {
-    background-color: #2D2F31;
-    box-shadow: 0 2px 8px #000000;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px #888888;
 
     .menu-item {
-      .label { color: #bbbbbb }
-      .binding { color: #a5a5a5 }
-      .binding i:hover { color: #fafaf5 }
-      .separator { border-bottom-color: #888888 }
+      .label { color: #383838 }
+      .binding { color: #505050 }
+      .binding i:hover { color: #101010 }
+      .separator { border-bottom-color: #b0b0b0 }
 
       &:hover {
-        &:not(.disabled) { background-color: #3A3A3A }
-        .label { color: #e1e4e8 }
-        .binding { color: #c6cbd1 }
+        &:not(.disabled) { background-color: #e8e8e8 }
+        .label { color: #24292e }
+        .binding { color: #383838 }
       }
 
       &.active {
-        .label { color: #ACDDFF; text-shadow: 0 0 0.15px #ACDDFF }
+        .label { color: #409eff; text-shadow: 0 0 0.15px #ACDDFF }
       }
 
       &.disabled {
-        .label { color: #777777 !important }
-        .binding { color: #666666 !important }
+        .label { color: #bababa !important }
+        .binding { color: #c8c8c8 !important }
       }
     }
   }
