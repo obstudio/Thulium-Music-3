@@ -32,27 +32,8 @@ module.exports = function(data) {
   }
 
   return {
-    keymap,
-    commands,
     menuData,
     menuKeys,
-    
-    executeCommand(key) {
-      if (commands[key].method in this) {
-        let args = commands[key].arguments
-        if (args === undefined) args = []
-        if (!(args instanceof Array)) args = [args]
-        this[commands[key].method](...args.map(arg => {
-          if (typeof arg === 'string' && arg.startsWith('$')) {
-            return this[arg.slice(1)]
-          } else {
-            return arg
-          }
-        }))
-      } else {
-        this.$message.error(`No command ${key} was found!`)
-      }
-    },
 
     onMount() {
       for (const key in keymap) {
@@ -69,6 +50,22 @@ module.exports = function(data) {
     },
 
     methods: {
+      executeCommand(key) {
+        if (commands[key].method in this) {
+          let args = commands[key].arguments
+          if (args === undefined) args = []
+          if (!(args instanceof Array)) args = [args]
+          this[commands[key].method](...args.map(arg => {
+            if (typeof arg === 'string' && arg.startsWith('$')) {
+              return this[arg.slice(1)]
+            } else {
+              return arg
+            }
+          }))
+        } else {
+          this.$message.error(`No command ${key} was found!`)
+        }
+      },
       hideContextMenus() {
         this.menubarActive = false
         for (const key in this.menuData) {
@@ -130,7 +127,7 @@ module.exports = function(data) {
     vue: {
       name: 'TmMenu',
       methods: {
-        displayKeyBinding(key) {
+        getBinding(key) {
           let binding = keymap[key]
           if (!binding) return ''
           if (binding.charAt(0) === '!') binding = binding.slice(1)
@@ -144,9 +141,9 @@ module.exports = function(data) {
             for (pointer = 0; pointer < commands[key].caption.length; pointer++) {
               if (this.getValue(commands[key].caption[pointer])) break
             }
-            return this.$t(`editor.menu.${key}.${pointer}`)
+            return this.$t(`${data.context}.menu.${key}.${pointer}`)
           } else {
-            return this.$t(`editor.menu.${key}`)
+            return this.$t(`${data.context}.menu.${key}`)
           }
         },
         getContext(key) {
@@ -159,18 +156,19 @@ module.exports = function(data) {
         getValue(data) {
           // FIXME: optimize value pattern
           return this.$parent[data.slice(1)]
+        },
+        getList(name) {
+          if (!name.startsWith('@')) return false
+          return this.lists.find(item => item.name === name.slice(1))
         }
       },
-      inject: ['tabs', 'execute'],
+      inject: ['execute'],
       props: {
-        current: {
-          type: Object
-        },
         data: {
           type: Array,
           required: true
         },
-        move: {
+        move: { // no use
           type: Number,
           required: true
         },
@@ -179,38 +177,44 @@ module.exports = function(data) {
           default() {
             return []
           }
+        },
+        lists: {
+          type: Array,
+          default() {
+            return []
+          }
         }
       },
       render: VueCompile(`<div class="content">
         <li v-for="(item, index) in data">
-          <div v-if="item === '@separator'" class="menu-item disabled" @click.stop>
+          <div v-if="item instanceof Object">
+            <!--transition :name="move !== 0 ? 'tm-menu' : ''"
+              :leave-to-class="'transform-to-' + (move > 0 ? 'left' : move < 0 ? 'right' : 'none')"
+              :enter-class="'transform-to-' + (move > 0 ? 'right' : move < 0 ? 'left' : 'none')"-->
+              <tm-menu v-show="embed[index]" :data="item.content" :move="0" :lists="lists"/>
+            <!--/transition-->
+          </div>
+          <div v-else-if="item === '@separator'" class="menu-item disabled" @click.stop>
             <a class="separator"/>
           </div>
-          <div v-else-if="item === '@tabs'">
-            <li v-for="tab in tabs" :key="tab.id">
-              <div class="menu-item" @click="execute('switchTabById', tab.id)">
-                <a class="label" :class="{ active: tab.id === current.id }">{{ tab.title }}</a>
+          <div v-else-if="getList(item)">
+            <li v-for="li in getList(item).data" :key="li.id">
+              <div class="menu-item" @click="execute(getList(item).switch, li.id)">
+                <a class="label" :class="{ active: li.id === getList(item).current }">{{ li.title }}</a>
                 <span class="binding">
-                  <i v-if="tab.changed" class="icon-circle" @click.stop="execute('closeTab', tab.id)"/>
-                  <i v-else class="icon-close" @click.stop="execute('closeTab', tab.id)"/>
+                  <i v-if="li.changed" class="icon-circle" @click.stop="execute(getList(item).close, li.id)"/>
+                  <i v-else class="icon-close" @click.stop="execute(getList(item).close, li.id)"/>
                 </span>
               </div>
             </li>
           </div>
-          <div v-else-if="item instanceof Object">
-            <!--transition :name="move !== 0 ? 'tm-menu' : ''"
-              :leave-to-class="'transform-to-' + (move > 0 ? 'left' : move < 0 ? 'right' : 'none')"
-              :enter-class="'transform-to-' + (move > 0 ? 'right' : move < 0 ? 'left' : 'none')"-->
-              <tm-menu v-show="embed[index]" :data="item.content" :move="0" :current="current"/>
-            <!--/transition-->
-          </div>
           <div v-else-if="getContext(item)" class="menu-item disabled" @click.stop>
             <a class="label">{{ getCaption(item) }}</a>
-            <span class="binding">{{ displayKeyBinding(item) }}</span>
+            <span class="binding">{{ getBinding(item) }}</span>
           </div>
           <div v-else class="menu-item" @click="execute('executeCommand', item)">
             <a class="label">{{ getCaption(item) }}</a>
-            <span class="binding">{{ displayKeyBinding(item) }}</span>
+            <span class="binding">{{ getBinding(item) }}</span>
           </div>
         </li>
       </div>`)

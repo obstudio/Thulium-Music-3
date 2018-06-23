@@ -10,6 +10,7 @@ const { registerPlayCommand } = require('../../library/editor/Editor')
 
 const storage = require('./storage')
 const TmCommand = require('../command')({
+  context: 'editor',
   commands: require('./command.json'),
   keymap: require('./keymap.json'),
   menus: require('./menu.json')
@@ -175,9 +176,6 @@ module.exports = {
     },
     executeTrigger(id) {
       this.editor.trigger(id, id)
-    },
-    executeCommand(key) {
-      TmCommand.executeCommand.call(this, key)
     },
     executeMethod(method, ...args) {
       if (method in this) this[method](...args)
@@ -375,10 +373,17 @@ module.exports = {
       <button @click="toggleExtension()"><i class="icon-control"/></button>
     </div>
   </div>
-  <div class="menus" ref="menus">
+  <div class="tm-menus" ref="menus">
     <transition name="el-zoom-in-top" v-for="key in menuKeys" :key="key">
       <ul v-show="menuData[key].show" class="tm-menu">
-        <tm-menu :data="menuData[key].content" :embed="menuData[key].embed" :move="menubarMove" :current="current"/>
+        <tm-menu :data="menuData[key].content" :embed="menuData[key].embed" :move="menubarMove"
+          :lists="[{
+            name: 'tabs',
+            data: tabs,
+            current: current.id,
+            switch: 'switchTabById',
+            close: 'closeTab'
+          }]"/>
       </ul>
     </transition>
   </div>

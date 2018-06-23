@@ -2,9 +2,14 @@
 @import "./components/editor/editor.css";
 @import "./components/document/document.css";
 @import "./components/settings/settings.css";
+@import "./components/menu.css";
 @import "./assets/icons.css";
 
 @import "./extensions/renderer/main.css";
+
+.no-transition { transition: none !important }
+.transform-to-right { transform: translateX(100%); opacity: 0 }
+.transform-to-left { transform: translateX(-100%); opacity: 0 }
 
 body {
     margin: 0;
