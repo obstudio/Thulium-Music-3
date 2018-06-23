@@ -1,4 +1,6 @@
 const Vue = require('vue')
+const Vuex = require('vuex')
+const open = require('opn')
 const SmoothScroll = require('../SmoothScroll')
 const index = require('../../documents/index.json')
 const History = require('./History')
@@ -37,29 +39,47 @@ module.exports = {
     TmDocVariant: {
       name: 'TmDocVariant',
       props: ['item', 'base'],
+      inject: ['switchDoc'],
       computed: {
         index() {
           return this.base + '/' + 
             (this.item instanceof Array ? this.item : this.item.name)[0]
+        },
+        path() {
+          return this.$store.state.path
         }
       },
       render: VueCompile(`
-      <el-menu-item v-if="item instanceof Array" :index="index">
-        <span slot="title">{{ item[1] }}</span>
-      </el-menu-item>
-      <el-submenu v-else :index="index">
+      <el-submenu v-if="!(item instanceof Array)" :index="index">
         <template slot="title">{{ item.name[1] }}</template>
         <tm-doc-variant v-for="sub in item.content" :item="sub" :base="index"/>
-      </el-submenu>`)
+      </el-submenu>
+      <el-submenu v-else-if="index === $store.state.path" :index="index">
+        <template slot="title">{{ item[1] }}</template>
+        <el-menu-item v-for="anchor in $store.state.anchors" :index="index + '#' + anchor">
+          <span slot="title">{{ anchor }}</span>
+        </el-menu-item>
+      </el-submenu>
+      <el-menu-item v-else :index="index">
+        <span slot="title">{{ item[1] }}</span>
+      </el-menu-item>`)
     }
   },
+  store: new Vuex.Store({
+    state: {
+      path: '/overview',
+      anchors: []
+    }
+  }),
   data() {
     return {
       items: index,
       state: {
         path: '/overview',
+        anchor: null,
         scroll: 0
       },
+      openedMenu: [],
       root: [],
       catalog: false,
       search: false
@@ -72,6 +92,9 @@ module.exports = {
     },
     contentWidth() {
       return this.width - (this.catalog ? this.catalogWidth : 0)
+    },
+    activeIndex() {
+      return this.state.anchor ? `${this.state.path}#${this.state.anchor}` : this.state.path
     }
   },
   props: {
@@ -84,14 +107,24 @@ module.exports = {
       required: true
     }
   },
+  provide() {
+    return {
+      switchDoc: this.switchDoc
+    }
+  },
   created() {
     window.monaco.editor.setTheme(global.user.state.Settings.theme)
-    this.history = new History((state) => {
+    const onStateChange = async (state) => {
       this.state = state
-      this.setContent()
-    })
+      await this.setContent()
+      this.$nextTick(() => {
+        this.$store.state.path = state.path
+        const nodes = this.$refs.doc.getElementsByTagName('h2')
+        this.$store.state.anchors = Array.prototype.map.call(nodes, node => node.textContent)
+      })
+    }
+    this.history = new History(onStateChange)
     this.history.pushState(this.state)
-    this.setContent()
   },
   mounted() {
     this.docScroll = SmoothScroll(this.$refs.doc, 100, 10)
@@ -99,7 +132,7 @@ module.exports = {
   },
   methods: {
     setContent() {
-      (async () => {
+      return (async () => {
         try {
           const doc = await fetch(`./documents${this.state.path}.tmd`)
           const text = await doc.text()
@@ -111,7 +144,19 @@ module.exports = {
         global.user.state.Prefix.documents = this.root[0].text + ' - '
         const scroll = this.$refs.doc.scrollTop
         this.$nextTick(() => {
-          this.docScroll(this.state.scroll - scroll)
+          if (typeof this.state.scroll === 'string') {
+            this.switchToAnchor(this.state.anchor)
+          } else {
+            this.docScroll(this.state.scroll - scroll)
+          }
+          const parts = this.state.path.match(/\/[^/]+/g)
+          let last = ''
+          const arr = []
+          for (const part of parts) {
+            last += part
+            arr.push(last)
+          }
+          arr.forEach(item => this.$refs.elMenu.open(item))
         })
       })()
     },
@@ -120,9 +165,12 @@ module.exports = {
     },
     switchDoc(index) {
       this.saveScrollInfo()
+      const anchor = index.match(/#(.+)$/)
+      if (anchor) index = index.slice(0, anchor.index)
       const state = {
         path: defaultDoc[index] || index,
-        scroll: 0
+        anchor: anchor ? anchor[1] : null,
+        scroll: anchor ? anchor[1] : 0
       }
       this.history.pushState(state)
     },
@@ -134,26 +182,31 @@ module.exports = {
       this.saveScrollInfo()
       this.history.forward()
     },
-    navigate(e) {
-      const url = e.srcElement.dataset.rawUrl
+    navigate(event) {
+      let url = event.srcElement.dataset.rawUrl
       if (!url) return
-      if (url.startsWith('#')) { // anchor
-        this.switchToAnchor(url.slice(1))
-      } else if (url.startsWith('/')) { // absolute path
-        this.switchDoc(url)
-      } else {  // relative path
-        const upPart = /^(?:\.\.\/)+/.exec(url)
+      if (url.startsWith('$issue#')) {
+        open('https://github.com/obstudio/Thulium-Music-3/issues/' + url.slice(7))
+      } else if (url.startsWith('#')) {
+        this.switchDoc(this.state.path + url)
+      } else {
         const docParts = this.state.path.split('/')
-        const up = upPart === null ? 1 : upPart[0].length / 3 + 1
-        docParts.splice(- up, up, upPart === null ? url : url.slice(upPart[0].length))
+        const back = /^(?:\.\.\/)*/.exec(url)[0].length
+        docParts.splice(-1 - back / 3, Infinity, url.slice(back))
         this.switchDoc(docParts.join('/'))
       }
     },
     switchToAnchor(text) {
+      if (!text) {
+        text = this.state.anchor
+      } else {
+        this.state.anchor = text
+      }
       const nodes = this.$refs.doc.getElementsByTagName('h2')
       const result = Array.prototype.find.call(nodes, (node) => node.textContent === text)
-      if (!result) return
-      this.docScroll(result.offsetTop - this.$refs.doc.scrollTop)
+      if (result) {
+        this.docScroll(result.offsetTop - this.$refs.doc.scrollTop)
+      }
     },
     getPath(route) {
       const result = []
@@ -190,6 +243,10 @@ module.exports = {
             <span v-if="index > 0">/</span>
             <a @click="switchDoc(part.route)">{{ part.title }}</a>
           </li>
+          <li v-if="state.anchor" class="anchor">
+            <span>#</span>
+            <a @click="switchDoc(state.path + '#' + state.anchor)">{{ state.anchor }}</a>
+          </li>
         </ul>
       </div>
       <div class="right">
@@ -203,11 +260,11 @@ module.exports = {
         left: catalog ? '0px' : - catalogWidth + 'px',
         width: catalogWidth + 'px'
       }" ref="menu" @mousewheel.prevent.stop="menuScroll($event.deltaY)">
-      <el-menu @select="switchDoc" :unique-opened="true"
+      <el-menu @select="switchDoc" :unique-opened="true" ref="elMenu"
         :background-color="styles.documents.navBackground"
         :text-color="styles.documents.navForeground"
         :active-text-color="styles.documents.navActive"
-        :default-active="state.path">
+        :default-active="activeIndex">
         <tm-doc-variant v-for="item in items" :item="item" base=""/>
       </el-menu>
     </div>

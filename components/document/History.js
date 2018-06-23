@@ -1,7 +1,7 @@
 module.exports = class History {
   constructor(onStateChange) {
     this._states = []
-    this._pointer = 0
+    this._pointer = -1
     this.onStateChange = onStateChange || (() => {})
   }
 

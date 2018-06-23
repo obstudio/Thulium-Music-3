@@ -25,47 +25,23 @@ class InlineLexer {
         continue
       }
 
-      // link
-      if (cap = this.rules.link.exec(src)) {
-        src = src.substring(cap[0].length)
-        href = cap[2]
-        title = cap[3] ? cap[3].slice(1, -1) : ''
-        href = href.trim().replace(/^<([\s\S]*)>$/, '$1')
-        out += this.outputLink(cap, {
-          href: InlineLexer.escapes(href),
-          title: InlineLexer.escapes(title)
-        })
-        continue
-      }
-
-      // // reflink, nolink
-      // if ((cap = this.rules.reflink.exec(src)) ||
-      //   (cap = this.rules.nolink.exec(src))) {
-      //   src = src.substring(cap[0].length)
-      //   link = (cap[2] || cap[1]).replace(/\s+/g, ' ')
-      //   link = this.links[link.toLowerCase()]
-      //   if (!link || !link.href) {
-      //     out += cap[0].charAt(0)
-      //     src = cap[0].substring(1) + src
-      //     continue
-      //   }
-      //   out += this.outputLink(cap, link)
-      //   continue
-      // }
-
       // tmlink
-      if ((cap = this.rules.tmlink.exec(src))) {
+      if (cap = this.rules.tmlink.exec(src)) {
         src = src.substring(cap[0].length)
-        let text = cap[1]
-        if (!text) {
-          if (cap[2].includes('#')) {
-            text = cap[2].match(/#([^#]+)$/)[1]
-          } else {
-            text = cap[2]
-          }
+        let text, match
+        if (cap[1]) {
+          text = cap[1]
+        } else if (match = cap[2].match(/^\$\w+(#\w+)$/)) {
+          text = match[1]
+        } else if (cap[2].includes('#')) {
+          text = cap[2].match(/#([^#]+)$/)[1]
+        } else if (cap[2].includes('/')) {
+          text = cap[2].match(/\/([^/]+)$/)[1]
+        } else {
+          text = cap[2]
         }
         const path = cap[2]
-        out += this.link(path, text, text)
+        out += this.link(path, text)
         continue
       }
 
@@ -133,33 +109,8 @@ class InlineLexer {
     return out
   }
 
-  /**
-   * Compile Link
-   */
-  outputLink(cap, link) {
-    const href = link.href,
-      title = link.title ? escape(link.title) : null
-
-    return cap[0].charAt(0) !== '!'
-      ? this.link(href, title, this.output(cap[1]))
-      : this.image(href, title, escape(cap[1]))
-  }
-
-  link(href, title, text) {
-    try {
-      const prot = decodeURIComponent(unescape(href))
-        .replace(/[^\w:]/g, '')
-        .toLowerCase()
-      if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0 || prot.indexOf('data:') === 0) {
-        return text
-      }
-      if (this.options.baseUrl && !originIndependentUrl.test(href)) {
-        href = resolveUrl(this.options.baseUrl, href)
-      }
-      return `<a href="#" data-raw-url="${href}" title="${title || ''}" onclick="event.preventDefault()"'>${text}</a>`
-    } catch (e) {
-      return text
-    }
+  link(href, text) {
+    return `<a href="#" data-raw-url="${href}" onclick="event.preventDefault()"'>${text}</a>`
   }
 
   image(href, title, text) {

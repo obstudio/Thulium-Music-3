@@ -50,7 +50,7 @@
     display: inline;
 }
 .tm-document > .toolbar .route > li { display: inline }
-.tm-document > .toolbar .route > li:not(:first-child) { padding-left: 4px }
+.tm-document > .toolbar .route > li:not(:first-child):not(.anchor) { padding-left: 4px }
 .tm-document > .toolbar .route a {
     padding: 2px;
     cursor: pointer;
@@ -126,7 +126,7 @@
 
 .tm-doc blockquote > :first-child { margin-top: 0 }
 .tm-doc blockquote > :last-child { margin-bottom: 0 }
-.tm-doc blockquote code { background-color: inherit }
+.tm-doc blockquote code { background-color: inherit !important }
 
 .tm-doc .usage blockquote {
     border: 1px solid !important;
