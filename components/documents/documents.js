@@ -30,7 +30,14 @@ Array.prototype.forEach.call([
 
 module.exports = {
   name: 'TmDoc',
+  provide() {
+    return {
+      switchDoc: this.switchDoc,
+      execute: this.executeMethod
+    }
+  },
   components: {
+    TmMenus: TmCommand.TmMenus,
     TmDocVariant: {
       name: 'TmDocVariant',
       props: ['item', 'base'],
@@ -75,6 +82,8 @@ module.exports = {
         scroll: 0
       },
       openedMenu: [],
+      menuData: TmCommand.menuData,
+      menuKeys: TmCommand.menuKeys,
       root: [],
       catalog: false,
       search: false
@@ -92,28 +101,7 @@ module.exports = {
       return this.state.anchor ? `${this.state.path}#${this.state.anchor}` : this.state.path
     },
     recent() {
-      return this.history._states.slice(-10).map(state => {
-        const index = state.path + (state.anchor ? '#' + state.anchor : '')
-        return {
-          title: index,
-          id: index
-        }
-      })
-    }
-  },
-  props: {
-    height: {
-      type: Number,
-      required: true
-    },
-    width: {
-      type: Number,
-      required: true
-    }
-  },
-  provide() {
-    return {
-      switchDoc: this.switchDoc
+      return this.history.recent(10)
     }
   },
   created() {
@@ -131,10 +119,12 @@ module.exports = {
     this.history.pushState(this.state)
   },
   mounted() {
+    TmCommand.onMount.call(this)
     this.docScroll = SmoothScroll(this.$refs.doc, 100, 10)
     this.menuScroll = SmoothScroll(this.$refs.menu, 100, 10)
   },
   methods: {
+    ...TmCommand.methods,
     setContent() {
       return (async () => {
         try {
@@ -230,7 +220,9 @@ module.exports = {
       return result
     }
   },
-  render: VueCompile(`<div class="tm-document">
+  props: ['width', 'height', 'left', 'top'],
+  render: VueCompile(`<div class="tm-document"
+    @click="hideContextMenus" @contextmenu="hideContextMenus">
     <div class="toolbar" :style="{ width: width + 'px' }">
       <div class="left">
         <button @click="catalog = !catalog" :class="{ active: catalog }">
@@ -254,8 +246,11 @@ module.exports = {
         </ul>
       </div>
       <div class="right">
-        <button @click="search = true">
+        <button @click.stop="search = true">
           <i class="icon-search"/>
+        </button>
+        <button @click.stop="showButtonMenu('history', $event)">
+          <i class="icon-history"/>
         </button>
       </div>
     </div>
@@ -277,7 +272,7 @@ module.exports = {
         left: catalog ? catalogWidth + 'px' : '0px',
         width: contentWidth + 'px'
       }">
-      <div class="tm-doc" ref="doc" @click.stop="navigate"
+      <div class="tm-doc" ref="doc" @click="navigate"
         @mousewheel.prevent.stop="docScroll($event.deltaY)"
         :style="{
           'padding-left': Math.max(24, contentWidth / 8) + 'px',
@@ -286,5 +281,11 @@ module.exports = {
         <component v-for="(comp, index) in root" :is="comp.type" :node="comp" :key="index"/>
       </div>
     </div>
+    <tm-menus ref="menus" :keys="menuKeys" :data="menuData" :lists="[{
+      name: 'recent',
+      data: recent,
+      switch: 'switchDoc',
+      close: ''
+    }]"/>
   </div>`)
 }

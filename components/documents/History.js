@@ -1,8 +1,9 @@
 module.exports = class TmHistory {
-  constructor(onStateChange) {
+  constructor(onStateChange, toRoutePath) {
     this._states = []
     this._pointer = -1
     this.onStateChange = onStateChange || (() => {})
+    this.toRoutePath = toRoutePath || (() => {})
   }
 
   get length() {
@@ -41,5 +42,15 @@ module.exports = class TmHistory {
   replaceState(state) {
     this._states.splice(this._pointer, this.length - this._pointer, state)
     this.go()
+  }
+
+  recent(amount = Infinity) {
+    return this._states.slice(-amount).map(state => {
+      const anchor = state.anchor ? '#' + state.anchor : ''
+      return {
+        title: this.toRoutePath(state.path) + anchor,
+        id: state.path + anchor
+      }
+    })
   }
 }

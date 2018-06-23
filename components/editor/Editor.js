@@ -20,7 +20,7 @@ module.exports = {
 
   components: {
     draggable,
-    TmMenu: TmCommand.vue
+    TmMenus: TmCommand.TmMenus
   },
   provide() {
     return {
@@ -171,9 +171,6 @@ module.exports = {
     },
     executeTrigger(id) {
       this.editor.trigger(id, id)
-    },
-    executeMethod(method, ...args) {
-      if (method in this) this[method](...args)
     },
     showEditor() {
       const editor = window.monaco.editor.create(this.$refs.content, {
@@ -368,19 +365,12 @@ module.exports = {
       <button @click="toggleExtension()"><i class="icon-control"/></button>
     </div>
   </div>
-  <div class="tm-menus" ref="menus">
-    <transition name="el-zoom-in-top" v-for="key in menuKeys" :key="key">
-      <ul v-show="menuData[key].show" class="tm-menu">
-        <tm-menu :data="menuData[key].content" :embed="menuData[key].embed" :move="menubarMove"
-          :lists="[{
-            name: 'tabs',
-            data: tabs,
-            current: current.id,
-            switch: 'switchTabById',
-            close: 'closeTab'
-          }]"/>
-      </ul>
-    </transition>
-  </div>
+  <tm-menus ref="menus" :keys="menuKeys" :data="menuData" :lists="[{
+    name: 'tabs',
+    data: tabs,
+    current: current.id,
+    switch: 'switchTabById',
+    close: 'closeTab'
+  }]"/>
 </div>`)
 }
