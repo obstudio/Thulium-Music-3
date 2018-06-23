@@ -8,12 +8,13 @@ function toKebab(camel) {
   return camel.replace(/[A-Z]/g, char => '-' + char.toLowerCase())
 }
 
-module.exports = function(data) {
-  if (!data.commands) data.commands = []
-  const keymap = data.keymap ? data.keymap : {}
-  const menus = data.menus ? data.menus : {}
+module.exports = function(context) {
+  const commandData = require(`./${context}/command.json`) || []
+  const keymap = require(`./${context}/keymap.json`) || {}
+  const menus = require(`./${context}/menu.json`) || {}
+
   const commands = {}
-  for (const command of data.commands) {
+  for (const command of commandData) {
     const key = command.key ? command.key : toKebab(command.method)
     if (command.caption && !(command.caption instanceof Array)) {
       command.caption = [command.caption]
@@ -141,9 +142,9 @@ module.exports = function(data) {
             for (pointer = 0; pointer < commands[key].caption.length; pointer++) {
               if (this.getValue(commands[key].caption[pointer])) break
             }
-            return this.$t(`${data.context}.menu.${key}.${pointer}`)
+            return this.$t(`${context}.menu.${key}.${pointer}`)
           } else {
-            return this.$t(`${data.context}.menu.${key}`)
+            return this.$t(`${context}.menu.${key}`)
           }
         },
         getContext(key) {

@@ -58,7 +58,7 @@ const router = new Router({
     {
       path: '/docs',
       name: 'TmDocument',
-      component: require('./components/document/document')
+      component: require('./components/documents/documents')
     },
     {
       path: '/settings',

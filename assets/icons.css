@@ -15,25 +15,27 @@
   -webkit-font-smoothing: antialiased;
 }
 
-.icon-user:before { content: "\e900" }
-.icon-menu:before { content: "\e901" }
-.icon-play:before { content: "\e902" }
-.icon-circle:before { content: "\e903" }
+.icon-history:before { content: "\e900" }
+.icon-player:before { content: "\e901" }
+.icon-user:before { content: "\e902" }
+.icon-menu:before { content: "\e903" }
+.icon-play:before { content: "\e904" }
+.icon-circle:before { content: "\e905" }
 .icon-circle:hover::before { content: "\ea0f" }
-.icon-home:before { content: "\e904" }
-.icon-window-close:before { content: "\e905" }
-.icon-window-maximize:before { content: "\e906" }
-.icon-window-minimize:before { content: "\e907" }
-.icon-stop:before { content: "\e908" }
-.icon-pause:before { content: "\e909" }
-.icon-editor:before { content: "\e90a" }
-.icon-volume-medium:before { content: "\e90b" }
-.icon-volume-high:before { content: "\e90c" }
-.icon-volume-low:before { content: "\e90d" }
-.icon-volume-mute:before { content: "\e90e" }
-.icon-up:before { content: "\e90f" }
-.icon-down:before { content: "\e910" }
-.icon-window-restore:before { content: "\e911" }
+.icon-home:before { content: "\e906" }
+.icon-window-close:before { content: "\e907" }
+.icon-window-maximize:before { content: "\e908" }
+.icon-window-minimize:before { content: "\e909" }
+.icon-stop:before { content: "\e90a" }
+.icon-pause:before { content: "\e90b" }
+.icon-editor:before { content: "\e90c" }
+.icon-volume-medium:before { content: "\e90d" }
+.icon-volume-high:before { content: "\e90e" }
+.icon-volume-low:before { content: "\e90f" }
+.icon-volume-mute:before { content: "\e910" }
+.icon-up:before { content: "\e911" }
+.icon-down:before { content: "\e912" }
+.icon-window-restore:before { content: "\e913" }
 .icon-document:before { content: "\e926" }
 .icon-control:before { content: "\e992" }
 .icon-settings:before { content: "\e994" }
@@ -44,3 +46,5 @@
 .icon-arrow-left:before { content: "\ea40" }
 .icon-search:before { content: "\e986" }
 .icon-favorite:before { content: "\e9da" }
+.icon-arrow-up:before { content: "\ea3a" }
+.icon-arrow-down:before { content: "\ea3e" }

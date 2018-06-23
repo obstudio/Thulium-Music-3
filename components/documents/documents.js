@@ -2,6 +2,7 @@ const Vue = require('vue')
 const Vuex = require('vuex')
 const open = require('opn')
 const SmoothScroll = require('../SmoothScroll')
+const TmCommand = require('../command')('documents')
 const index = require('../../documents/index.json')
 const TmHistory = require('./History')
 const dictionary = {}
@@ -89,6 +90,15 @@ module.exports = {
     },
     activeIndex() {
       return this.state.anchor ? `${this.state.path}#${this.state.anchor}` : this.state.path
+    },
+    recent() {
+      return this.history._states.slice(-10).map(state => {
+        const index = state.path + (state.anchor ? '#' + state.anchor : '')
+        return {
+          title: index,
+          id: index
+        }
+      })
     }
   },
   props: {

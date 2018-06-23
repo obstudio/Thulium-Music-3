@@ -9,12 +9,7 @@ const extensions = require('../../extensions/extension')
 const { registerPlayCommand } = require('../../library/editor/Editor')
 
 const storage = require('./storage')
-const TmCommand = require('../command')({
-  context: 'editor',
-  commands: require('./command.json'),
-  keymap: require('./keymap.json'),
-  menus: require('./menu.json')
-})
+const TmCommand = require('../command')('editor')
 
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
