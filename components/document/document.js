@@ -109,16 +109,17 @@ module.exports = {
   },
   created() {
     window.monaco.editor.setTheme(global.user.state.Settings.theme)
-    const onStateChange = state => {
+    const onStateChange = async (state) => {
       this.state = state
-      this.setContent()
-      this.$store.state.path = state.path
-      const nodes = this.$refs.doc.getElementsByTagName('h2')
-      this.$store.state.anchors = Array.prototype.map.call(nodes, node => node.textContent)
+      await this.setContent()
+      this.$nextTick(() => {
+        this.$store.state.path = state.path
+        const nodes = this.$refs.doc.getElementsByTagName('h2')
+        this.$store.state.anchors = Array.prototype.map.call(nodes, node => node.textContent)
+      })
     }
     this.history = new History(onStateChange)
     this.history.pushState(this.state)
-    this.setContent()
   },
   mounted() {
     this.docScroll = SmoothScroll(this.$refs.doc, 100, 10)
@@ -126,7 +127,7 @@ module.exports = {
   },
   methods: {
     setContent() {
-      (async () => {
+      return (async () => {
         try {
           const doc = await fetch(`./documents${this.state.path}.tmd`)
           const text = await doc.text()
@@ -138,7 +139,11 @@ module.exports = {
         global.user.state.Prefix.documents = this.root[0].text + ' - '
         const scroll = this.$refs.doc.scrollTop
         this.$nextTick(() => {
-          this.docScroll(this.state.scroll - scroll)
+          if (this.state.anchor) {
+            this.switchToAnchor(this.state.anchor)
+          } else {
+            this.docScroll(this.state.scroll - scroll)
+          }
         })
       })()
     },
@@ -155,7 +160,6 @@ module.exports = {
         scroll: 0
       }
       this.history.pushState(state)
-      this.switchToAnchor(state.anchor)
     },
     back() {
       this.saveScrollInfo()
