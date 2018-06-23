@@ -126,7 +126,7 @@
 
 .tm-doc blockquote > :first-child { margin-top: 0 }
 .tm-doc blockquote > :last-child { margin-bottom: 0 }
-.tm-doc blockquote code { background-color: inherit }
+.tm-doc blockquote code { background-color: inherit !important }
 
 .tm-doc .usage blockquote {
     border: 1px solid !important;

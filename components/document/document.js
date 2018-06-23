@@ -1,5 +1,6 @@
 const Vue = require('vue')
 const Vuex = require('vuex')
+const open = require('opn')
 const SmoothScroll = require('../SmoothScroll')
 const index = require('../../documents/index.json')
 const History = require('./History')
@@ -155,7 +156,7 @@ module.exports = {
             last += part
             arr.push(last)
           }
-          this.openedMenu = arr
+          arr.forEach(item => this.$refs.elMenu.open(item))
         })
       })()
     },
@@ -184,7 +185,9 @@ module.exports = {
     navigate(event) {
       let url = event.srcElement.dataset.rawUrl
       if (!url) return
-      if (url.startsWith('#')) {
+      if (url.startsWith('$issue#')) {
+        open('https://github.com/obstudio/Thulium-Music-3/issues/' + url.slice(7))
+      } else if (url.startsWith('#')) {
         this.switchDoc(this.state.path + url)
       } else {
         const docParts = this.state.path.split('/')
@@ -257,12 +260,11 @@ module.exports = {
         left: catalog ? '0px' : - catalogWidth + 'px',
         width: catalogWidth + 'px'
       }" ref="menu" @mousewheel.prevent.stop="menuScroll($event.deltaY)">
-      <el-menu @select="switchDoc" :unique-opened="true"
+      <el-menu @select="switchDoc" :unique-opened="true" ref="elMenu"
         :background-color="styles.documents.navBackground"
         :text-color="styles.documents.navForeground"
         :active-text-color="styles.documents.navActive"
-        :default-active="activeIndex"
-        :default-openeds="openedMenu">
+        :default-active="activeIndex">
         <tm-doc-variant v-for="item in items" :item="item" base=""/>
       </el-menu>
     </div>
