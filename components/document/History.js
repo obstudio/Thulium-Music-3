@@ -1,4 +1,4 @@
-module.exports = class History {
+module.exports = class TmHistory {
   constructor(onStateChange) {
     this._states = []
     this._pointer = -1

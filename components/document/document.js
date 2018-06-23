@@ -3,7 +3,7 @@ const Vuex = require('vuex')
 const open = require('opn')
 const SmoothScroll = require('../SmoothScroll')
 const index = require('../../documents/index.json')
-const History = require('./History')
+const TmHistory = require('./History')
 const dictionary = {}
 const defaultDoc = {}
 
@@ -22,16 +22,10 @@ function walk(index, base = '') {
 
 walk(index)
 
-Vue.component('Code', require('./Code'))
-Vue.component('List', require('./List'))
-Vue.component('Split', require('./Split'))
-Vue.component('Table', require('./Table'))
-Vue.component('Textblock', require('./Textblock'))
-Vue.component('Paragraph', require('./Paragraph'))
-Vue.component('Heading', require('./Heading'))
-Vue.component('Section', require('./Section'))
-Vue.component('Blockquote', require('./Blockquote'))
-Vue.component('Usage', require('./Usage'))
+Array.prototype.forEach.call([
+  'Code', 'List', 'Split', 'Table', 'Textblock',
+  'Paragraph', 'Heading', 'Section', 'Blockquote', 'Usage'
+], name => Vue.component(name, require('./components/' + name)))
 
 module.exports = {
   name: 'TmDoc',
@@ -123,7 +117,7 @@ module.exports = {
         this.$store.state.anchors = Array.prototype.map.call(nodes, node => node.textContent)
       })
     }
-    this.history = new History(onStateChange)
+    this.history = new TmHistory(onStateChange)
     this.history.pushState(this.state)
   },
   mounted() {
