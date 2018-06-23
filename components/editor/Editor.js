@@ -1,15 +1,19 @@
-const {registerPlayCommand} = require('../../library/editor/Editor')
 // annoying bypass
 const tempAmd = global.define.amd
 global.define.amd = null
 const draggable = require('vuedraggable')
 global.define.amd = tempAmd
 
-const extensions = require('../../extensions/extension')
-const TmCommand = require('./command')
-const TmMenu = require('./menu')
-const storage = require('./storage')
 const SmoothScroll = require('../SmoothScroll')
+const extensions = require('../../extensions/extension')
+const { registerPlayCommand } = require('../../library/editor/Editor')
+
+const storage = require('./storage')
+const TmCommand = require('../command')({
+  commands: require('./command.json'),
+  keymap: require('./keymap.json'),
+  menus: require('./menu.json')
+})
 
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
@@ -19,7 +23,8 @@ module.exports = {
   name: 'TmEditor',
 
   components: {
-    draggable
+    draggable,
+    TmMenu: TmCommand.vue
   },
   provide() {
     return {
@@ -54,8 +59,8 @@ module.exports = {
     const menuState = {
       menubarMove: 0,
       menubarActive: false,
-      menuData: TmMenu.menuData,
-      menuKeys: TmMenu.menuKeys,
+      menuData: TmCommand.menuData,
+      menuKeys: TmCommand.menuKeys,
       altKey: false,
       contextId: null
     }
@@ -111,7 +116,6 @@ module.exports = {
   mounted() {
     // properties added in mounted hook to prevent unnecessary reactivity
     TmCommand.onMount.call(this)
-    TmMenu.onMount.call(this)
 
     this.player = undefined
     this.tabs.forEach(tab => {
@@ -139,6 +143,7 @@ module.exports = {
   methods: {
     // commands
     ...require('./method'),
+    ...TmCommand.methods,
     activate() {
       this.editor.setModel(this.current.model)
       if (this.current.viewState) this.editor.restoreViewState(this.current.viewState)
@@ -297,8 +302,7 @@ module.exports = {
       } else {
         return ext.i18n.default
       }
-    },
-    ...TmMenu.methods
+    }
   },
 
   props: ['width', 'height', 'left', 'top'],
