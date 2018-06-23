@@ -78,6 +78,7 @@ module.exports = {
         anchor: null,
         scroll: 0
       },
+      openedMenu: [],
       root: [],
       catalog: false,
       search: false
@@ -90,6 +91,9 @@ module.exports = {
     },
     contentWidth() {
       return this.width - (this.catalog ? this.catalogWidth : 0)
+    },
+    activeIndex() {
+      return this.state.anchor ? `${this.state.path}#${this.state.anchor}` : this.state.path
     }
   },
   props: {
@@ -144,6 +148,14 @@ module.exports = {
           } else {
             this.docScroll(this.state.scroll - scroll)
           }
+          const parts = this.state.path.match(/\/[^/]+/g)
+          let last = ''
+          const arr = []
+          for (const part of parts) {
+            last += part
+            arr.push(last)
+          }
+          this.openedMenu = arr
         })
       })()
     },
@@ -249,7 +261,8 @@ module.exports = {
         :background-color="styles.documents.navBackground"
         :text-color="styles.documents.navForeground"
         :active-text-color="styles.documents.navActive"
-        :default-active="state.path">
+        :default-active="activeIndex"
+        :default-openeds="openedMenu">
         <tm-doc-variant v-for="item in items" :item="item" base=""/>
       </el-menu>
     </div>
