@@ -139,7 +139,7 @@ module.exports = {
         global.user.state.Prefix.documents = this.root[0].text + ' - '
         const scroll = this.$refs.doc.scrollTop
         this.$nextTick(() => {
-          if (this.state.anchor) {
+          if (typeof this.state.scroll === 'string') {
             this.switchToAnchor(this.state.anchor)
           } else {
             this.docScroll(this.state.scroll - scroll)
@@ -157,7 +157,7 @@ module.exports = {
       const state = {
         path: defaultDoc[index] || index,
         anchor: anchor ? anchor[1] : null,
-        scroll: 0
+        scroll: anchor ? anchor[1] : 0
       }
       this.history.pushState(state)
     },
