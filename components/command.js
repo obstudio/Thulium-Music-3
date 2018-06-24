@@ -146,6 +146,29 @@ module.exports = function(context) {
       components: {
         TmMenu: {
           name: 'TmMenu',
+          components: {
+            TmMenuList: {
+              name: 'TmMenuList',
+              props: {
+                list: {
+                  type: Object,
+                  required: true
+                }
+              },    
+              inject: ['execute'],
+              render: VueCompile(`<transition-group name="tm-menu-list">
+                <li v-for="(item, index) in list.data" :key="index">
+                  <div class="menu-item" @click="execute(list.switch, item.id)">
+                    <a class="label" :class="{ active: item.id === list.current }">{{ item.title }}</a>
+                    <span class="binding">
+                      <i v-if="item.changed" class="icon-circle" @click.stop="execute(list.close, item.id)"/>
+                      <i v-else class="icon-close" @click.stop="execute(list.close, item.id)"/>
+                    </span>
+                  </div>
+                </li>
+              </transition-group>`)
+            }
+          },
           methods: {
             getBinding(key) {
               let binding = keymap[key]
@@ -219,17 +242,7 @@ module.exports = function(context) {
               <div v-else-if="item === '@separator'" class="menu-item disabled" @click.stop>
                 <a class="separator"/>
               </div>
-              <div v-else-if="getList(item)">
-                <li v-for="(li, index) in getList(item).data" :key="index">
-                  <div class="menu-item" @click="execute(getList(item).switch, li.id)">
-                    <a class="label" :class="{ active: li.id === getList(item).current }">{{ li.title }}</a>
-                    <span class="binding">
-                      <i v-if="li.changed" class="icon-circle" @click.stop="execute(getList(item).close, li.id)"/>
-                      <i v-else class="icon-close" @click.stop="execute(getList(item).close, li.id)"/>
-                    </span>
-                  </div>
-                </li>
-              </div>
+              <tm-menu-list v-else-if="getList(item)" :list="getList(item)"/>
               <div v-else-if="getContext(item)" class="menu-item disabled" @click.stop>
                 <a class="label">{{ getCaption(item) }}</a>
                 <span class="binding">{{ getBinding(item) }}</span>

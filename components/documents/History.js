@@ -37,9 +37,9 @@ function getPath(route) {
 }
 
 class TmHistory {
-  constructor(onStateChange = () => {}) {
-    this._states = []
-    this._pointer = -1
+  constructor(states = [], onStateChange = () => {}) {
+    this._states = states
+    this._pointer = states.length - 1
     this.onStateChange = onStateChange
   }
 
@@ -49,6 +49,10 @@ class TmHistory {
 
   get current() {
     return this._states[this._pointer]
+  }
+
+  toJSON() {
+    return this._states
   }
 
   move(delta = 0) {
@@ -73,15 +77,8 @@ class TmHistory {
     this.move()
   }
 
-  getIndex(id) {
-    const state = this._states[id]
-    return state.path + (state.anchor ? '#' + state.anchor : '')
-  }
-
   deleteIndex(id) {
-    console.log(id)
     this._states.splice(id, 1)
-    console.log(this._states)
   }
 
   recent(amount = Infinity) {
@@ -95,6 +92,25 @@ class TmHistory {
       }
     }).reverse()
   }
+
+  static load() {
+    const source = localStorage.getItem('history')
+    try {
+      const data = JSON.parse(source)
+      if (data instanceof Array) {
+        return JSON.parse(source)
+      } else {
+        return []
+      }
+    } catch (err) {
+      console.error('emmmm')
+      return []
+    }
+  }
+  
+  static save() {
+    localStorage.setItem('history', JSON.stringify(this.history))
+  }
 }
 
 TmHistory.index = index
@@ -102,10 +118,11 @@ TmHistory.index = index
 TmHistory.methods = {
   getPath,
   switchTo(id) {
-    this.switchDoc(this.history.getIndex(id))
+    const state = this.history._states[id]
+    this.switchDoc(state.path + (state.anchor ? '#' + state.anchor : ''))
   },
   deleteAt(id) {
-    this.history.deleteIndex(id)
+    this.history._states.splice(id, 1)
   },
   move(delta) {
     this.history.move(delta)

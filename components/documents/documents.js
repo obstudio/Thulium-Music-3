@@ -22,8 +22,6 @@ module.exports = {
     TmMenus: TmCommand.TmMenus,
     TmDocVariant: {
       name: 'TmDocVariant',
-      props: ['item', 'base'],
-      inject: ['switchDoc'],
       computed: {
         index() {
           return this.base + '/' + 
@@ -33,6 +31,8 @@ module.exports = {
           return this.$store.state.path
         }
       },
+      props: ['item', 'base'],
+      inject: ['switchDoc'],
       render: VueCompile(`
       <el-submenu v-if="!(item instanceof Array)" :index="index">
         <template slot="title">{{ item.name[1] }}</template>
@@ -87,7 +87,7 @@ module.exports = {
   },
   created() {
     window.monaco.editor.setTheme(global.user.state.Settings.theme)
-    this.history = new TmHistory(async (state) => {
+    this.history = new TmHistory(TmHistory.load(), async (state) => {
       this.state = state
       await this.setContent()
       this.$nextTick(() => {
@@ -106,6 +106,9 @@ module.exports = {
     })
     this.menuScroll = SmoothScroll(this.$refs.menu, {}, (menu) => {
       this.menuScrolled = menu.scrollTop > 0
+    })
+    addEventListener('beforeunload', () => {
+      TmHistory.save.call(this)
     })
   },
   methods: {
