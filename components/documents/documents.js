@@ -23,10 +23,10 @@ function walk(index, base = '') {
 
 walk(index)
 
-Array.prototype.forEach.call([
+;[
   'Code', 'List', 'Split', 'Table', 'Textblock',
   'Paragraph', 'Heading', 'Section', 'Blockquote', 'Usage'
-], name => Vue.component(name, require('./components/' + name)))
+].forEach(name => Vue.component(name, require('./components/' + name)))
 
 module.exports = {
   name: 'TmDoc',
@@ -99,9 +99,6 @@ module.exports = {
     },
     activeIndex() {
       return this.state.anchor ? `${this.state.path}#${this.state.anchor}` : this.state.path
-    },
-    recent() {
-      return this.history.recent(10)
     }
   },
   created() {
@@ -115,7 +112,11 @@ module.exports = {
         this.$store.state.anchors = Array.prototype.map.call(nodes, node => node.textContent)
       })
     }
-    this.history = new TmHistory(onStateChange)
+    const toRoutePath = (route) => {
+      console.log(this.getPath(route))
+      return this.getPath(route).map(node => node.title).join(' / ')
+    }
+    this.history = new TmHistory(onStateChange, toRoutePath)
     this.history.pushState(this.state)
   },
   mounted() {
@@ -218,6 +219,9 @@ module.exports = {
         title: dictionary[route]
       })
       return result
+    },
+    getRecent() {
+      return this.history ? this.history.recent(10) : []
     }
   },
   props: ['width', 'height', 'left', 'top'],
@@ -283,7 +287,7 @@ module.exports = {
     </div>
     <tm-menus ref="menus" :keys="menuKeys" :data="menuData" :lists="[{
       name: 'recent',
-      data: recent,
+      data: getRecent(),
       switch: 'switchDoc',
       close: ''
     }]"/>

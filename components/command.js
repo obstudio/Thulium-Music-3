@@ -82,10 +82,10 @@ module.exports = function(context) {
       showContextMenu(key, event) {
         const style = this.menuReference[key].style
         this.hideContextMenus()
-        this.showMenuAtClient(event, style)
+        this.locateMenuAtClient(event, style)
         this.menuData[key].show = true
       },
-      showMenuAtClient(event, style) {
+      locateMenuAtClient(event, style) {
         if (event.clientX + 200 > this.width) {
           style.left = event.clientX - 200 - this.left + 'px'
         } else {
@@ -107,7 +107,7 @@ module.exports = function(context) {
       showButtonMenu(key, event) {
         const style = this.menuReference[key].style
         this.hideContextMenus()
-        this.showMenuAtButton(event, style)
+        this.locateMenuAtButton(event, style)
         this.menuData[key].show = true
       },
       showMenu(index, event) {
@@ -125,19 +125,19 @@ module.exports = function(context) {
           this.menubarMove = index - last
         }
         this.hideContextMenus()
-        this.showMenuAtButton(event, style)
+        this.locateMenuAtButton(event, style)
         this.menubarActive = true
         this.menuData.menubar.show = true
         this.menuData.menubar.embed.splice(index, 1, true)
       },
-      showMenuAtButton(event, style) {
-        console.log(event.currentTarget.offsetLeft,event.currentTarget.offsetWidth)
-        if (event.currentTarget.offsetLeft + 200 > this.width) {
-          style.left = event.currentTarget.offsetLeft + event.currentTarget.offsetWidth - 200 + 'px'
+      locateMenuAtButton(event, style) {
+        const rect = event.currentTarget.getBoundingClientRect()
+        if (rect.left + 200 > this.width) {
+          style.left = rect.left + rect.width - 200 - this.left + 'px'
         } else {
-          style.left = event.currentTarget.offsetLeft + 'px'
+          style.left = rect.left - this.left + 'px'
         }
-        style.top = event.currentTarget.offsetTop + event.currentTarget.offsetHeight + 'px'
+        style.top = rect.top + rect.height - this.top + 'px'
       }
     },
 
@@ -220,7 +220,7 @@ module.exports = function(context) {
                 <a class="separator"/>
               </div>
               <div v-else-if="getList(item)">
-                <li v-for="li in getList(item).data" :key="li.id">
+                <li v-for="(li, index) in getList(item).data" :key="index">
                   <div class="menu-item" @click="execute(getList(item).switch, li.id)">
                     <a class="label" :class="{ active: li.id === getList(item).current }">{{ li.title }}</a>
                     <span class="binding">

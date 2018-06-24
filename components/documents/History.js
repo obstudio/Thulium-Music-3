@@ -45,11 +45,10 @@ module.exports = class TmHistory {
   }
 
   recent(amount = Infinity) {
-    return this._states.slice(-amount).map(state => {
-      const anchor = state.anchor ? '#' + state.anchor : ''
+    return this._states.slice(-amount).reverse().map(state => {
       return {
-        title: this.toRoutePath(state.path) + anchor,
-        id: state.path + anchor
+        title: this.toRoutePath(state.path) + (state.anchor ? ' # ' + state.anchor : ''),
+        id: state.path + (state.anchor ? '#' + state.anchor : '')
       }
     })
   }
