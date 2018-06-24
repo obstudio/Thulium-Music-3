@@ -281,26 +281,19 @@
 }
 
 .tm-doc table {
-  border-spacing: 0;
-  border-collapse: collapse;
-  margin-top: 0;
-  margin-bottom: 16px;
-  display: block;
-  width: 100%;
-  overflow: auto;
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+    margin-bottom: 16px;
+    display: block;
+    overflow: auto;
 }
 
-.tm-doc table th {
-  font-weight: 600;
-}
-
-.tm-doc table th, .tm-doc table td {
-  padding: 6px 13px;
-}
-
-.tm-doc td, th {
-  padding: 0;
-}
+.tm-doc table th { font-weight: 600 }
+.tm-doc table th, .tm-doc table td { padding: 6px 13px }
 
 .tm-doc a {
   text-decoration: none;
