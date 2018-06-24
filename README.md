@@ -1,4 +1,4 @@
-# Thulium Music 3
+# Thulium Music 3 [![Build Status](https://travis-ci.org/obstudio/Thulium-Music-3.svg?branch=master)](https://travis-ci.org/obstudio/Thulium-Music-3)
 
 ![screenshot](https://github.com/obstudio/Thulium-Music-3/blob/editor/assets/screenshot.png)
 
