@@ -3,25 +3,7 @@ const Vuex = require('vuex')
 const open = require('opn')
 const SmoothScroll = require('../SmoothScroll')
 const TmCommand = require('../command')('documents')
-const index = require('../../documents/index.json')
 const TmHistory = require('./History')
-const dictionary = {}
-const defaultDoc = {}
-
-function walk(index, base = '') {
-  for (const item of index) {
-    if (item instanceof Array) {
-      dictionary[base + '/' + item[0]] = item[1]
-    } else {
-      const path = base + '/' + item.name[0]
-      walk(item.content, path)
-      dictionary[path] = item.name[1]
-      defaultDoc[path] = path + '/' + item.default
-    }
-  }
-}
-
-walk(index)
 
 ;[
   'Code', 'List', 'Split', 'Table', 'Textblock',
@@ -75,7 +57,7 @@ module.exports = {
   }),
   data() {
     return {
-      items: index,
+      items: TmHistory.index,
       state: {
         path: '/overview',
         anchor: null,
@@ -86,7 +68,9 @@ module.exports = {
       menuKeys: TmCommand.menuKeys,
       root: [],
       catalog: false,
-      search: false
+      search: false,
+      docScrolled: false,
+      menuScrolled: false
     }
   },
   computed: {
@@ -103,7 +87,7 @@ module.exports = {
   },
   created() {
     window.monaco.editor.setTheme(global.user.state.Settings.theme)
-    const onStateChange = async (state) => {
+    this.history = new TmHistory(async (state) => {
       this.state = state
       await this.setContent()
       this.$nextTick(() => {
@@ -111,21 +95,22 @@ module.exports = {
         const nodes = this.$refs.doc.getElementsByTagName('h2')
         this.$store.state.anchors = Array.prototype.map.call(nodes, node => node.textContent)
       })
-    }
-    const toRoutePath = (route) => {
-      console.log(this.getPath(route))
-      return this.getPath(route).map(node => node.title).join(' / ')
-    }
-    this.history = new TmHistory(onStateChange, toRoutePath)
+      this.history.current.scroll = this.$refs.doc.scrollTop  // save scroll info, better way?
+    })
     this.history.pushState(this.state)
   },
   mounted() {
     TmCommand.onMount.call(this)
-    this.docScroll = SmoothScroll(this.$refs.doc, 100, 10)
-    this.menuScroll = SmoothScroll(this.$refs.menu, 100, 10)
+    this.docScroll = SmoothScroll(this.$refs.doc, {}, (doc) => {
+      this.docScrolled = doc.scrollTop > 0
+    })
+    this.menuScroll = SmoothScroll(this.$refs.menu, {}, (menu) => {
+      this.menuScrolled = menu.scrollTop > 0
+    })
   },
   methods: {
     ...TmCommand.methods,
+    ...TmHistory.methods,
     setContent() {
       return (async () => {
         try {
@@ -133,7 +118,7 @@ module.exports = {
           const text = await doc.text()
           this.root = this.$markdown(text)
         } catch (e) {
-          this.history.back()
+          this.history.move(-1)
           return
         }
         global.user.state.Prefix.documents = this.root[0].text + ' - '
@@ -154,28 +139,6 @@ module.exports = {
           arr.forEach(item => this.$refs.elMenu.open(item))
         })
       })()
-    },
-    saveScrollInfo() {
-      this.history.current.scroll = this.$refs.doc.scrollTop  // save scroll info, better way?
-    },
-    switchDoc(index) {
-      this.saveScrollInfo()
-      const anchor = index.match(/#(.+)$/)
-      if (anchor) index = index.slice(0, anchor.index)
-      const state = {
-        path: defaultDoc[index] || index,
-        anchor: anchor ? anchor[1] : null,
-        scroll: anchor ? anchor[1] : 0
-      }
-      this.history.pushState(state)
-    },
-    back() {
-      this.saveScrollInfo()
-      this.history.back()
-    },
-    forward() {
-      this.saveScrollInfo()
-      this.history.forward()
     },
     navigate(event) {
       let url = event.srcElement.dataset.rawUrl
@@ -202,26 +165,6 @@ module.exports = {
       if (result) {
         this.docScroll(result.offsetTop - this.$refs.doc.scrollTop)
       }
-    },
-    getPath(route) {
-      const result = []
-      let pointer = 0, index
-      while ((index = route.slice(pointer + 1).search('/')) !== -1) {
-        pointer += index + 1
-        const base = route.slice(0, pointer)
-        result.push({
-          route: base,
-          title: dictionary[base]
-        })
-      }
-      result.push({
-        route: route,
-        title: dictionary[route]
-      })
-      return result
-    },
-    getRecent() {
-      return this.history ? this.history.recent(10) : []
     }
   },
   props: ['width', 'height', 'left', 'top'],
@@ -232,10 +175,10 @@ module.exports = {
         <button @click="catalog = !catalog" :class="{ active: catalog }">
           <i class="icon-menu"/>
         </button>
-        <button @click="back">
+        <button @click="move(-1)">
           <i class="icon-arrow-left"/>
         </button>
-        <button @click="forward">
+        <button @click="move(1)">
           <i class="icon-arrow-right"/>
         </button>
         <ul class="route">
@@ -278,7 +221,7 @@ module.exports = {
       }">
       <div class="tm-doc" ref="doc" @click="navigate"
         @mousewheel.prevent.stop="docScroll($event.deltaY)"
-        :style="{
+        :class="{ scrolled: docScrolled }" :style="{
           'padding-left': Math.max(24, contentWidth / 8) + 'px',
           'padding-right': Math.max(24, contentWidth / 8) + 'px'
         }">
@@ -288,8 +231,8 @@ module.exports = {
     <tm-menus ref="menus" :keys="menuKeys" :data="menuData" :lists="[{
       name: 'recent',
       data: getRecent(),
-      switch: 'switchDoc',
-      close: ''
+      switch: 'switchTo',
+      close: 'deleteAt'
     }]"/>
   </div>`)
 }

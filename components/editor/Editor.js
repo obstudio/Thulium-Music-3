@@ -120,7 +120,7 @@ module.exports = {
       })
       tab.checkChange()
     })
-    this.doScroll = SmoothScroll(this.$refs.tabs.$el, 100, 10, false)
+    this.doScroll = SmoothScroll(this.$refs.tabs.$el, { vertical: false })
 
     this.refreshExtUnderline()
     this.refreshAddTagLeft()

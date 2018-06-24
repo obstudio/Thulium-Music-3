@@ -1,4 +1,9 @@
-module.exports = function SmoothScroll(target, speed, smooth, vertical = true) {
+module.exports = function SmoothScroll(target, {
+  speed = 100,
+  smooth = 10,
+  vertical = true
+} = {}, callback = () => {}) {
+  
   let scrollLength, scrollPosition, clientLength
   if (vertical) {
     scrollLength = 'scrollHeight'
@@ -13,21 +18,21 @@ module.exports = function SmoothScroll(target, speed, smooth, vertical = true) {
   let moving = false
   let pos = target[scrollPosition]
 
-  function scrolled(delta) {
-    pos += delta / 100 * speed
-    pos = Math.max(-10, Math.min(pos, target[scrollLength] - target[clientLength] + 10)) // limit scrolling
-
-    if (!moving) update()
-  }
-
   function update() {
     moving = true
     const delta = (pos - target[scrollPosition]) / smooth
     target[scrollPosition] += delta
-    if (Math.abs(delta) > 0.5)
+    if (Math.abs(delta) > 0.5) {
       requestAnimationFrame(update)
-    else
+    } else {
       moving = false
+    }
+    callback(target)
   }
-  return scrolled
+
+  return function(delta) {
+    pos += delta / 100 * speed
+    pos = Math.max(-10, Math.min(pos, target[scrollLength] - target[clientLength] + 10)) // limit scrolling
+    if (!moving) update()
+  }
 }
