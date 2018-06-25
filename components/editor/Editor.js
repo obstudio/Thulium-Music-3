@@ -314,8 +314,8 @@ module.exports = {
           <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
             <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
             <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
-            <div class="title" @contextmenu.stop="toggleTabMenu(tab.id, $event)">{{ tab.title }}</div>
             <div class="left-border"/>
+            <div class="title" @contextmenu.stop="toggleTabMenu(tab.id, $event)">{{ tab.title }}</div>
             <div class="right-border"/>
           </div>
         </button>
