@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "build-doc": "electron ./build/main.js",
     "pack-win-x64": "electron-packager . \"Thulium Music 3\" --win --arch=x64 --out=./dist --app-version=3.0.0 --overwrite --icon=./assets/icon.ico",
     "pack-win-x86": "electron-packager . \"Thulium Music 3\" --win --arch=ia32 --out=./dist --app-version=3.0.0 --overwrite --icon=./assets/icon.ico"
   },
