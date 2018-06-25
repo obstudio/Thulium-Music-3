@@ -1,6 +1,7 @@
 const Vue = require('vue')
 const ElementUI = require('element-ui/lib')
 const VueCompiler = require('vue-template-compiler/browser')
+const YAML = require('js-yaml')
 const fs = require('fs')
 const {remote} = require('electron')
 global.VueCompile = (template) => {
@@ -8,9 +9,7 @@ global.VueCompile = (template) => {
 }
 
 const Lexer = require('../library/tmdoc/Lexer')
-// const DirTree = require('./DirTree')
-// const DocumentDir = __dirname + '/../documents'
-// fs.writeFileSync('structure.json', JSON.stringify(DirTree(DocumentDir)), 'utf8')
+
 ;[
   'Code', 'List', 'Split', 'Table', 'Textblock',
   'Paragraph', 'Heading', 'Section', 'Blockquote', 'Usage'
@@ -26,26 +25,16 @@ window.monaco = {
     }
   }
 }
-function terminate() {
-  remote.getCurrentWindow().close()
-}
 
 function walk(dirTree) {
   if (dirTree.type === 'file') {
-    const content = fs.readFileSync(__dirname + '/' + dirTree.path, 'utf8')
+    const content = fs.readFileSync(dirTree.path, 'utf8')
     const root = new Lexer().lex(content)
     const vm = new Vue({
-      data() {
-        return {
-          root
-        }
-      },
-      render: VueCompile(`<div>
-      <component v-for="(comp, index) in root" :is="comp.type" :node="comp" :key="index"/>
-    </div>`)
+      data() {return {root}},
+      render: VueCompile(`<div><component v-for="(comp, index) in root" :is="comp.type" :node="comp" :key="index"/></div>`)
     })
     vm.$mount()
-    console.log(vm.$el)
     const titleNode = vm.$el.getElementsByTagName('h1')[0], title = titleNode ? titleNode.textContent : dirTree.name
 
     return {
@@ -58,23 +47,10 @@ function walk(dirTree) {
     return {
       type: 'folder',
       name: dirTree.name,
-      default: 'overview',
+      default: fs.existsSync(__dirname + '/' + dirTree.path + '/overview.tmd') ? 'overview' : null,
       content: dirTree.children.map(walk)
     }
   }
 }
-console.log(walk(require('./structure.json')))
-
-// new Vue({
-//   data() {
-//     return {
-//       root: []
-//     }
-//   },
-//   mounted() {
-//
-//   },
-//   render: VueCompile(`<div>
-//   <component v-for="(comp, index) in root" :is="comp.type" :node="comp" :key="index"/>
-// </div>`)
-// }).mount()
+fs.writeFileSync(__dirname + '/structure.json', JSON.stringify(walk(YAML.safeLoad(fs.readFileSync(__dirname + '/structure.yml')))), 'utf8')
+// remote.getCurrentWindow().close()
