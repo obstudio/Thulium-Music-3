@@ -33,10 +33,18 @@ module.exports = function(context) {
   }
 
   return {
-    menuData,
-    menuKeys,
+    data() {
+      return {
+        menuData,
+        menuKeys,
+        menubarMove: 0,
+        menubarActive: false,
+        altKey: false,
+        contextId: null
+      }
+    },
 
-    onMount() {
+    mounted() {
       for (const key in keymap) {
         if (!(key in commands) || keymap[key].startsWith('!')) continue
         Mousetrap.bind(keymap[key], () => {
@@ -141,143 +149,145 @@ module.exports = function(context) {
       }
     },
 
-    TmMenus: {
-      name: 'TmMenus',
-      components: {
-        TmMenu: {
-          name: 'TmMenu',
-          components: {
-            TmMenuList: {
-              name: 'TmMenuList',
-              props: {
-                list: {
-                  type: Object,
-                  required: true
+    components: {
+      TmMenus: {
+        name: 'TmMenus',
+        components: {
+          TmMenu: {
+            name: 'TmMenu',
+            components: {
+              TmMenuList: {
+                name: 'TmMenuList',
+                props: {
+                  list: {
+                    type: Object,
+                    required: true
+                  }
+                },    
+                inject: ['execute'],
+                render: VueCompile(`<transition-group name="tm-menu-list">
+                  <li v-for="(item, index) in list.data" :key="index">
+                    <div class="menu-item" @click="execute(list.switch, item.id)">
+                      <a class="label" :class="{ active: item.id === list.current }">{{ item.title }}</a>
+                      <span class="binding">
+                        <i v-if="item.changed" class="icon-circle" @click.stop="execute(list.close, item.id)"/>
+                        <i v-else class="icon-close" @click.stop="execute(list.close, item.id)"/>
+                      </span>
+                    </div>
+                  </li>
+                </transition-group>`)
+              }
+            },
+            methods: {
+              getBinding(key) {
+                let binding = keymap[key]
+                if (!binding) return ''
+                if (binding.charAt(0) === '!') binding = binding.slice(1)
+                return binding.replace(/[a-z]+/g, word => {
+                  return word.charAt(0).toUpperCase() + word.slice(1)
+                }).replace(/ /g, ', ')
+              },
+              getCaption(key) {
+                if (commands[key].caption) {
+                  let pointer
+                  for (pointer = 0; pointer < commands[key].caption.length; pointer++) {
+                    if (this.getValue(commands[key].caption[pointer])) break
+                  }
+                  return this.$t(`${context}.menu.${key}.${pointer}`)
+                } else {
+                  return this.$t(`${context}.menu.${key}`)
                 }
-              },    
-              inject: ['execute'],
-              render: VueCompile(`<transition-group name="tm-menu-list">
-                <li v-for="(item, index) in list.data" :key="index">
-                  <div class="menu-item" @click="execute(list.switch, item.id)">
-                    <a class="label" :class="{ active: item.id === list.current }">{{ item.title }}</a>
-                    <span class="binding">
-                      <i v-if="item.changed" class="icon-circle" @click.stop="execute(list.close, item.id)"/>
-                      <i v-else class="icon-close" @click.stop="execute(list.close, item.id)"/>
-                    </span>
-                  </div>
-                </li>
-              </transition-group>`)
-            }
-          },
-          methods: {
-            getBinding(key) {
-              let binding = keymap[key]
-              if (!binding) return ''
-              if (binding.charAt(0) === '!') binding = binding.slice(1)
-              return binding.replace(/[a-z]+/g, word => {
-                return word.charAt(0).toUpperCase() + word.slice(1)
-              }).replace(/ /g, ', ')
-            },
-            getCaption(key) {
-              if (commands[key].caption) {
-                let pointer
-                for (pointer = 0; pointer < commands[key].caption.length; pointer++) {
-                  if (this.getValue(commands[key].caption[pointer])) break
+              },
+              getContext(key) {
+                if (commands[key].enabled) {
+                  return !this.getValue(commands[key].enabled)
+                } else {
+                  return false
                 }
-                return this.$t(`${context}.menu.${key}.${pointer}`)
-              } else {
-                return this.$t(`${context}.menu.${key}`)
+              },
+              getValue(data) {
+                // FIXME: optimize value pattern
+                return this.$parent[data.slice(1)]
+              },
+              getList(name) {
+                if (!name.startsWith('@')) return false
+                return this.lists.find(item => item.name === name.slice(1))
               }
             },
-            getContext(key) {
-              if (commands[key].enabled) {
-                return !this.getValue(commands[key].enabled)
-              } else {
-                return false
+            inject: ['execute'],
+            props: {
+              data: {
+                type: Array,
+                required: true
+              },
+              move: { // no use
+                type: Number,
+                default() {
+                  return 0
+                }
+              },
+              embed: {
+                type: Array,
+                default() {
+                  return []
+                }
+              },
+              lists: {
+                type: Array,
+                default() {
+                  return []
+                }
               }
             },
-            getValue(data) {
-              // FIXME: optimize value pattern
-              return this.$parent[data.slice(1)]
-            },
-            getList(name) {
-              if (!name.startsWith('@')) return false
-              return this.lists.find(item => item.name === name.slice(1))
-            }
-          },
-          inject: ['execute'],
-          props: {
-            data: {
-              type: Array,
-              required: true
-            },
-            move: { // no use
-              type: Number,
-              default() {
-                return 0
-              }
-            },
-            embed: {
-              type: Array,
-              default() {
-                return []
-              }
-            },
-            lists: {
-              type: Array,
-              default() {
-                return []
-              }
-            }
-          },
-          render: VueCompile(`<div class="content">
-            <li v-for="(item, index) in data">
-              <div v-if="item instanceof Object">
-                <!--transition :name="move !== 0 ? 'tm-menu' : ''"
-                  :leave-to-class="'transform-to-' + (move > 0 ? 'left' : move < 0 ? 'right' : 'none')"
-                  :enter-class="'transform-to-' + (move > 0 ? 'right' : move < 0 ? 'left' : 'none')"-->
-                  <tm-menu v-show="embed[index]" :data="item.content" :lists="lists"/>
-                <!--/transition-->
-              </div>
-              <div v-else-if="item === '@separator'" class="menu-item disabled" @click.stop>
-                <a class="separator"/>
-              </div>
-              <tm-menu-list v-else-if="getList(item)" :list="getList(item)"/>
-              <div v-else-if="getContext(item)" class="menu-item disabled" @click.stop>
-                <a class="label">{{ getCaption(item) }}</a>
-                <span class="binding">{{ getBinding(item) }}</span>
-              </div>
-              <div v-else class="menu-item" @click="execute('executeCommand', item)">
-                <a class="label">{{ getCaption(item) }}</a>
-                <span class="binding">{{ getBinding(item) }}</span>
-              </div>
-            </li>
-          </div>`)
-        }
-      },
-      props: {
-        keys: {
-          type: Array,
-          required: true
-        },
-        data: {
-          type: Object,
-          required: true
-        },
-        lists: {
-          type: Array,
-          default() {
-            return []
+            render: VueCompile(`<div class="content">
+              <li v-for="(item, index) in data">
+                <div v-if="item instanceof Object">
+                  <!--transition :name="move !== 0 ? 'tm-menu' : ''"
+                    :leave-to-class="'transform-to-' + (move > 0 ? 'left' : move < 0 ? 'right' : 'none')"
+                    :enter-class="'transform-to-' + (move > 0 ? 'right' : move < 0 ? 'left' : 'none')"-->
+                    <tm-menu v-show="embed[index]" :data="item.content" :lists="lists"/>
+                  <!--/transition-->
+                </div>
+                <div v-else-if="item === '@separator'" class="menu-item disabled" @click.stop>
+                  <a class="separator"/>
+                </div>
+                <tm-menu-list v-else-if="getList(item)" :list="getList(item)"/>
+                <div v-else-if="getContext(item)" class="menu-item disabled" @click.stop>
+                  <a class="label">{{ getCaption(item) }}</a>
+                  <span class="binding">{{ getBinding(item) }}</span>
+                </div>
+                <div v-else class="menu-item" @click="execute('executeCommand', item)">
+                  <a class="label">{{ getCaption(item) }}</a>
+                  <span class="binding">{{ getBinding(item) }}</span>
+                </div>
+              </li>
+            </div>`)
           }
-        }
-      },
-      render: VueCompile(`<div class="tm-menus">
-        <transition name="el-zoom-in-top" v-for="key in keys" :key="key">
-          <ul v-show="data[key].show" class="tm-menu">
-            <tm-menu :data="data[key].content" :embed="data[key].embed" :lists="lists"/>
-          </ul>
-        </transition>
-      </div>`)
+        },
+        props: {
+          keys: {
+            type: Array,
+            required: true
+          },
+          data: {
+            type: Object,
+            required: true
+          },
+          lists: {
+            type: Array,
+            default() {
+              return []
+            }
+          }
+        },
+        render: VueCompile(`<div class="tm-menus">
+          <transition name="el-zoom-in-top" v-for="key in keys" :key="key">
+            <ul v-show="data[key].show" class="tm-menu">
+              <tm-menu :data="data[key].content" :embed="data[key].embed" :lists="lists"/>
+            </ul>
+          </transition>
+        </div>`)
+      }
     }
   }
 }

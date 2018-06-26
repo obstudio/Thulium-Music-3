@@ -2,7 +2,6 @@ const Vue = require('vue')
 const Vuex = require('vuex')
 const open = require('opn')
 const SmoothScroll = require('../SmoothScroll')
-const TmCommand = require('../command')('documents')
 const TmHistory = require('./History')
 
 ;[
@@ -12,14 +11,15 @@ const TmHistory = require('./History')
 
 module.exports = {
   name: 'TmDoc',
+
   provide() {
     return {
       switchDoc: this.switchDoc,
       execute: this.executeMethod
     }
   },
+
   components: {
-    TmMenus: TmCommand.TmMenus,
     TmDocVariant: {
       name: 'TmDocVariant',
       computed: {
@@ -49,12 +49,18 @@ module.exports = {
       </el-menu-item>`)
     }
   },
+
   store: new Vuex.Store({
     state: {
       path: '/overview',
       anchors: []
     }
   }),
+
+  mixins: [
+    require('../command')('documents')
+  ],
+
   data() {
     return {
       items: TmHistory.index,
@@ -64,8 +70,6 @@ module.exports = {
         scroll: 0
       },
       openedMenu: [],
-      menuData: TmCommand.menuData,
-      menuKeys: TmCommand.menuKeys,
       root: [],
       catalog: false,
       search: false,
@@ -73,6 +77,7 @@ module.exports = {
       menuScrolled: false
     }
   },
+
   computed: {
     styles: () => global.user.state.Styles,
     catalogWidth() {
@@ -100,7 +105,6 @@ module.exports = {
     this.history.pushState(this.state)
   },
   mounted() {
-    TmCommand.onMount.call(this)
     this.docScroll = SmoothScroll(this.$refs.doc, {}, (doc) => {
       this.docScrolled = doc.scrollTop > 0
     })
@@ -112,7 +116,6 @@ module.exports = {
     })
   },
   methods: {
-    ...TmCommand.methods,
     ...TmHistory.methods,
     setContent() {
       return (async () => {
