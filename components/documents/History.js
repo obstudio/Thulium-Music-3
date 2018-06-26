@@ -36,110 +36,87 @@ function getPath(route) {
   return result
 }
 
-class TmHistory {
-  constructor(states = [], onStateChange = () => {}) {
-    this._states = states
-    this._pointer = states.length - 1
-    this.onStateChange = onStateChange
-  }
+const defaultState = {
+  path: '/overview',
+  anchor: null,
+  scroll: 0
+}
 
-  get length() {
-    return this._states.length
-  }
-
-  get current() {
-    return this._states[this._pointer]
-  }
-
-  toJSON() {
-    return this._states
-  }
-
-  move(delta = 0) {
-    const nextPointer = delta + this._pointer
-    if (nextPointer >= 0 && nextPointer < this.length) {
-      this.onStateChange(this._states[nextPointer], this._states[this._pointer])
-      this._pointer = nextPointer
-    }
-  }
-
-  pushState(state) {
-    if (this._pointer < this.length - 1) {
-      this._states.splice(this._pointer + 1, this.length - 1 - this._pointer, state)
-    } else {
-      this._states.push(state)
-    }
-    this.move(1)
-  }
-
-  setState(state) {
-    this._states.splice(this._pointer, this.length - this._pointer, state)
-    this.move()
-  }
-
-  deleteIndex(id) {
-    this._states.splice(id, 1)
-  }
-
-  recent(amount = Infinity) {
-    const start = amount > this._states.length ? 0 : this._states.length - amount
-    return this._states.slice(start).map((state, index) => {
-      const path = getPath(state.path).map(node => node.title).join(' / ')
-      const anchor = state.anchor ? ' # ' + state.anchor : ''
-      return {
-        title: path + anchor,
-        id: start + index
-      }
-    }).reverse()
-  }
-
-  static load() {
+module.exports = {
+  data() {
     const source = localStorage.getItem('history')
+    let history = defaultState
     try {
       const data = JSON.parse(source)
-      if (data instanceof Array) {
-        return JSON.parse(source)
-      } else {
-        return []
-      }
+      if (data instanceof Array) history = data
     } catch (err) {
-      console.error('emmmm')
-      return []
+      console.error(err)
+    }
+
+    return {
+      docIndex: index,
+      history: history,
+      currentId: history.length - 1
+    }
+  },
+
+  computed: {
+    current() {
+      return this.history[this.currentId]
+    }
+  },
+
+  mounted() {
+    this.move()
+    addEventListener('beforeunload', () => {
+      localStorage.setItem('history', JSON.stringify(this.history))
+    })
+  },
+
+  methods: {
+    getPath,
+    move(delta = 0) {
+      this.switchTo(this.currentId + delta)
+    },
+    switchDoc(index) {
+      const anchor = index.match(/#(.+)$/)
+      if (anchor) index = index.slice(0, anchor.index)
+      const state = {
+        path: defaultDoc[index] || index,
+        anchor: anchor ? anchor[1] : null,
+        scroll: anchor ? anchor[1] : 0
+      }
+      if (this.current.path === state.path && this.current.anchor === state.anchor) {
+        this.move()
+      } else {
+        this.history.push(state)
+        this.move(1)
+      }
+    },
+    switchTo(id) {
+      if (id >= 0 && id < this.history.length) {
+        this.currentId = id
+        return (async () => await this.setContent())()
+      }
+    },
+    deleteAt(id) {
+      if (this.history.length === 1) {
+        this.history.splice(id, 1, defaultState)
+      } else {
+        this.history.splice(id, 1)
+        if (id === this.currentId) this.currentId -= 1
+      }
+    },
+    getRecent(amount = Infinity) {
+      const start = amount > this.history.length ? 0 : this.history.length - amount
+      return this.history.slice(start).map((state, index) => {
+        const path = getPath(state.path).map(node => node.title).join(' / ')
+        const anchor = state.anchor ? ' # ' + state.anchor : ''
+        return {
+          title: path + anchor,
+          id: start + index
+        }
+      }).reverse()
     }
   }
-  
-  static save() {
-    localStorage.setItem('history', JSON.stringify(this.history))
-  }
 }
-
-TmHistory.index = index
-
-TmHistory.methods = {
-  getPath,
-  switchTo(id) {
-    const state = this.history._states[id]
-    this.switchDoc(state.path + (state.anchor ? '#' + state.anchor : ''))
-  },
-  deleteAt(id) {
-    this.history._states.splice(id, 1)
-  },
-  move(delta) {
-    this.history.move(delta)
-  },
-  switchDoc(index) {
-    const anchor = index.match(/#(.+)$/)
-    if (anchor) index = index.slice(0, anchor.index)
-    const state = {
-      path: defaultDoc[index] || index,
-      anchor: anchor ? anchor[1] : null,
-      scroll: anchor ? anchor[1] : 0
-    }
-    this.history.pushState(state)
-  },
-  getRecent() {
-    return this.history ? this.history.recent(10) : []
-  }
-}
-
-module.exports = TmHistory
