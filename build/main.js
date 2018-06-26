@@ -1,9 +1,11 @@
+console.time('Foo')
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
 const url = require('url')
 const DEBUG = true
 app.on('window-all-closed', function () {
   app.quit()
+  console.timeEnd('Foo')
 })
 
 let window

@@ -64,15 +64,25 @@ function dirTree(filename, structure) {
   return info
 }
 
-function io() {
+function read() {
   let structure
   if (fs.existsSync(StructurePath)) {
     structure = YAML.safeLoad(fs.readFileSync(StructurePath, 'utf8'))
-    fs.renameSync(StructurePath, StructureBackupPath)
+    fs.copyFileSync(StructurePath, StructureBackupPath)
   } else {
     structure = {}
   }
-  fs.writeFileSync(StructurePath, YAML.safeDump(dirTree(DocumentDir, structure)), 'utf8')
+  return structure
 }
 
-io()
+function write(result) {
+  fs.writeFileSync(StructurePath, YAML.safeDump(result), 'utf8')
+}
+write(dirTree(DocumentDir, read()))
+
+module.exports = {
+  dirTree,
+  read,
+  write,
+  StructurePath
+}

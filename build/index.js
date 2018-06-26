@@ -1,14 +1,25 @@
 const Vue = require('vue')
 const ElementUI = require('element-ui/lib')
 const VueCompiler = require('vue-template-compiler/browser')
-const YAML = require('js-yaml')
+// const YAML = require('js-yaml')
 const fs = require('fs')
-const {remote} = require('electron')
+// const {remote} = require('electron')
 global.VueCompile = (template) => {
   return VueCompiler.compileToFunctions(template).render
 }
 
 const Lexer = require('../library/tmdoc/Lexer')
+
+const {dirTree, read, write, StructurePath} = require('./DirTree')
+let structure = read()
+fs.watch('documents', {recursive: true}, () => {
+  console.log(performance.now())
+  write(structure = dirTree('documents', structure))
+})
+fs.watch(StructurePath, () => {
+  console.log(performance.now())
+  generate(structure)
+})
 
 ;[
   'Code', 'List', 'Split', 'Table', 'Textblock',
@@ -52,5 +63,9 @@ function walk(dirTree) {
     }
   }
 }
-fs.writeFileSync(__dirname + '/structure.json', JSON.stringify(walk(YAML.safeLoad(fs.readFileSync(__dirname + '/structure.yml')))), 'utf8')
-// remote.getCurrentWindow().close()
+
+function generate() {
+  fs.writeFileSync(__dirname + '/structure.json', JSON.stringify(walk(structure)), 'utf8')
+}
+
+generate()
