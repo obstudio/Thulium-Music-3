@@ -13,11 +13,9 @@ const Lexer = require('../library/tmdoc/Lexer')
 const {dirTree, read, write, StructurePath} = require('./DirTree')
 let structure = read()
 fs.watch('documents', {recursive: true}, () => {
-  console.log(performance.now())
   write(structure = dirTree('documents', structure))
 })
 fs.watch(StructurePath, () => {
-  console.log(performance.now())
   generate(structure)
 })
 
