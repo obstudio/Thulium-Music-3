@@ -84,6 +84,7 @@ module.exports = {
         }
         global.user.state.Prefix.documents = this.root[0].text + ' - '
         const scroll = this.$refs.doc.scrollTop
+        this.h2nodes = Array.from(this.$refs.doc.getElementsByTagName('h2'))
         this.$nextTick(() => {
           if (typeof this.current.scroll === 'string') {
             this.switchToAnchor(this.current.anchor)
@@ -122,8 +123,7 @@ module.exports = {
       } else {
         this.current.anchor = text
       }
-      const nodes = this.$refs.doc.getElementsByTagName('h2')
-      const result = Array.prototype.find.call(nodes, (node) => node.textContent === text)
+      const result = this.h2nodes.find(node => node.textContent === text)
       if (result) {
         this.docScroll(result.offsetTop - this.$refs.doc.scrollTop)
       }

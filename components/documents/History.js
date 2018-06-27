@@ -1,40 +1,60 @@
-const index = require('../../documents/index.json')
+const fs = require('fs')
+const yaml = require('js-yaml')
 
-const dictionary = {}
-const defaultDoc = {}
-
-function walk(index, base = '') {
-  for (const item of index) {
-    if (item instanceof Array) {
-      dictionary[base + '/' + item[0]] = item[1]
+class TmDocTree {
+  constructor() {
+    this.source = yaml.safeLoad(fs.readFileSync(TmDocTree.sourcePath, { encoding: 'utf8' }))
+    if (fs.existsSync(TmDocTree.indexPath)) {
+      this.index = require(TmDocTree.indexPath)
     } else {
-      const path = base + '/' + item.name[0]
-      walk(item.content, path)
-      dictionary[path] = item.name[1]
-      defaultDoc[path] = path + '/' + item.default
+      this.index = this.source
+      fs.writeFileSync(TmDocTree.indexPath, JSON.stringify(this.index), { encoding: 'utf8' })
     }
+
+    const dictionary = {}
+    const defaultDoc = {}
+    function walk(index, base = '') {
+      for (const item of index) {
+        if (item instanceof Array) {
+          dictionary[base + '/' + item[0]] = item[1]
+        } else {
+          const path = base + '/' + item.name[0]
+          walk(item.content, path)
+          dictionary[path] = item.name[1]
+          defaultDoc[path] = path + '/' + item.default
+        }
+      }
+    }
+    walk(this.source)
+    this.dictionary = dictionary
+    this.defaultDoc = defaultDoc
   }
-}
 
-walk(index)
-
-function getPath(route) {
-  const result = []
-  let pointer = 0, index
-  while ((index = route.slice(pointer + 1).search('/')) !== -1) {
-    pointer += index + 1
-    const base = route.slice(0, pointer)
+  getPath(route) {
+    const result = []
+    let pointer = 0, index
+    while ((index = route.slice(pointer + 1).search('/')) !== -1) {
+      pointer += index + 1
+      const base = route.slice(0, pointer)
+      result.push({
+        route: base,
+        title: this.dictionary[base]
+      })
+    }
     result.push({
-      route: base,
-      title: dictionary[base]
+      route: route,
+      title: this.dictionary[route]
     })
+    return result
   }
-  result.push({
-    route: route,
-    title: dictionary[route]
-  })
-  return result
+
+  update() {
+    if (global.env === 0) return
+  }
 }
+
+TmDocTree.sourcePath = __dirname + '/../../documents/index.yaml'
+TmDocTree.indexPath = __dirname + '/index.json'
 
 const defaultState = {
   path: '/overview',
@@ -54,7 +74,7 @@ module.exports = {
     }
 
     return {
-      docIndex: index,
+      tree: new TmDocTree(),
       history: history,
       currentId: history.length - 1
     }
@@ -74,7 +94,6 @@ module.exports = {
   },
 
   methods: {
-    getPath,
     move(delta = 0) {
       this.switchTo(this.currentId + delta)
     },
@@ -82,7 +101,7 @@ module.exports = {
       const anchor = index.match(/#(.+)$/)
       if (anchor) index = index.slice(0, anchor.index)
       const state = {
-        path: defaultDoc[index] || index,
+        path: this.tree.defaultDoc[index] || index,
         anchor: anchor ? anchor[1] : null,
         scroll: anchor ? anchor[1] : 0
       }
@@ -110,7 +129,7 @@ module.exports = {
     getRecent(amount = Infinity) {
       const start = amount > this.history.length ? 0 : this.history.length - amount
       return this.history.slice(start).map((state, index) => {
-        const path = getPath(state.path).map(node => node.title).join(' / ')
+        const path = this.tree.getPath(state.path).map(node => node.title).join(' / ')
         const anchor = state.anchor ? ' # ' + state.anchor : ''
         return {
           title: path + anchor,

@@ -31,12 +31,12 @@ global.user = new Vuex.Store(require('./user'))
 
 global.getRender = function(filepath) {
   if (global.env === 0 && fs.existsSync(filepath + '.js')) {
-    return new Function(fs.readFileSync(filepath + '.js', { encoding: 'utf8' }))
+    return require(filepath)
   } else {
     const html = fs.readFileSync(filepath, { encoding: 'utf8' })
     const result = VueCompiler.compileToFunctions(html).render
     fs.writeFile(filepath + '.js',
-      result.toString().slice(23, -2), // delete heading
+      'module.exports = ' + result.toString(),
       { encoding: 'utf8' },
       (err) => console.error(err)
     )
