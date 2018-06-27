@@ -115,7 +115,7 @@ module.exports = {
     switchTo(id) {
       if (id >= 0 && id < this.history.length) {
         this.currentId = id
-        return (async () => await this.setContent())()
+        this.setContent()
       }
     },
     deleteAt(id) {

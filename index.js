@@ -35,10 +35,9 @@ global.getRender = function(filepath) {
   } else {
     const html = fs.readFileSync(filepath, { encoding: 'utf8' })
     const result = VueCompiler.compileToFunctions(html).render
-    fs.writeFile(filepath + '.js',
+    fs.writeFileSync(filepath + '.js',
       'module.exports = ' + result.toString(),
-      { encoding: 'utf8' },
-      (err) => console.error(err)
+      { encoding: 'utf8' }
     )
     return result
   }

@@ -7,6 +7,15 @@ const SmoothScroll = require('../SmoothScroll')
   'Paragraph', 'Heading', 'Section', 'Blockquote', 'Usage'
 ].forEach(name => Vue.component(name, require('./components/' + name)))
 
+function getTopLevelText(element) {
+  let result = '', child = element.firstChild
+  while (child) {
+    if (child.nodeType == 3) result += child.data
+    child = child.nextSibling
+  }
+  return result.trim()
+}
+
 module.exports = {
   name: 'TmDoc',
 
@@ -72,36 +81,26 @@ module.exports = {
   },
 
   methods: {
-    setContent() {
-      return (async () => {
-        try {
-          const doc = await fetch(`./documents${this.current.path}.tmd`)
-          const text = await doc.text()
-          this.root = this.$markdown(text)
-        } catch (e) {
-          this.move(-1)
-          return
+    async setContent() {
+      try {
+        const doc = await fetch(`./documents${this.current.path}.tmd`)
+        const text = await doc.text()
+        this.root = this.$markdown(text)
+      } catch (e) {
+        this.move(-1)
+        return
+      }
+      const scroll = this.$refs.doc.scrollTop
+      this.h2nodes = Array.from(this.$refs.doc.getElementsByTagName('h2'))
+      this.$nextTick(() => {
+        global.user.state.Prefix.documents = getTopLevelText(this.$refs.doc.children[0]) + ' - '
+        if (typeof this.current.scroll === 'string') {
+          this.switchToAnchor(this.current.anchor)
+        } else {
+          this.docScroll(this.current.scroll - scroll)
         }
-        global.user.state.Prefix.documents = this.root[0].text + ' - '
-        const scroll = this.$refs.doc.scrollTop
-        this.h2nodes = Array.from(this.$refs.doc.getElementsByTagName('h2'))
-        this.$nextTick(() => {
-          if (typeof this.current.scroll === 'string') {
-            this.switchToAnchor(this.current.anchor)
-          } else {
-            this.docScroll(this.current.scroll - scroll)
-          }
-          const parts = this.current.path.match(/\/[^/]+/g)
-          let last = ''
-          const arr = []
-          for (const part of parts) {
-            last += part
-            arr.push(last)
-          }
-          arr.forEach(item => this.$refs.elMenu.open(item))
-          this.current.scroll = this.$refs.doc.scrollTop // save scroll info, better way?
-        })
-      })()
+        this.current.scroll = this.$refs.doc.scrollTop // save scroll info, better way?
+      })
     },
     navigate(event) {
       let url = event.srcElement.dataset.rawUrl
@@ -123,7 +122,7 @@ module.exports = {
       } else {
         this.current.anchor = text
       }
-      const result = this.h2nodes.find(node => node.textContent === text)
+      const result = this.h2nodes.find(node => getTopLevelText(node) === text)
       if (result) {
         this.docScroll(result.offsetTop - this.$refs.doc.scrollTop)
       }

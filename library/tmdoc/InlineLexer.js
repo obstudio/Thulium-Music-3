@@ -15,7 +15,7 @@ class InlineLexer {
    * Lexing/Compiling
    */
   output(src) {
-    let out = '', link, href, title, cap
+    let out = '', cap
 
     while (src) {
       // escape
@@ -40,8 +40,7 @@ class InlineLexer {
         } else {
           text = cap[2]
         }
-        const path = cap[2]
-        out += this.link(path, text)
+        out += `<a href="#" data-raw-url="${cap[2]}" onclick="event.preventDefault()"'>${text}</a>`
         continue
       }
 
@@ -63,6 +62,13 @@ class InlineLexer {
       if (cap = this.rules.comment.exec(src)) {
         src = src.substring(cap[0].length)
         out += `<span class="comment">${this.output(cap[2] || cap[1])}</span>`
+        continue
+      }
+
+      // package
+      if (cap = this.rules.package.exec(src)) {
+        src = src.substring(cap[0].length)
+        out += `<code class="package">${this.output(cap[2] || cap[1])}</code>`
         continue
       }
 
@@ -109,10 +115,6 @@ class InlineLexer {
     return out
   }
 
-  link(href, text) {
-    return `<a href="#" data-raw-url="${href}" onclick="event.preventDefault()"'>${text}</a>`
-  }
-
   image(href, title, text) {
     if (this.options.baseUrl && !originIndependentUrl.test(href)) {
       href = resolveUrl(this.options.baseUrl, href)
@@ -150,19 +152,16 @@ class InlineLexer {
 InlineLexer.rules = {
   _escapes: /\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/g,
   escape: /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,
-  // eslint-disable-next-line no-control-regex
-  link: /^!?\[((?:\[[^\[\]]*\]|\\[\[\]]?|`[^`]*`|[^\[\]\\])*?)\]\(\s*(<(?:\\[<>]?|[^\s<>\\])*>|(?:\\[()]?|\([^\s\x00-\x1f()\\]*\)|[^\s\x00-\x1f()\\])*?)(?:\s+("(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)))?\s*\)/,
-  reflink: /^!?\[((?:\[[^\[\]]*\]|\\[\[\]]?|`[^`]*`|[^\[\]\\])*?)\]\[(?!\s*\])((?:\\[\[\]]?|[^\[\]\\])+)\]/,
-  nolink: /^!?\[(?!\s*\])((?:\[[^\[\]]*\]|\\[\[\]]|[^\[\]])*)\](?:\[\])?/,
   tmlink: /^\[(?:([^\]|]+)\|)?([^\]]+)\]/,
   strong: /^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)|^\*\*([^\s])\*\*(?!\*)/,
   em: /^\*([^\s][\s\S]*?[^\s*])\*(?!\*)|^\*([^\s*][\s\S]*?[^\s])\*(?!\*)|^\*([^\s*])\*(?!\*)/,
   underline: /^_([^\s][\s\S]*?[^\s_])_(?!_)|^_([^\s*])_(?!_)/,
   comment: /^\(\(([^\s][\s\S]*?[^\s])\)\)(?!\))|^\(\(([^\s])\)\)(?!\))/,
+  package: /^\{\{([^\s][\s\S]*?[^\s])\}\}(?!\})|^\{\{([^\s])\}\}(?!\})/,
   code: /^(`+)\s*([\s\S]*?[^`]?)\s*\1(?!`)/,
   br: /^\n(?!\s*$)/,
   del: /^-(?=\S)([\s\S]*?\S)-/,
-  text: /^[\s\S]+?(?=[\\<!\[`*(]|\b_|\n|$)/
+  text: /^[\s\S]+?(?=[\\<!\[`*({]|\b_|\n|$)/
 }
 
 module.exports = InlineLexer

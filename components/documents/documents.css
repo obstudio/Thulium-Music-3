@@ -180,7 +180,6 @@
 
 .tm-doc h1, .tm-doc h2, .tm-doc h3, .tm-doc h4 {
     margin-top: 24px;
-    margin-bottom: 12px;
     font-weight: bold;
     line-height: 1.25;
 }
@@ -197,6 +196,8 @@
     padding-bottom: 0.3em;
 }
 
+.tm-doc h1, .tm-doc h2 { margin-bottom: 12px }
+.tm-doc h3, .tm-doc h4 { margin-bottom: 16px }
 .tm-doc h3 { font-size: 1.25em }
 .tm-doc h4 { font-size: 1em }
 
@@ -217,10 +218,9 @@
 
 .tm-doc ul ul, .tm-doc ul ol,
 .tm-doc ol ol, .tm-doc ol ul {
-    margin-top: 0;
+    margin-top: 0.25em;
     margin-bottom: 0;
     padding-left: 1.2em;
-    list-style-type: lower-roman;
 }
 
 .tm-doc ul ul ol, .tm-doc ul ol ol,
@@ -228,17 +228,9 @@
     list-style-type: lower-alpha;
 }
 
-.tm-doc li {
-  word-wrap: break-all;
-}
-
-.tm-doc li > p {
-  margin-top: 16px;
-}
-
-.tm-doc li + li {
-  margin-top: 0.25em;
-}
+.tm-doc li { word-wrap: break-all }
+.tm-doc li > p { margin-top: 16px }
+.tm-doc li + li { margin-top: 0.25em }
 
 .tm-doc p {
   margin-top: 0;
@@ -338,8 +330,8 @@
 
 .tm-doc code {
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-    padding: 0.2em 0.4em;
-    margin: 0 2px;
+    padding: 0.2em 0.3em;
+    margin: 0 0.2em;
     font-size: 85%;
     border-radius: 3px;
     vertical-align: 0.1em;
