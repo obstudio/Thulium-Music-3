@@ -12,7 +12,7 @@
   "build": {
     "appId": "com.obstudio.thulium",
     "win": {
-      "target": "nsis",
+      "target": "msi",
       "icon": "assets/icon.ico"
     },
     "mac": {
