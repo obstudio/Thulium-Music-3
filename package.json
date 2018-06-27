@@ -19,6 +19,9 @@
       "category": "public.app-category.music",
       "target": "dmg",
       "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": "deb"
     }
   },
   "keywords": [],
