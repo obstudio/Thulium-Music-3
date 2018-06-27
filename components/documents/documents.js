@@ -28,14 +28,7 @@ module.exports = {
       },
       props: ['item', 'base'],
       inject: ['switchDoc'],
-      render: VueCompile(`
-      <el-submenu v-if="!(item instanceof Array)" :index="index">
-        <template slot="title">{{ item.name[1] }}</template>
-        <tm-doc-variant v-for="sub in item.content" :item="sub" :base="index"/>
-      </el-submenu>
-      <el-menu-item v-else :index="index">
-        <span slot="title">{{ item[1] }}</span>
-      </el-menu-item>`)
+      render: getRender(__dirname + '/doc-variant.html')
     }
   },
 
@@ -136,72 +129,7 @@ module.exports = {
       }
     }
   },
+  
   props: ['width', 'height', 'left', 'top'],
-  render: VueCompile(`<div class="tm-document"
-    @click="hideContextMenus" @contextmenu="hideContextMenus">
-    <div class="toolbar" :style="{ width: width + 'px' }">
-      <div class="left">
-        <button @click="catalog = !catalog" :class="{ active: catalog }">
-          <i class="icon-menu"/>
-        </button>
-        <button @click="move(-1)">
-          <i class="icon-arrow-left"/>
-        </button>
-        <button @click="move(1)">
-          <i class="icon-arrow-right"/>
-        </button>
-        <ul class="route">
-          <li v-for="(part, index) in getPath(current.path)" :key="index">
-            <span v-if="index > 0">/</span>
-            <a @click="switchDoc(part.route)">{{ part.title }}</a>
-          </li>
-          <li v-if="current.anchor" class="anchor">
-            <span>#</span>
-            <a @click="switchDoc(current.path + '#' + current.anchor)">{{ current.anchor }}</a>
-          </li>
-        </ul>
-      </div>
-      <div class="right">
-        <button @click.stop="search = true">
-          <i class="icon-search"/>
-        </button>
-        <button @click.stop="showButtonMenu('history', $event)">
-          <i class="icon-history"/>
-        </button>
-      </div>
-    </div>
-    <div class="catalog" :style="{
-        height: height - 36 + 'px',
-        left: catalog ? '0px' : - catalogWidth + 'px',
-        width: catalogWidth + 'px'
-      }" ref="menu" @mousewheel.prevent.stop="menuScroll($event.deltaY)">
-      <el-menu @select="switchDoc" :unique-opened="true" ref="elMenu"
-        :background-color="styles.documents.navBackground"
-        :text-color="styles.documents.navForeground"
-        :active-text-color="styles.documents.navActive"
-        :default-active="activeIndex">
-        <tm-doc-variant v-for="item in docIndex" :item="item" base=""/>
-      </el-menu>
-    </div>
-    <div class="content" :style="{
-        height: height - 36 + 'px',
-        left: catalog ? catalogWidth + 'px' : '0px',
-        width: contentWidth + 'px'
-      }">
-      <div class="tm-doc" ref="doc" @click="navigate"
-        @mousewheel.prevent.stop="docScroll($event.deltaY)"
-        :class="{ scrolled: docScrolled }" :style="{
-          'padding-left': Math.max(24, contentWidth / 8) + 'px',
-          'padding-right': Math.max(24, contentWidth / 8) + 'px'
-        }">
-        <component v-for="(comp, index) in root" :is="comp.type" :node="comp" :key="index"/>
-      </div>
-    </div>
-    <tm-menus ref="menus" :keys="menuKeys" :data="menuData" :lists="[{
-      name: 'recent',
-      data: getRecent(10),
-      switch: 'switchTo',
-      close: 'deleteAt'
-    }]"/>
-  </div>`)
+  render: getRender(__dirname + '/documents.html')
 }

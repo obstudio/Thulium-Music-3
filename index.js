@@ -1,8 +1,9 @@
-const Vue = require('vue')
 const ElementUI = require('element-ui/lib')
 const VueI18n = require('vue-i18n')
 const Router = require('vue-router')
 const Vuex = require('vuex')
+const Vue = require('vue')
+const fs = require('fs')
 const VueCompiler = require('vue-template-compiler/browser')
 
 const Lexer = require('./library/tmdoc/Lexer')
@@ -21,11 +22,31 @@ Vue.prototype.$markdown = (content) => {
   return new Lexer().lex(content)
 }
 
+// Global Environment
+//   0: production mode
+//   1: development mode
+global.env = 1
+global.remote = require('electron').remote
+global.user = new Vuex.Store(require('./user'))
+
+global.getRender = function(filepath) {
+  if (global.env === 0 && fs.existsSync(filepath + '.js')) {
+    return new Function(fs.readFileSync(filepath + '.js', { encoding: 'utf8' }))
+  } else {
+    const html = fs.readFileSync(filepath, { encoding: 'utf8' })
+    const result = VueCompiler.compileToFunctions(html).render
+    fs.writeFile(filepath + '.js',
+      result.toString().slice(23, -2), // delete heading
+      { encoding: 'utf8' },
+      (err) => console.error(err)
+    )
+    return result
+  }
+}
+
 global.VueCompile = (template) => {
   return VueCompiler.compileToFunctions(template).render
 }
-global.remote = require('electron').remote
-global.user = new Vuex.Store(require('./user'))
 
 const i18n = new VueI18n({
   locale: global.user.state.Settings.language,
@@ -112,56 +133,10 @@ new Vue({
         this.browser.maximize()
       }
     },
-    switchRoute: (route) => global.user.state.Route = route
+    switchRoute(route) {
+      global.user.state.Route = route
+    }
   },
 
-  render: VueCompile(`<div :class="settings.theme">
-    <div :class="{'show-sidebar': sidebar}">
-    <div class="navbar">
-      <button class="sidebar-toggler" @click="sidebar = !sidebar">
-        <i v-if="sidebar" class="icon-arrow-left"/>
-        <i v-else class="icon-arrow-right"/>
-      </button>
-      <div class="title" v-html="title"></div>
-      <div class="top-right">
-        <button @click="browser.minimize()" class="minimize"><i class="icon-window-minimize"/></button>
-        <button @click="toggleMaximize()" class="maximize">
-          <i v-if="browser.isMaximized()" class="icon-window-restore"/>
-          <i v-else class="icon-window-maximize"/>
-        </button>
-        <button @click="browser.close()" class="close"><i class="icon-window-close"/></button>
-      </div>
-      <div class="top-border"/>
-    </div>
-    <div class="window">
-      <div class="sidebar">
-        <el-menu default-active="/" :collapse="true" :router="true"
-          :backgroundColor="styles.sidebar.background">
-          <el-menu-item index="/" @click="switchRoute('homepage')">
-            <i class="icon-home"></i>
-            <span slot="title">{{ $t('window.homepage') }}</span>
-          </el-menu-item>
-          <el-menu-item index="/editor" @click="switchRoute('editor')">
-            <i class="icon-editor"></i>
-            <span slot="title">{{ $t('window.editor') }}</span>
-          </el-menu-item>
-          <el-menu-item index="/docs" @click="switchRoute('documents')">
-            <i class="icon-document"></i>
-            <span slot="title">{{ $t('window.documents') }}</span>
-          </el-menu-item>
-          <el-menu-item index="/settings" @click="switchRoute('settings')">
-            <i class="icon-settings"></i>
-            <span slot="title">{{ $t('window.settings') }}</span>
-          </el-menu-item>
-        </el-menu>
-        <div class="left-border"/>
-      </div>
-      <div class="main">
-        <keep-alive>
-          <router-view :height="height" :top="48" :width="width" :left="this.sidebar ? 64 : 0"/>
-        </keep-alive>
-      </div>
-    </div>
-    </div>
-  </div>`)
+  render: getRender(__dirname + '/app.html')
 })

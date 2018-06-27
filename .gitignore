@@ -4,3 +4,4 @@ test*.*
 *.buffer.*
 dist
 package-lock.json
+*.html.js
