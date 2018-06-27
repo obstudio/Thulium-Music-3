@@ -1,7 +1,25 @@
+dist: trusty
+
 language: node_js
 node_js:
-  - "node"
-  
+  - node
+
+os:
+  - osx
+
+env:
+  - ELECTRON_CACHE=$HOME/.cache/electron
+  - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+
+cache:
+  directories:
+    - node_modules
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
+
+script:
+  - npm run publish
+
 branches:
   only:
     - master
