@@ -69,3 +69,17 @@
 	width: 100%;
 }
 
+.tm-menu-list-enter-active, .tm-menu-list-leave-active {
+    transition: 0.3s ease;
+}
+
+.tm-menu-list-enter-active .menu-item, .tm-menu-list-leave-active .menu-item {
+    color: inherit !important;
+    background-color: inherit !important;
+}
+
+.tm-menu-list-enter, .tm-menu-list-leave-to {
+    opacity: 0;
+    transform: translateX(200px);
+}
+

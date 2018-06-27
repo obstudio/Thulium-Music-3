@@ -9,7 +9,6 @@ const extensions = require('../../extensions/extension')
 const { registerPlayCommand } = require('../../library/editor/Editor')
 
 const storage = require('./storage')
-const TmCommand = require('../command')('editor')
 
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
@@ -19,9 +18,9 @@ module.exports = {
   name: 'TmEditor',
 
   components: {
-    draggable,
-    TmMenus: TmCommand.TmMenus
+    draggable
   },
+
   provide() {
     return {
       tabs: this.tabs,
@@ -30,6 +29,11 @@ module.exports = {
       execute: this.executeMethod
     }
   },
+
+  mixins: [
+    require('../command')('editor')
+  ],
+
   data() {
     const storageState = storage.load()
     const editorState = {
@@ -52,20 +56,11 @@ module.exports = {
       extUnderlineWidth: '0px',
       extensionMoveToRight: false
     }
-    const menuState = {
-      menubarMove: 0,
-      menubarActive: false,
-      menuData: TmCommand.menuData,
-      menuKeys: TmCommand.menuKeys,
-      altKey: false,
-      contextId: null
-    }
     return {
       ...storageState,
       ...editorState,
       ...tabState,
-      ...extensionState,
-      ...menuState
+      ...extensionState
     }
   },
 
@@ -111,7 +106,6 @@ module.exports = {
 
   mounted() {
     // properties added in mounted hook to prevent unnecessary reactivity
-    TmCommand.onMount.call(this)
 
     this.player = undefined
     this.tabs.forEach(tab => {
@@ -120,7 +114,7 @@ module.exports = {
       })
       tab.checkChange()
     })
-    this.doScroll = SmoothScroll(this.$refs.tabs.$el, 100, 10, false)
+    this.doScroll = SmoothScroll(this.$refs.tabs.$el, { vertical: false })
 
     this.refreshExtUnderline()
     this.refreshAddTagLeft()
@@ -139,7 +133,6 @@ module.exports = {
   methods: {
     // commands
     ...require('./method'),
-    ...TmCommand.methods,
     activate() {
       this.editor.setModel(this.current.model)
       if (this.current.viewState) this.editor.restoreViewState(this.current.viewState)

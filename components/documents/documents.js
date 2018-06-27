@@ -1,27 +1,6 @@
 const Vue = require('vue')
-const Vuex = require('vuex')
 const open = require('opn')
 const SmoothScroll = require('../SmoothScroll')
-const TmCommand = require('../command')('documents')
-const index = require('../../documents/index.json')
-const TmHistory = require('./History')
-const dictionary = {}
-const defaultDoc = {}
-
-function walk(index, base = '') {
-  for (const item of index) {
-    if (item instanceof Array) {
-      dictionary[base + '/' + item[0]] = item[1]
-    } else {
-      const path = base + '/' + item.name[0]
-      walk(item.content, path)
-      dictionary[path] = item.name[1]
-      defaultDoc[path] = path + '/' + item.default
-    }
-  }
-}
-
-walk(index)
 
 ;[
   'Code', 'List', 'Split', 'Table', 'Textblock',
@@ -30,65 +9,52 @@ walk(index)
 
 module.exports = {
   name: 'TmDoc',
+
   provide() {
     return {
       switchDoc: this.switchDoc,
       execute: this.executeMethod
     }
   },
+
   components: {
-    TmMenus: TmCommand.TmMenus,
     TmDocVariant: {
       name: 'TmDocVariant',
-      props: ['item', 'base'],
-      inject: ['switchDoc'],
       computed: {
         index() {
           return this.base + '/' + 
             (this.item instanceof Array ? this.item : this.item.name)[0]
-        },
-        path() {
-          return this.$store.state.path
         }
       },
+      props: ['item', 'base'],
+      inject: ['switchDoc'],
       render: VueCompile(`
       <el-submenu v-if="!(item instanceof Array)" :index="index">
         <template slot="title">{{ item.name[1] }}</template>
         <tm-doc-variant v-for="sub in item.content" :item="sub" :base="index"/>
-      </el-submenu>
-      <el-submenu v-else-if="index === $store.state.path" :index="index">
-        <template slot="title">{{ item[1] }}</template>
-        <el-menu-item v-for="anchor in $store.state.anchors" :index="index + '#' + anchor">
-          <span slot="title">{{ anchor }}</span>
-        </el-menu-item>
       </el-submenu>
       <el-menu-item v-else :index="index">
         <span slot="title">{{ item[1] }}</span>
       </el-menu-item>`)
     }
   },
-  store: new Vuex.Store({
-    state: {
-      path: '/overview',
-      anchors: []
-    }
-  }),
+
+  mixins: [
+    require('../command')('documents'),
+    require('./History')
+  ],
+
   data() {
     return {
-      items: index,
-      state: {
-        path: '/overview',
-        anchor: null,
-        scroll: 0
-      },
       openedMenu: [],
-      menuData: TmCommand.menuData,
-      menuKeys: TmCommand.menuKeys,
       root: [],
       catalog: false,
-      search: false
+      search: false,
+      docScrolled: false,
+      menuScrolled: false
     }
   },
+
   computed: {
     styles: () => global.user.state.Styles,
     catalogWidth() {
@@ -98,53 +64,40 @@ module.exports = {
       return this.width - (this.catalog ? this.catalogWidth : 0)
     },
     activeIndex() {
-      return this.state.anchor ? `${this.state.path}#${this.state.anchor}` : this.state.path
+      return this.current.anchor ? `${this.current.path}#${this.current.anchor}` : this.current.path
     }
   },
-  created() {
-    window.monaco.editor.setTheme(global.user.state.Settings.theme)
-    const onStateChange = async (state) => {
-      this.state = state
-      await this.setContent()
-      this.$nextTick(() => {
-        this.$store.state.path = state.path
-        const nodes = this.$refs.doc.getElementsByTagName('h2')
-        this.$store.state.anchors = Array.prototype.map.call(nodes, node => node.textContent)
-      })
-    }
-    const toRoutePath = (route) => {
-      console.log(this.getPath(route))
-      return this.getPath(route).map(node => node.title).join(' / ')
-    }
-    this.history = new TmHistory(onStateChange, toRoutePath)
-    this.history.pushState(this.state)
-  },
+
   mounted() {
-    TmCommand.onMount.call(this)
-    this.docScroll = SmoothScroll(this.$refs.doc, 100, 10)
-    this.menuScroll = SmoothScroll(this.$refs.menu, 100, 10)
+    window.monaco.editor.setTheme(global.user.state.Settings.theme)
+    this.docScroll = SmoothScroll(this.$refs.doc, {}, (doc) => {
+      this.docScrolled = doc.scrollTop > 0
+    })
+    this.menuScroll = SmoothScroll(this.$refs.menu, {}, (menu) => {
+      this.menuScrolled = menu.scrollTop > 0
+    })
   },
+
   methods: {
-    ...TmCommand.methods,
     setContent() {
       return (async () => {
         try {
-          const doc = await fetch(`./documents${this.state.path}.tmd`)
+          const doc = await fetch(`./documents${this.current.path}.tmd`)
           const text = await doc.text()
           this.root = this.$markdown(text)
         } catch (e) {
-          this.history.back()
+          this.move(-1)
           return
         }
         global.user.state.Prefix.documents = this.root[0].text + ' - '
         const scroll = this.$refs.doc.scrollTop
         this.$nextTick(() => {
-          if (typeof this.state.scroll === 'string') {
-            this.switchToAnchor(this.state.anchor)
+          if (typeof this.current.scroll === 'string') {
+            this.switchToAnchor(this.current.anchor)
           } else {
-            this.docScroll(this.state.scroll - scroll)
+            this.docScroll(this.current.scroll - scroll)
           }
-          const parts = this.state.path.match(/\/[^/]+/g)
+          const parts = this.current.path.match(/\/[^/]+/g)
           let last = ''
           const arr = []
           for (const part of parts) {
@@ -152,30 +105,9 @@ module.exports = {
             arr.push(last)
           }
           arr.forEach(item => this.$refs.elMenu.open(item))
+          this.current.scroll = this.$refs.doc.scrollTop // save scroll info, better way?
         })
       })()
-    },
-    saveScrollInfo() {
-      this.history.current.scroll = this.$refs.doc.scrollTop  // save scroll info, better way?
-    },
-    switchDoc(index) {
-      this.saveScrollInfo()
-      const anchor = index.match(/#(.+)$/)
-      if (anchor) index = index.slice(0, anchor.index)
-      const state = {
-        path: defaultDoc[index] || index,
-        anchor: anchor ? anchor[1] : null,
-        scroll: anchor ? anchor[1] : 0
-      }
-      this.history.pushState(state)
-    },
-    back() {
-      this.saveScrollInfo()
-      this.history.back()
-    },
-    forward() {
-      this.saveScrollInfo()
-      this.history.forward()
     },
     navigate(event) {
       let url = event.srcElement.dataset.rawUrl
@@ -183,9 +115,9 @@ module.exports = {
       if (url.startsWith('$issue#')) {
         open('https://github.com/obstudio/Thulium-Music-3/issues/' + url.slice(7))
       } else if (url.startsWith('#')) {
-        this.switchDoc(this.state.path + url)
+        this.switchDoc(this.current.path + url)
       } else {
-        const docParts = this.state.path.split('/')
+        const docParts = this.current.path.split('/')
         const back = /^(?:\.\.\/)*/.exec(url)[0].length
         docParts.splice(-1 - back / 3, Infinity, url.slice(back))
         this.switchDoc(docParts.join('/'))
@@ -193,35 +125,15 @@ module.exports = {
     },
     switchToAnchor(text) {
       if (!text) {
-        text = this.state.anchor
+        text = this.current.anchor
       } else {
-        this.state.anchor = text
+        this.current.anchor = text
       }
       const nodes = this.$refs.doc.getElementsByTagName('h2')
       const result = Array.prototype.find.call(nodes, (node) => node.textContent === text)
       if (result) {
         this.docScroll(result.offsetTop - this.$refs.doc.scrollTop)
       }
-    },
-    getPath(route) {
-      const result = []
-      let pointer = 0, index
-      while ((index = route.slice(pointer + 1).search('/')) !== -1) {
-        pointer += index + 1
-        const base = route.slice(0, pointer)
-        result.push({
-          route: base,
-          title: dictionary[base]
-        })
-      }
-      result.push({
-        route: route,
-        title: dictionary[route]
-      })
-      return result
-    },
-    getRecent() {
-      return this.history ? this.history.recent(10) : []
     }
   },
   props: ['width', 'height', 'left', 'top'],
@@ -232,20 +144,20 @@ module.exports = {
         <button @click="catalog = !catalog" :class="{ active: catalog }">
           <i class="icon-menu"/>
         </button>
-        <button @click="back">
+        <button @click="move(-1)">
           <i class="icon-arrow-left"/>
         </button>
-        <button @click="forward">
+        <button @click="move(1)">
           <i class="icon-arrow-right"/>
         </button>
         <ul class="route">
-          <li v-for="(part, index) in getPath(state.path)" :key="index">
+          <li v-for="(part, index) in getPath(current.path)" :key="index">
             <span v-if="index > 0">/</span>
             <a @click="switchDoc(part.route)">{{ part.title }}</a>
           </li>
-          <li v-if="state.anchor" class="anchor">
+          <li v-if="current.anchor" class="anchor">
             <span>#</span>
-            <a @click="switchDoc(state.path + '#' + state.anchor)">{{ state.anchor }}</a>
+            <a @click="switchDoc(current.path + '#' + current.anchor)">{{ current.anchor }}</a>
           </li>
         </ul>
       </div>
@@ -268,7 +180,7 @@ module.exports = {
         :text-color="styles.documents.navForeground"
         :active-text-color="styles.documents.navActive"
         :default-active="activeIndex">
-        <tm-doc-variant v-for="item in items" :item="item" base=""/>
+        <tm-doc-variant v-for="item in docIndex" :item="item" base=""/>
       </el-menu>
     </div>
     <div class="content" :style="{
@@ -278,7 +190,7 @@ module.exports = {
       }">
       <div class="tm-doc" ref="doc" @click="navigate"
         @mousewheel.prevent.stop="docScroll($event.deltaY)"
-        :style="{
+        :class="{ scrolled: docScrolled }" :style="{
           'padding-left': Math.max(24, contentWidth / 8) + 'px',
           'padding-right': Math.max(24, contentWidth / 8) + 'px'
         }">
@@ -287,9 +199,9 @@ module.exports = {
     </div>
     <tm-menus ref="menus" :keys="menuKeys" :data="menuData" :lists="[{
       name: 'recent',
-      data: getRecent(),
-      switch: 'switchDoc',
-      close: ''
+      data: getRecent(10),
+      switch: 'switchTo',
+      close: 'deleteAt'
     }]"/>
   </div>`)
 }
