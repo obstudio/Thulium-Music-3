@@ -16,7 +16,7 @@ editor:
   list.inactiveSelectionBackground: '#E5EBF1'
   list.hoverBackground: '#E8E8E8'
   list.dropBackground: '#ffffff'
-  list.highlightForeground: '#f8f8f2'
+  list.highlightForeground: '#007acc'
   button.background: '#75715E'
   editor.background: '#ffffff'
   editor.foreground: '#24292e'
@@ -27,7 +27,7 @@ editor:
   editor.wordHighlightStrongBackground: '#6a6a9680'
   editor.lineHighlightBackground: '#fffbdd'
   editorLineNumber.activeForeground: '#0b0b59'
-  editorCursor.foreground: '#f8f8f0'
+  editorCursor.foreground: '#000000'
   editorWhitespace.foreground: '#464741'
   editorIndentGuide.background: '#eeeeee'
   editorIndentGuide.activeBackground: '#939393'
@@ -99,88 +99,87 @@ editor:
 
 tokenizer:
   - token: default
-    foreground: FFFFFF
+    foreground: 24292e
 
   # comment
   - token: comment
-    foreground: 75715E
+    foreground: 6a737d
   - token: comment.marker
-    foreground: 75715E
+    foreground: 6a737d
 
   # command
   - token: command.marker
-    foreground: F92672
+    foreground: d73a49
   - token: command.keyword
-    foreground: F92672
+    foreground: d73a49
 
   # library
   - token: library.package
-    foreground: E6DB74
+    foreground: 032f62
 
   # section
   - token: section.name
-    foreground: A6E22E
+    foreground: '008000'
     fontStyle: italic
 
   # track
   - token: track.marker
-    foreground: A6E22E
+    foreground: '008000'
   - token: track.name
-    foreground: A6E22E
+    foreground: '008000'
     fontStyle: italic
   - token: track.instrument
-    foreground: E6DB74
+    foreground: 032f62
   - token: track.operator
-    foreground: F92672
+    foreground: d73a49
   - token: track.macro
-    foreground: A6E22E
+    foreground: '008000'
 
   # subtrack
   - token: subtrack.curly
-    foreground: F92672
+    foreground: d73a49
     fontStyle: bold
   - token: subtrack.repeat
-    foreground: AE81FF
+    foreground: 6f42c1
   - token: subtrack.repeat.marker
-    foreground: AE81FF
+    foreground: 6f42c1
   - token: subtrack.barline
-    foreground: F92672
+    foreground: d73a49
     fontStyle: bold
   - token: subtrack.barline.plain
-    foreground: F92672
+    foreground: d73a49
     fontStyle: normal
 
   # note
   - token: note.square
-    foreground: 66D9EF
+    foreground: 005cc5
   - token: note.degree
-    foreground: 66D9EF
+    foreground: 005cc5
   - token: note.pitop-chord
-    foreground: 66D9EF
+    foreground: 005cc5
   - token: note.durop-stac-volop
-    foreground: 66D9EF
+    foreground: 005cc5
   - token: note.declaration
-    foreground: F92672
+    foreground: d73a49
 
   # function
   - token: function.name
-    foreground: FD971F
+    foreground: e36209
   - token: function.marker
-    foreground: FD971F
+    foreground: e36209
   - token: function.alias
-    foreground: FD971F
+    foreground: e36209
 
   # string
   - token: string
-    foreground: E6DB74
+    foreground: 032f62
   - token: string.marker
-    foreground: E6DB74
+    foreground: 032f62
   - token: string.escape
-    foreground: E6DB74
+    foreground: 032f62
 
   # number
   - token: number.operator
-    foreground: F92672
+    foreground: d73a49
   - token: number.constant
-    foreground: AE81FF
-
+    foreground: 6f42c1
