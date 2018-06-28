@@ -70,11 +70,15 @@ module.exports = {
 
   mounted() {
     window.monaco.editor.setTheme(global.user.state.Settings.theme)
-    this.docScroll = SmoothScroll(this.$refs.doc, {}, (doc) => {
-      this.docScrolled = doc.scrollTop > 0
+    this.docScroll = SmoothScroll(this.$refs.doc, {
+      callback: (doc) => {
+        this.docScrolled = doc.scrollTop > 0
+      }
     })
-    this.menuScroll = SmoothScroll(this.$refs.menu, {}, (menu) => {
-      this.menuScrolled = menu.scrollTop > 0
+    this.menuScroll = SmoothScroll(this.$refs.menu, {
+      callback: (menu) => {
+        this.menuScrolled = menu.scrollTop > 0
+      }
     })
   },
 
@@ -90,12 +94,11 @@ module.exports = {
           return
         }
         global.user.state.Prefix.documents = this.root[0].text + ' - '
-        const scroll = this.$refs.doc.scrollTop
         this.$nextTick(() => {
           if (typeof this.current.scroll === 'string') {
             this.switchToAnchor(this.current.anchor)
           } else {
-            this.docScroll(this.current.scroll - scroll)
+            this.docScroll.scrollByPos(this.current.scroll)
           }
           const parts = this.current.path.match(/\/[^/]+/g)
           let last = ''
@@ -132,7 +135,7 @@ module.exports = {
       const nodes = this.$refs.doc.getElementsByTagName('h2')
       const result = Array.prototype.find.call(nodes, (node) => node.textContent === text)
       if (result) {
-        this.docScroll(result.offsetTop - this.$refs.doc.scrollTop)
+        this.docScroll.scrollByPos(result.offsetTop)
       }
     }
   },
@@ -174,7 +177,7 @@ module.exports = {
         height: height - 36 + 'px',
         left: catalog ? '0px' : - catalogWidth + 'px',
         width: catalogWidth + 'px'
-      }" ref="menu" @mousewheel.prevent.stop="menuScroll($event.deltaY)">
+      }" ref="menu" @mousewheel.prevent.stop="menuScroll.scrollByDelta($event.deltaY)">
       <el-menu @select="switchDoc" :unique-opened="true" ref="elMenu"
         :background-color="styles.documents.navBackground"
         :text-color="styles.documents.navForeground"
@@ -189,7 +192,7 @@ module.exports = {
         width: contentWidth + 'px'
       }">
       <div class="tm-doc" ref="doc" @click="navigate"
-        @mousewheel.prevent.stop="docScroll($event.deltaY)"
+        @mousewheel.prevent.stop="docScroll.scrollByDelta($event.deltaY)"
         :class="{ scrolled: docScrolled }" :style="{
           'padding-left': Math.max(24, contentWidth / 8) + 'px',
           'padding-right': Math.max(24, contentWidth / 8) + 'px'
