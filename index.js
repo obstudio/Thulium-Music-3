@@ -17,7 +17,7 @@ Vue.use(Router)
 Vue.use(VueI18n)
 Vue.use(ElementUI)
 Vue.config.productionTip = false
-Vue.prototype.$markdown = (content) => {
+Vue.prototype.$markdown = (content, dict) => {
   if (typeof content !== 'string') return []
   return new Lexer().lex(content)
 }

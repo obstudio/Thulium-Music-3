@@ -1,13 +1,32 @@
-const defaults = require('./defaults')
-const {escape, originIndependentUrl, resolveUrl, unescape} = require('./util')
+function escape(html, encode) {
+  return html
+    .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function unescape(html) {
+  // explicitly match decimal, hex, and named HTML entities
+  return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/ig, function (_, n) {
+    n = n.toLowerCase()
+    if (n === 'colon') return ':'
+    if (n.charAt(0) === '#') {
+      return n.charAt(1) === 'x'
+        ? String.fromCharCode(parseInt(n.substring(2), 16))
+        : String.fromCharCode(+n.substring(1))
+    }
+    return ''
+  })
+}
 
 class InlineLexer {
   /**
    * Inline Lexer & Compiler
    */
-  constructor(links, options) {
-    this.options = options || defaults
-    this.links = links
+  constructor(options) {
+    this.options = options
     this.rules = InlineLexer.rules
   }
 
@@ -113,13 +132,6 @@ class InlineLexer {
     }
 
     return out
-  }
-
-  image(href, title, text) {
-    if (this.options.baseUrl && !originIndependentUrl.test(href)) {
-      href = resolveUrl(this.options.baseUrl, href)
-    }
-    return `<img src="${href}" alt="${text}" title="${title}">`
   }
 
   /**

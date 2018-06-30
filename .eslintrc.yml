@@ -30,4 +30,4 @@ rules:
   no-console:
     - warn
   no-cond-assign:
-    - warn
+    - off
