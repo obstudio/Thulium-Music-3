@@ -3,5 +3,5 @@ temp.*.*
 test*.*
 *.buffer.*
 dist
-build
 package-lock.json
+*.html.js

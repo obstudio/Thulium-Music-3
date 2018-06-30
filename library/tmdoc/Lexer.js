@@ -1,15 +1,46 @@
 const defaults = require('./defaults')
-const {edit, align} = require('./util')
 const InlineLexer = require('./InlineLexer')
+
+function edit(regex, opt) {
+  regex = regex.source || regex
+  opt = opt || ''
+  return {
+    replace(name, val) {
+      regex = regex.replace(name, (val.source || val).replace(/(^|[^\[])\^/g, '$1'))
+      return this
+    },
+    getRegex() {
+      return new RegExp(regex, opt)
+    }
+  }
+}
+
+function align(col) {
+  return col.includes('<') ? 1 : col.includes('=') ? 2 : col.includes('>') ? 3 : 0
+}
 
 class Lexer {
   /**
    * Block Lexer
+   * @param {String} defaultLanguage default language of code block
+   * @param {Object} dictionary link dictionary
+   * @param {Boolean} smartLists use smart lists
+   * @param {Boolean} smartypants use smartypants
    */
-  constructor(options) {
+  constructor({
+    defaultLanguage = 'tm',
+    dictionary = {},
+    smartLists = false,
+    smartypants = false
+  } = {}) {
     this.tokens = []
     this.tokens.links = {}
-    this.options = options || defaults
+    this.options = {
+      defaultLanguage,
+      dictionary,
+      smartLists,
+      smartypants
+    }
     this.rules = block
   }
 
@@ -33,27 +64,12 @@ class Lexer {
    */
   token(src, top) {
     src = src.replace(/^ +$/gm, '')
-    let next,
-      loose,
-      cap,
-      bull,
-      b,
-      item,
-      space,
-      i,
-      tag,
-      l,
-      isordered
+    let cap
 
     while (src) {
       // newline
       if (cap = this.rules.newline.exec(src)) {
         src = src.substring(cap[0].length)
-        // if (cap[0].length > 1) {
-        //   this.tokens.push({
-        //     type: 'space'
-        //   })
-        // }
       }
 
       // fences (gfm)
@@ -136,22 +152,21 @@ class Lexer {
       // list
       if (cap = this.rules.list.exec(src)) {
         src = src.substring(cap[0].length)
-        bull = cap[2]
-        isordered = bull.length > 1
+        let bull = cap[2]
+        const isordered = bull.length > 1
 
         // Get each top-level item.
         cap = cap[0].match(this.rules.item)
 
-        next = false
-        l = cap.length
-        i = 0
+        let next = false
+        let l = cap.length
         const items = []
-        for (; i < l; i++) {
-          item = cap[i]
+        for (let i = 0; i < l; i++) {
+          let item = cap[i]
 
           // Remove the list item's bullet
           // so it is seen as the next token.
-          space = item.length
+          let space = item.length
           item = item.replace(/^ *([*+-]|\d+\.) +/, '')
 
           // Outdent whatever the
@@ -164,7 +179,7 @@ class Lexer {
           // Determine whether the next list item belongs here.
           // Backpedal if it does not belong in this list.
           if (this.options.smartLists && i !== l - 1) {
-            b = block.bullet.exec(cap[i + 1])[0]
+            const b = block.bullet.exec(cap[i + 1])[0]
             if (bull !== b && !(bull.length > 1 && b.length > 1)) {
               src = cap.slice(i + 1).join('\n') + src
               i = l - 1
@@ -174,7 +189,7 @@ class Lexer {
           // Determine whether item is loose or not.
           // Use: /(^|\n)(?! )[^\n]+\n\n(?!\s*$)/
           // for discount behavior.
-          loose = next || /\n\n(?!\s*$)/.test(item)
+          let loose = next || /\n\n(?!\s*$)/.test(item)
           if (i !== l - 1) {
             next = item.charAt(item.length - 1) === '\n'
             if (!loose) loose = next
@@ -219,7 +234,7 @@ class Lexer {
       if (top && (cap = this.rules.def.exec(src))) {
         src = src.substring(cap[0].length)
         if (cap[3]) cap[3] = cap[3].substring(1, cap[3].length - 1)
-        tag = cap[1].toLowerCase().replace(/\s+/g, ' ')
+        const tag = cap[1].toLowerCase().replace(/\s+/g, ' ')
         if (!this.tokens.links[tag]) {
           this.tokens.links[tag] = {
             href: cap[2],
@@ -250,7 +265,7 @@ class Lexer {
             em = true
             row[0] = row[0].slice(1)
           }
-          for (i = 0; i < row.length; ++i) {
+          for (let i = 0; i < row.length; ++i) {
             const cell = row[i], header = headers[i]
             rowRes.push({
               em: header.em || em,
@@ -296,7 +311,7 @@ class Lexer {
   }
 
   inline() {
-    const inl = new InlineLexer(this.tokens.links)
+    const inl = new InlineLexer(this.options)
 
     function walk(node) {
       if (node.text) {
@@ -328,18 +343,15 @@ class Lexer {
 
 const block = {
   newline: /^\n+/,
-  // code: /^( {4}[^\n]+\n*)+/,
   fences: /^ *(`{3,})[ .]*(\S+)? *\n([\s\S]*?)\n? *\1 *(?:\n+|$)/,
   hr: /^ {0,3}([-=])(\1|\.\1| \1)\2+ *(?:\n+|$)/,
   section: /^ *(\^{1,3}) *([^\n]+?) *(?:\^+ *)?(?:\n+|$)/,
   heading: /^ *(#{1,4}) +([^\n]+?) *(#*) *(?:\n+|$)/,
-  // nptable: /^ *([^|\n ].*\|.*)\n *([-:]+ *\|[-| :]*)(?:\n((?:.*[^>\n ].*(?:\n|$))*)\n*|$)/,
   blockquote: /^( *>\w* (paragraph|[^\n]*)(?:\n|$))+/,
   usage: /^( *\? +(paragraph|[^\n]*)(?:\n|$))+/,
   list: /^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
   inlinelist: /^(?: *\+[^\n]*[^+\n]\n(?= *\+))*(?: *\+[^\n]+\+?(?:\n+|$))/,
   def: /^ {0,3}\[((?!\s*])(?:\\[\[\]]|[^\[\]])+)]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)((?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))))? *(?:\n+|$)/,
-  // table: /^ *\|(.+)\n *\|?( *[-:]+[-| :]*)(?:\n((?: *[^>\n ].*(?:\n|$))*)\n*|$)/,
   table: /^([=<>*\t]+)\n((?:.+\n)*.*)(?:\n{2,}|$)/,
   paragraph: /^([^\n]+(?:\n(?!hr|heading| {0,3}>)[^\n]+)*)/,
   text: /^[^\n]+/

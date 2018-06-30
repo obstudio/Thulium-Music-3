@@ -7,6 +7,15 @@ const SmoothScroll = require('../SmoothScroll')
   'Paragraph', 'Heading', 'Section', 'Blockquote', 'Usage'
 ].forEach(name => Vue.component(name, require('./components/' + name)))
 
+function getTopLevelText(element) {
+  let result = '', child = element.firstChild
+  while (child) {
+    if (child.nodeType == 3) result += child.data
+    child = child.nextSibling
+  }
+  return result.trim()
+}
+
 module.exports = {
   name: 'TmDoc',
 
@@ -28,14 +37,7 @@ module.exports = {
       },
       props: ['item', 'base'],
       inject: ['switchDoc'],
-      render: VueCompile(`
-      <el-submenu v-if="!(item instanceof Array)" :index="index">
-        <template slot="title">{{ item.name[1] }}</template>
-        <tm-doc-variant v-for="sub in item.content" :item="sub" :base="index"/>
-      </el-submenu>
-      <el-menu-item v-else :index="index">
-        <span slot="title">{{ item[1] }}</span>
-      </el-menu-item>`)
+      render: getRender(__dirname + '/doc-variant.html')
     }
   },
 
@@ -83,16 +85,25 @@ module.exports = {
   },
 
   methods: {
-    setContent() {
-      return (async () => {
-        try {
-          const doc = await fetch(`./documents${this.current.path}.tmd`)
-          const text = await doc.text()
-          this.root = this.$markdown(text)
-        } catch (e) {
-          this.move(-1)
-          return
+    async setContent() {
+      try {
+        const doc = await fetch(`./documents${this.current.path}.tmd`)
+        const text = await doc.text()
+        this.root = this.$markdown(text)
+      } catch (e) {
+        this.move(-1)
+        return
+      }
+      const scroll = this.$refs.doc.scrollTop
+      this.h2nodes = Array.from(this.$refs.doc.getElementsByTagName('h2'))
+      this.$nextTick(() => {
+        global.user.state.Prefix.documents = getTopLevelText(this.$refs.doc.children[0]) + ' - '
+        if (typeof this.current.scroll === 'string') {
+          this.switchToAnchor(this.current.anchor)
+        } else {
+          this.docScroll(this.current.scroll - scroll)
         }
+<<<<<<< HEAD
         global.user.state.Prefix.documents = this.root[0].text + ' - '
         this.$nextTick(() => {
           if (typeof this.current.scroll === 'string') {
@@ -111,6 +122,10 @@ module.exports = {
           this.current.scroll = this.$refs.doc.scrollTop // save scroll info, better way?
         })
       })()
+=======
+        this.current.scroll = this.$refs.doc.scrollTop // save scroll info, better way?
+      })
+>>>>>>> build-doc
     },
     navigate(event) {
       let url = event.srcElement.dataset.rawUrl
@@ -132,14 +147,15 @@ module.exports = {
       } else {
         this.current.anchor = text
       }
-      const nodes = this.$refs.doc.getElementsByTagName('h2')
-      const result = Array.prototype.find.call(nodes, (node) => node.textContent === text)
+      const result = this.h2nodes.find(node => getTopLevelText(node) === text)
       if (result) {
         this.docScroll.scrollByPos(result.offsetTop)
       }
     }
   },
+  
   props: ['width', 'height', 'left', 'top'],
+<<<<<<< HEAD
   render: VueCompile(`<div class="tm-document"
     @click="hideContextMenus" @contextmenu="hideContextMenus">
     <div class="toolbar" :style="{ width: width + 'px' }">
@@ -207,4 +223,7 @@ module.exports = {
       close: 'deleteAt'
     }]"/>
   </div>`)
+=======
+  render: getRender(__dirname + '/documents.html')
+>>>>>>> build-doc
 }

@@ -165,17 +165,7 @@ module.exports = function(context) {
                   }
                 },    
                 inject: ['execute'],
-                render: VueCompile(`<transition-group name="tm-menu-list">
-                  <li v-for="(item, index) in list.data" :key="index">
-                    <div class="menu-item" @click="execute(list.switch, item.id)">
-                      <a class="label" :class="{ active: item.id === list.current }">{{ item.title }}</a>
-                      <span class="binding">
-                        <i v-if="item.changed" class="icon-circle" @click.stop="execute(list.close, item.id)"/>
-                        <i v-else class="icon-close" @click.stop="execute(list.close, item.id)"/>
-                      </span>
-                    </div>
-                  </li>
-                </transition-group>`)
+                render: getRender(__dirname + '/tm-menu-list.html')
               }
             },
             methods: {
@@ -239,29 +229,7 @@ module.exports = function(context) {
                 }
               }
             },
-            render: VueCompile(`<div class="content">
-              <li v-for="(item, index) in data">
-                <div v-if="item instanceof Object">
-                  <!--transition :name="move !== 0 ? 'tm-menu' : ''"
-                    :leave-to-class="'transform-to-' + (move > 0 ? 'left' : move < 0 ? 'right' : 'none')"
-                    :enter-class="'transform-to-' + (move > 0 ? 'right' : move < 0 ? 'left' : 'none')"-->
-                    <tm-menu v-show="embed[index]" :data="item.content" :lists="lists"/>
-                  <!--/transition-->
-                </div>
-                <div v-else-if="item === '@separator'" class="menu-item disabled" @click.stop>
-                  <a class="separator"/>
-                </div>
-                <tm-menu-list v-else-if="getList(item)" :list="getList(item)"/>
-                <div v-else-if="getContext(item)" class="menu-item disabled" @click.stop>
-                  <a class="label">{{ getCaption(item) }}</a>
-                  <span class="binding">{{ getBinding(item) }}</span>
-                </div>
-                <div v-else class="menu-item" @click="execute('executeCommand', item)">
-                  <a class="label">{{ getCaption(item) }}</a>
-                  <span class="binding">{{ getBinding(item) }}</span>
-                </div>
-              </li>
-            </div>`)
+            render: getRender(__dirname + '/tm-menu.html')
           }
         },
         props: {
@@ -280,13 +248,7 @@ module.exports = function(context) {
             }
           }
         },
-        render: VueCompile(`<div class="tm-menus">
-          <transition name="el-zoom-in-top" v-for="key in keys" :key="key">
-            <ul v-show="data[key].show" class="tm-menu">
-              <tm-menu :data="data[key].content" :embed="data[key].embed" :lists="lists"/>
-            </ul>
-          </transition>
-        </div>`)
+        render: getRender(__dirname + '/tm-menus.html')
       }
     }
   }
