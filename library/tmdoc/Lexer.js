@@ -1,4 +1,3 @@
-const defaults = require('./defaults')
 const InlineLexer = require('./InlineLexer')
 
 function edit(regex, opt) {
@@ -24,12 +23,14 @@ class Lexer {
    * Block Lexer
    * @param {String} defaultLanguage default language of code block
    * @param {Object} dictionary link dictionary
+   * @param {String} directory working directory
    * @param {Boolean} smartLists use smart lists
    * @param {Boolean} smartypants use smartypants
    */
   constructor({
     defaultLanguage = 'tm',
     dictionary = {},
+    directory = '/',
     smartLists = false,
     smartypants = false
   } = {}) {
@@ -38,6 +39,7 @@ class Lexer {
     this.options = {
       defaultLanguage,
       dictionary,
+      directory,
       smartLists,
       smartypants
     }
@@ -196,7 +198,6 @@ class Lexer {
           }
 
           const length = this.tokens.length
-          // Recurse.
           this.token(item, false)
           items.push({
             type: 'item',
@@ -244,7 +245,7 @@ class Lexer {
         continue
       }
 
-      // table (gfm)
+      // table
       if (top && (cap = this.rules.table.exec(src))) {
         src = src.substring(cap[0].length)
         const item = {

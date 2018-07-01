@@ -35,7 +35,7 @@
       height: height - 36 + 'px',
       left: catalog ? '0px' : - catalogWidth + 'px',
       width: catalogWidth + 'px'
-    }" ref="menu" @mousewheel.prevent.stop="menuScroll($event.deltaY)">
+    }" ref="menu" @mousewheel.prevent.stop="menuScroll.scrollByDelta($event.deltaY)">
     <el-menu @select="switchDoc" :unique-opened="true" ref="elMenu"
       :background-color="styles.documents.navBackground"
       :text-color="styles.documents.navForeground"
@@ -50,7 +50,7 @@
       width: contentWidth + 'px'
     }">
     <div class="tm-doc" ref="doc" @click="navigate"
-      @mousewheel.prevent.stop="docScroll($event.deltaY)"
+      @mousewheel.prevent.stop="docScroll.scrollByDelta($event.deltaY)"
       :class="{ scrolled: docScrolled }" :style="{
         'padding-left': Math.max(24, contentWidth / 8) + 'px',
         'padding-right': Math.max(24, contentWidth / 8) + 'px'

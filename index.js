@@ -17,9 +17,9 @@ Vue.use(Router)
 Vue.use(VueI18n)
 Vue.use(ElementUI)
 Vue.config.productionTip = false
-Vue.prototype.$markdown = (content, dict) => {
+Vue.prototype.$markdown = (content, options = {}) => {
   if (typeof content !== 'string') return []
-  return new Lexer().lex(content)
+  return new Lexer(options).lex(content)
 }
 
 // Global Environment

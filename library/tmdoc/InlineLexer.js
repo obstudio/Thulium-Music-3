@@ -31,7 +31,7 @@ class InlineLexer {
   }
 
   /**
-   * Lexing/Compiling
+   * Lexing / Compiling
    */
   output(src) {
     let out = '', cap
@@ -44,18 +44,18 @@ class InlineLexer {
         continue
       }
 
-      // tmlink
-      if (cap = this.rules.tmlink.exec(src)) {
+      // link
+      if (cap = this.rules.link.exec(src)) {
         src = src.substring(cap[0].length)
         let text, match
         if (cap[1]) {
           text = cap[1]
         } else if (match = cap[2].match(/^\$\w+(#\w+)$/)) {
           text = match[1]
-        } else if (cap[2].includes('#')) {
-          text = cap[2].match(/#([^#]+)$/)[1]
-        } else if (cap[2].includes('/')) {
-          text = cap[2].match(/\/([^/]+)$/)[1]
+        } else if (this.resolve(cap[2]) in this.options.dictionary) {
+          text = this.options.dictionary[this.resolve(cap[2])]
+        } else if (cap[2].includes('#') || cap[2].includes('/')) {
+          text = cap[2].match(/[#/]([^#/]+)$/)[1]
         } else {
           text = cap[2]
         }
@@ -134,6 +134,12 @@ class InlineLexer {
     return out
   }
 
+  resolve(url) {
+    const parts = this.options.directory.split('/')
+    const back = /^(\.\.\/)*/.exec(url)[0].length
+    return parts.slice(0, -1 - back / 3).join('/') + '/' + url.slice(back)
+  }  
+
   /**
    * Smartypants Transformations
    */
@@ -155,16 +161,11 @@ class InlineLexer {
       // ellipses
       .replace(/\.{3}/g, '\u2026')
   }
-
-  static escapes(text) {
-    return text ? text.replace(InlineLexer.rules._escapes, '$1') : text
-  }
 }
 
 InlineLexer.rules = {
-  _escapes: /\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/g,
   escape: /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,
-  tmlink: /^\[(?:([^\]|]+)\|)?([^\]]+)\]/,
+  link: /^\[(?:([^\]|]+)\|)?([^\]]+)\]/,
   strong: /^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)|^\*\*([^\s])\*\*(?!\*)/,
   em: /^\*([^\s][\s\S]*?[^\s*])\*(?!\*)|^\*([^\s*][\s\S]*?[^\s])\*(?!\*)|^\*([^\s*])\*(?!\*)/,
   underline: /^_([^\s][\s\S]*?[^\s_])_(?!_)|^_([^\s*])_(?!_)/,
