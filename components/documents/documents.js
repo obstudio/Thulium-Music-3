@@ -10,7 +10,7 @@ const SmoothScroll = require('../SmoothScroll')
 function getTopLevelText(element) {
   let result = '', child = element.firstChild
   while (child) {
-    if (child.nodeType == 3) result += child.data
+    if (child.nodeType === 3) result += child.data
     child = child.nextSibling
   }
   return result.trim()
@@ -72,11 +72,15 @@ module.exports = {
 
   mounted() {
     window.monaco.editor.setTheme(global.user.state.Settings.theme)
-    this.docScroll = SmoothScroll(this.$refs.doc, {}, (doc) => {
-      this.docScrolled = doc.scrollTop > 0
+    this.docScroll = SmoothScroll(this.$refs.doc, {
+      callback: (doc) => {
+        this.docScrolled = doc.scrollTop > 0
+      }
     })
-    this.menuScroll = SmoothScroll(this.$refs.menu, {}, (menu) => {
-      this.menuScrolled = menu.scrollTop > 0
+    this.menuScroll = SmoothScroll(this.$refs.menu, {
+      callback: (menu) => {
+        this.menuScrolled = menu.scrollTop > 0
+      }
     })
   },
 
@@ -97,7 +101,7 @@ module.exports = {
         if (typeof this.current.scroll === 'string') {
           this.switchToAnchor(this.current.anchor)
         } else {
-          this.docScroll(this.current.scroll - scroll)
+          this.docScroll.scrollByPos(this.current.scroll)
         }
         this.current.scroll = this.$refs.doc.scrollTop // save scroll info, better way?
       })
@@ -124,7 +128,7 @@ module.exports = {
       }
       const result = this.h2nodes.find(node => getTopLevelText(node) === text)
       if (result) {
-        this.docScroll(result.offsetTop - this.$refs.doc.scrollTop)
+        this.docScroll.scrollByPos(result.offsetTop)
       }
     }
   },

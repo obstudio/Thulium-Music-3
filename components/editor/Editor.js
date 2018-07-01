@@ -233,9 +233,9 @@ module.exports = {
         const width = this.current.node.clientWidth
         const scroll = tabsNode.scrollLeft
         if (scroll < left + width - tabsNode.clientWidth) {
-          this.doScroll(left + width - tabsNode.clientWidth - scroll + 20)
+          this.doScroll.scrollByDelta(left + width - tabsNode.clientWidth - scroll + 20)
         } else if (scroll > left) {
-          this.doScroll(left - scroll - 20)
+          this.doScroll.scrollByDelta(left - scroll - 20)
         }
       })
     },
@@ -266,7 +266,7 @@ module.exports = {
       this.draggingExtension = false
     },
     scrollTab(e) {
-      this.doScroll(e.deltaY)
+      this.doScroll.scrollByDelta(e.deltaY)
     },
     changeExtension(id) {
       if (this.activeExtension === id) return

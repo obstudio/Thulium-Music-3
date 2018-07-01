@@ -64,8 +64,8 @@ const defaultState = {
 
 module.exports = {
   data() {
-    const source = localStorage.getItem('history')
-    let history = defaultState
+    const source = localStorage.getItem('recent')
+    let history = [defaultState]
     try {
       const data = JSON.parse(source)
       if (data instanceof Array) history = data
@@ -76,6 +76,7 @@ module.exports = {
     return {
       tree: new TmDocTree(),
       history: history,
+      recent: history.slice(),
       currentId: history.length - 1
     }
   },
@@ -89,7 +90,7 @@ module.exports = {
   mounted() {
     this.move()
     addEventListener('beforeunload', () => {
-      localStorage.setItem('history', JSON.stringify(this.history))
+      localStorage.setItem('recent', JSON.stringify(this.recent))
     })
   },
 
@@ -106,11 +107,16 @@ module.exports = {
         scroll: anchor ? anchor[1] : 0
       }
       if (this.current.path === state.path && this.current.anchor === state.anchor) {
+        this.current.scroll = this.current.anchor
         this.move()
       } else {
-        this.history.push(state)
-        this.move(1)
+        this.pushState(state)
+        this.recent.push(state)
       }
+    },
+    pushState(state) {
+      this.history.splice(this.currentId + 1, Infinity, state)
+      this.move(1)
     },
     switchTo(id) {
       if (id >= 0 && id < this.history.length) {
@@ -118,18 +124,21 @@ module.exports = {
         this.setContent()
       }
     },
+    viewRecent(id) {
+      this.pushState(Object.assign({}, this.recent[id]))
+    },
     deleteAt(id) {
-      if (this.history.length === 1) {
-        this.history.splice(id, 1, defaultState)
-      } else {
-        this.history.splice(id, 1)
-        if (id === this.currentId) this.currentId -= 1
-      }
+      // if (this.history.length === 1) {
+      //   this.recent.splice(id, 1, defaultState)
+      // } else {
+      this.recent.splice(id, 1)
+      //   if (id === this.currentId) this.currentId -= 1
+      // }
     },
     getRecent(amount = Infinity) {
-      const start = amount > this.history.length ? 0 : this.history.length - amount
-      return this.history.slice(start).map((state, index) => {
-        const path = this.tree.getPath(state.path).map(node => node.title).join(' / ')
+      const start = amount > this.recent.length ? 0 : this.history.length - amount
+      return this.recent.slice(start).map((state, index) => {
+        const path = getPath(state.path).map(node => node.title).join(' / ')
         const anchor = state.anchor ? ' # ' + state.anchor : ''
         return {
           title: path + anchor,
