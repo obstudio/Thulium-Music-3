@@ -83,34 +83,32 @@ module.exports = {
   },
 
   methods: {
-    setContent() {
-      return (async () => {
-        try {
-          const doc = await fetch(`./documents${this.current.path}.tmd`)
-          const text = await doc.text()
-          this.root = this.$markdown(text)
-        } catch (e) {
-          this.move(-1)
-          return
+    async setContent() {
+      try {
+        const doc = await fetch(`./documents${this.current.path}.tmd`)
+        const text = await doc.text()
+        this.root = this.$markdown(text)
+      } catch (e) {
+        this.move(-1)
+        return
+      }
+      global.user.state.Prefix.documents = this.root[0].text + ' - '
+      this.$nextTick(() => {
+        if (typeof this.current.scroll === 'string') {
+          this.switchToAnchor(this.current.anchor)
+        } else {
+          this.docScroll.scrollByPos(this.current.scroll)
         }
-        global.user.state.Prefix.documents = this.root[0].text + ' - '
-        this.$nextTick(() => {
-          if (typeof this.current.scroll === 'string') {
-            this.switchToAnchor(this.current.anchor)
-          } else {
-            this.docScroll.scrollByPos(this.current.scroll)
-          }
-          const parts = this.current.path.match(/\/[^/]+/g)
-          let last = ''
-          const arr = []
-          for (const part of parts) {
-            last += part
-            arr.push(last)
-          }
-          arr.forEach(item => this.$refs.elMenu.open(item))
-          this.current.scroll = this.$refs.doc.scrollTop // save scroll info, better way?
-        })
-      })()
+        const parts = this.current.path.match(/\/[^/]+/g)
+        let last = ''
+        const arr = []
+        for (const part of parts) {
+          last += part
+          arr.push(last)
+        }
+        // arr.forEach(item => this.$refs.elMenu.open(item))
+        this.current.scroll = this.$refs.doc.scrollTop // save scroll info, better way?
+      })
     },
     navigate(event) {
       let url = event.srcElement.dataset.rawUrl
@@ -203,7 +201,7 @@ module.exports = {
     <tm-menus ref="menus" :keys="menuKeys" :data="menuData" :lists="[{
       name: 'recent',
       data: getRecent(10),
-      switch: 'switchTo',
+      switch: 'viewRecent',
       close: 'deleteAt'
     }]"/>
   </div>`)
