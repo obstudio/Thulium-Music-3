@@ -138,7 +138,7 @@ module.exports = {
     getRecent(amount = Infinity) {
       const start = amount > this.recent.length ? 0 : this.history.length - amount
       return this.recent.slice(start).map((state, index) => {
-        const path = getPath(state.path).map(node => node.title).join(' / ')
+        const path = this.tree.getPath(state.path).map(node => node.title).join(' / ')
         const anchor = state.anchor ? ' # ' + state.anchor : ''
         return {
           title: path + anchor,

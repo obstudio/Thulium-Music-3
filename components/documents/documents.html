@@ -50,7 +50,7 @@
       width: contentWidth + 'px'
     }">
     <div class="tm-doc" ref="doc" @click="navigate"
-      @mousewheel.prevent.stop="docScroll($event.deltaY)"
+      @mousewheel.prevent.stop="docScroll.scrollByDelta($event.deltaY)"
       :class="{ scrolled: docScrolled }" :style="{
         'padding-left': Math.max(24, contentWidth / 8) + 'px',
         'padding-right': Math.max(24, contentWidth / 8) + 'px'
@@ -61,7 +61,7 @@
   <tm-menus ref="menus" :keys="menuKeys" :data="menuData" :lists="[{
     name: 'recent',
     data: getRecent(10),
-    switch: 'switchTo',
+    switch: 'viewRecent',
     close: 'deleteAt'
   }]"/>
 </div>
