@@ -1,0 +1,7 @@
+<el-submenu v-if="!(item instanceof Array)" :index="index">
+  <template slot="title">{{ item.name[1] }}</template>
+  <tm-doc-variant v-for="sub in item.content" :item="sub" :base="index"/>
+</el-submenu>
+<el-menu-item v-else :index="index">
+  <span slot="title">{{ item[1] }}</span>
+</el-menu-item>

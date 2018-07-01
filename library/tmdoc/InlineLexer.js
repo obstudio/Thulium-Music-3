@@ -1,21 +1,40 @@
-const defaults = require('./defaults')
-const {escape, originIndependentUrl, resolveUrl, unescape} = require('./util')
+function escape(html, encode) {
+  return html
+    .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function unescape(html) {
+  // explicitly match decimal, hex, and named HTML entities
+  return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/ig, function (_, n) {
+    n = n.toLowerCase()
+    if (n === 'colon') return ':'
+    if (n.charAt(0) === '#') {
+      return n.charAt(1) === 'x'
+        ? String.fromCharCode(parseInt(n.substring(2), 16))
+        : String.fromCharCode(+n.substring(1))
+    }
+    return ''
+  })
+}
 
 class InlineLexer {
   /**
    * Inline Lexer & Compiler
    */
-  constructor(links, options) {
-    this.options = options || defaults
-    this.links = links
+  constructor(options) {
+    this.options = options
     this.rules = InlineLexer.rules
   }
 
   /**
-   * Lexing/Compiling
+   * Lexing / Compiling
    */
   output(src) {
-    let out = '', link, href, title, cap
+    let out = '', cap
 
     while (src) {
       // escape
@@ -25,23 +44,22 @@ class InlineLexer {
         continue
       }
 
-      // tmlink
-      if (cap = this.rules.tmlink.exec(src)) {
+      // link
+      if (cap = this.rules.link.exec(src)) {
         src = src.substring(cap[0].length)
         let text, match
         if (cap[1]) {
           text = cap[1]
         } else if (match = cap[2].match(/^\$\w+(#\w+)$/)) {
           text = match[1]
-        } else if (cap[2].includes('#')) {
-          text = cap[2].match(/#([^#]+)$/)[1]
-        } else if (cap[2].includes('/')) {
-          text = cap[2].match(/\/([^/]+)$/)[1]
+        } else if (this.resolve(cap[2]) in this.options.dictionary) {
+          text = this.options.dictionary[this.resolve(cap[2])]
+        } else if (cap[2].includes('#') || cap[2].includes('/')) {
+          text = cap[2].match(/[#/]([^#/]+)$/)[1]
         } else {
           text = cap[2]
         }
-        const path = cap[2]
-        out += this.link(path, text)
+        out += `<a href="#" data-raw-url="${cap[2]}" onclick="event.preventDefault()"'>${text}</a>`
         continue
       }
 
@@ -63,6 +81,13 @@ class InlineLexer {
       if (cap = this.rules.comment.exec(src)) {
         src = src.substring(cap[0].length)
         out += `<span class="comment">${this.output(cap[2] || cap[1])}</span>`
+        continue
+      }
+
+      // package
+      if (cap = this.rules.package.exec(src)) {
+        src = src.substring(cap[0].length)
+        out += `<code class="package">${this.output(cap[2] || cap[1])}</code>`
         continue
       }
 
@@ -109,16 +134,11 @@ class InlineLexer {
     return out
   }
 
-  link(href, text) {
-    return `<a href="#" data-raw-url="${href}" onclick="event.preventDefault()"'>${text}</a>`
-  }
-
-  image(href, title, text) {
-    if (this.options.baseUrl && !originIndependentUrl.test(href)) {
-      href = resolveUrl(this.options.baseUrl, href)
-    }
-    return `<img src="${href}" alt="${text}" title="${title}">`
-  }
+  resolve(url) {
+    const parts = this.options.directory.split('/')
+    const back = /^(\.\.\/)*/.exec(url)[0].length
+    return parts.slice(0, -1 - back / 3).join('/') + '/' + url.slice(back)
+  }  
 
   /**
    * Smartypants Transformations
@@ -141,28 +161,20 @@ class InlineLexer {
       // ellipses
       .replace(/\.{3}/g, '\u2026')
   }
-
-  static escapes(text) {
-    return text ? text.replace(InlineLexer.rules._escapes, '$1') : text
-  }
 }
 
 InlineLexer.rules = {
-  _escapes: /\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/g,
   escape: /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,
-  // eslint-disable-next-line no-control-regex
-  link: /^!?\[((?:\[[^\[\]]*\]|\\[\[\]]?|`[^`]*`|[^\[\]\\])*?)\]\(\s*(<(?:\\[<>]?|[^\s<>\\])*>|(?:\\[()]?|\([^\s\x00-\x1f()\\]*\)|[^\s\x00-\x1f()\\])*?)(?:\s+("(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)))?\s*\)/,
-  reflink: /^!?\[((?:\[[^\[\]]*\]|\\[\[\]]?|`[^`]*`|[^\[\]\\])*?)\]\[(?!\s*\])((?:\\[\[\]]?|[^\[\]\\])+)\]/,
-  nolink: /^!?\[(?!\s*\])((?:\[[^\[\]]*\]|\\[\[\]]|[^\[\]])*)\](?:\[\])?/,
-  tmlink: /^\[(?:([^\]|]+)\|)?([^\]]+)\]/,
+  link: /^\[(?:([^\]|]+)\|)?([^\]]+)\]/,
   strong: /^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)|^\*\*([^\s])\*\*(?!\*)/,
   em: /^\*([^\s][\s\S]*?[^\s*])\*(?!\*)|^\*([^\s*][\s\S]*?[^\s])\*(?!\*)|^\*([^\s*])\*(?!\*)/,
   underline: /^_([^\s][\s\S]*?[^\s_])_(?!_)|^_([^\s*])_(?!_)/,
   comment: /^\(\(([^\s][\s\S]*?[^\s])\)\)(?!\))|^\(\(([^\s])\)\)(?!\))/,
+  package: /^\{\{([^\s][\s\S]*?[^\s])\}\}(?!\})|^\{\{([^\s])\}\}(?!\})/,
   code: /^(`+)\s*([\s\S]*?[^`]?)\s*\1(?!`)/,
   br: /^\n(?!\s*$)/,
   del: /^-(?=\S)([\s\S]*?\S)-/,
-  text: /^[\s\S]+?(?=[\\<!\[`*(]|\b_|\n|$)/
+  text: /^[\s\S]+?(?=[\\<!\[`*({]|\b_|\n|$)/
 }
 
 module.exports = InlineLexer

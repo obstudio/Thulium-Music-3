@@ -12,6 +12,7 @@ parserOptions:
     jsx: true
 globals:
   VueCompile: true
+  getRender: true
 rules:
   indent:
     - warn
@@ -29,4 +30,4 @@ rules:
   no-console:
     - warn
   no-cond-assign:
-    - warn
+    - off

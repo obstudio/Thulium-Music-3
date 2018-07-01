@@ -1,0 +1,23 @@
+<div class="content">
+  <li v-for="(item, index) in data">
+    <div v-if="item instanceof Object">
+      <!--transition :name="move !== 0 ? 'tm-menu' : ''"
+        :leave-to-class="'transform-to-' + (move > 0 ? 'left' : move < 0 ? 'right' : 'none')"
+        :enter-class="'transform-to-' + (move > 0 ? 'right' : move < 0 ? 'left' : 'none')"-->
+        <tm-menu v-show="embed[index]" :data="item.content" :lists="lists"/>
+      <!--/transition-->
+    </div>
+    <div v-else-if="item === '@separator'" class="menu-item disabled" @click.stop>
+      <a class="separator"/>
+    </div>
+    <tm-menu-list v-else-if="getList(item)" :list="getList(item)"/>
+    <div v-else-if="getContext(item)" class="menu-item disabled" @click.stop>
+      <a class="label">{{ getCaption(item) }}</a>
+      <span class="binding">{{ getBinding(item) }}</span>
+    </div>
+    <div v-else class="menu-item" @click="execute('executeCommand', item)">
+      <a class="label">{{ getCaption(item) }}</a>
+      <span class="binding">{{ getBinding(item) }}</span>
+    </div>
+  </li>
+</div>

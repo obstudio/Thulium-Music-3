@@ -1,0 +1,7 @@
+<div class="tm-menus">
+  <transition name="el-zoom-in-top" v-for="key in keys" :key="key">
+    <ul v-show="data[key].show" class="tm-menu">
+      <tm-menu :data="data[key].content" :embed="data[key].embed" :lists="lists"/>
+    </ul>
+  </transition>
+</div>
