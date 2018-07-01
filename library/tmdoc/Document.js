@@ -1,31 +1,11 @@
-const Lexer = require('./Lexer')
+const TmLexer = require('./Lexer')
 const InlineLexer = require('./InlineLexer')
 
 function align(col) {
   return col.includes('<') ? 1 : col.includes('=') ? 2 : col.includes('>') ? 3 : 0
 }
 
-class LexerRules {
-  constructor(rules) {
-    this.rules = rules
-  }
-
-  /**
-   * edit pattern
-   * @param {String} key 
-   * @param {Function} callback 
-   */
-  edit(key, callback) {
-    let source = this.rules[key].regex.source
-    for (const key in this.rules) {
-      source.replace(new RegExp(key, 'g'), this.rules[key].regex.source.replace(/(^|[^\[])\^/g, '$1'))
-    }
-    if (callback) source = callback.call(this.rules, source)
-    this.rules[key].regex = new RegExp(source, this.rules[key].attrs || '')
-  }
-}
-
-const rules = new LexerRules({
+const rules = new TmLexer.Rules({
   newline: {
     regex: /^\n+/
   },
@@ -85,20 +65,22 @@ const rules = new LexerRules({
   },
   list: {
     regex: /^( *)(bullet) [\s\S]+?(?:\n+(?=separator|definition)|\n+(?! )(?!\1bullet )\n*|\s*$)/,
-    token: (cap) => ({
-      ordered: cap[2].length > 1,
-      content: cap[0].match(this.rules.item).map((item) => {
-        // Remove the list item's bullet so it is seen as the next token.
-        let space = item.length
-        item = item.replace(/^ *([*+-]|\d+\.) +/, '')
-        // Outdent whatever the list item contains. Hacky.
-        if (~item.indexOf('\n ')) {
-          space -= item.length
-          item = item.replace(new RegExp(`^ {1,${space}}`, 'gm'), '')
-        }
-        return this.parse(item)
-      })
-    })
+    token(cap) {
+      return {
+        ordered: cap[2].length > 1,
+        content: cap[0].match(this.rules.item.regex).map((item) => {
+          // Remove the list item's bullet so it is seen as the next token.
+          let space = item.length
+          item = item.replace(/^ *([*+-]|\d+\.) +/, '')
+          // Outdent whatever the list item contains. Hacky.
+          if (~item.indexOf('\n ')) {
+            space -= item.length
+            item = item.replace(new RegExp(`^ {1,${space}}`, 'gm'), '')
+          }
+          return this.parse(item, { topLevel: false })
+        })
+      }
+    }
   },
   inlinelist: {
     regex: /^(?: *\+[^\n]*[^+\n]\n(?= *\+))*(?: *\+[^\n]+\+?(?:\n+|$))/,
@@ -131,30 +113,26 @@ const rules = new LexerRules({
       return this.options.topLevel
     },
     token(cap) {
-      const inner = []
       const headers = cap[1].split(/\t+/).map((col) => ({
         em: col.includes('*'),
         al: align(col)
       }))
-      const cells = cap[2].split('\n').map((line) => line.split(/\t+/))
-      for (const row of cells) {
-        const rowRes = []
+      return cap[2].split('\n').map((line) => {
+        const row = line.split(/\t+/)
         let em = false
         if (row[0].startsWith('*')) {
           em = true
           row[0] = row[0].slice(1)
         }
-        for (let i = 0; i < row.length; ++i) {
-          const cell = row[i], header = headers[i]
-          rowRes.push({
-            em: header.em || em,
-            al: align(cell[0]) || header.al,
+        return row.map((cell, index) => {
+          const col = headers[index]
+          return {
+            em: col.em || em,
+            al: align(cell[0]) || col.al,
             text: cell.replace(/^[=<>]/, '')
-          })
-        }
-        inner.push(rowRes)
-      }
-      return inner
+          }
+        })
+      })
     }
   },
   paragraph: {
@@ -165,20 +143,23 @@ const rules = new LexerRules({
     regex: /^[^\n]+/,
     token: (cap) => cap[0]
   }
-})
+}, [
+  'item',
+  'list',
+  'paragraph',
+  'blockquote',
+  'usage',
+  {
+    key: 'paragraph',
+    edit(source) {
+      return source.replace('(?!', '(?!'
+        + this.code.regex.source.replace('\\1', '\\2') + '|'
+        + this.list.regex.source.replace('\\1', '\\3') + '|')
+    }
+  }
+])
 
-rules.edit('item')
-rules.edit('list')
-rules.edit('paragraph')
-rules.edit('blockquote')
-rules.edit('usage')
-rules.edit('paragraph', function(source) {
-  return source.replace('(?!', '(?!'
-    + this.code.regex.source.replace('\\1', '\\2') + '|'
-    + this.list.regex.source.replace('\\1', '\\3') + '|')
-})
-
-class DocumentLexer extends Lexer {
+class DocumentLexer extends TmLexer {
   /**
    * Block Lexer
    * @param {Object} dictionary link dictionary
@@ -188,11 +169,25 @@ class DocumentLexer extends Lexer {
     dictionary = {},
     directory = '/'
   } = {}) {
-    super(rules.rules, {
+    super({
+      rules,
+      initial: [],
+      onToken(prev, curr, type) {
+        if (curr instanceof Array) {
+          curr = { content: curr }
+        } else if (typeof curr === 'string') {
+          curr = { text: curr }
+        }
+        curr.type = curr.type || type
+        prev.push(curr)
+        return prev
+      }
+    })
+    this.options = {
       dictionary,
       directory,
       links: {}
-    })
+    }
   }
 
   lex(source) {
@@ -206,27 +201,15 @@ class DocumentLexer extends Lexer {
   }
 
   inline(tokens) {
-    const inl = new InlineLexer(this.options)
+    const lexer = new InlineLexer(this.options)
 
     function walk(node) {
-      if (node.text) {
-        node.text = inl.output(node.text)
+      if (node instanceof Array) {
+        node.forEach(walk)
+      } else if (node.text) {
+        node.text = lexer.parse(node.text)
       } else if (node.content) {
-        if (typeof node.content[0] === 'string') {
-          for (let i = 0; i < node.content.length; ++i) {
-            node.content[i] = inl.output(node.content[i])
-          }
-        } else {
-          for (const token of node.content) {
-            if (token instanceof Array) {
-              for (const t2 of token) {
-                walk(t2)
-              }
-            } else {
-              walk(token)
-            }
-          }
-        }
+        node.content.forEach(walk)
       }
     }
 

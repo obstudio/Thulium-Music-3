@@ -6,15 +6,9 @@ module.exports = {
       required: true
     }
   },
-  render: VueCompile(`
-  <ul v-if="!node.ordered">
+  render: VueCompile(`<component :is="node.ordered ? 'ol' : 'ul'">
     <li v-for="(item, index) in node.content" :key="index">
-      <component v-for="(comp, index) in item" :key="index" :is="comp.type" :node="comp"/>
+      <component v-for="(comp, index) in item" :key="index" :is="'tm-doc-' + comp.type" :node="comp"/>
     </li>
-  </ul>
-  <ol v-else>
-    <li v-for="(item, index) in node.content" :key="index">
-      <component v-for="(comp, index) in item" :key="index" :is="comp.type" :node="comp"/>
-    </li>
-  </ol>`)
+  </component>`)
 }
