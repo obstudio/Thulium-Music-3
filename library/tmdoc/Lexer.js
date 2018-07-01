@@ -4,25 +4,27 @@ class TmLexer {
     this.options = options
   }
 
-  parse(source) {
-    this.tokens = []
+  parse(source, options = {}) {
+    const _options = this.options, tokens = []
+    Object.assign(this.options, options)
     while (source) {
-      let capture, matched = false
-      for (const rule of this.rules) {
-        if (rule.exec === false) continue
-        capture = rule.exec(source)
+      let matched = false
+      for (const key in this.rules) {
+        const rule = this.rules[key]
+        if (rule.test && !rule.test.call(this)) continue
+        const capture = rule.regex.exec(source)
         if (capture) {
           source = source.substring(capture[0].length)
           if (rule.token) {
-            const token = rule.token.call(this, capture)
+            let token = rule.token.call(this, capture)
             if (token) {
-              if (rule.inner) {
-                const length = this.tokens.length
-                this.parse(rule.inner(capture))
-                token.inner = this.tokens.splice(length, this.tokens.length - length)
+              if (token instanceof Array) {
+                token = { content: token }
+              } else if (typeof token === 'string') {
+                token = { text: token }
               }
-              token.type = rule.name
-              this.tokens.push(token)
+              token.type = token.type || key
+              tokens.push(token)
             }
           }
           matched = true
@@ -35,6 +37,8 @@ class TmLexer {
         throw new Error('Infinite loop on byte: ' + source.charCodeAt(0))
       }
     }
+    this.options = _options
+    return tokens
   }
 }
 

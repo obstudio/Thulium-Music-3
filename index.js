@@ -6,7 +6,7 @@ const Vue = require('vue')
 const fs = require('fs')
 const VueCompiler = require('vue-template-compiler/browser')
 
-const Lexer = require('./library/tmdoc/DocLexer')
+const Lexer = require('./library/tmdoc/Document')
 // Vue files can not be used
 // const Icon = require('vue-awesome/components/Icon')
 // require('node_modules/vue-awesome/dist/vue-awesome.js')

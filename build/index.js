@@ -8,7 +8,7 @@ global.VueCompile = (template) => {
   return VueCompiler.compileToFunctions(template).render
 }
 
-const Lexer = require('../library/tmdoc/DocLexer')
+const Lexer = require('../library/tmdoc/Document')
 
 const {dirTree, read, write, StructurePath} = require('./DirTree')
 let structure = read()
