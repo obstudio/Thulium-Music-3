@@ -34,7 +34,14 @@ window.monaco = {
     }
   }
 }
-
+function getTopLevelText(element) {
+  let result = '', child = element.firstChild
+  while (child) {
+    if (child.nodeType === 3) result += child.data
+    child = child.nextSibling
+  }
+  return result.trim()
+}
 function walk(dirTree) {
   if (dirTree.type === 'file') {
     const content = fs.readFileSync(dirTree.path, 'utf8')
@@ -49,7 +56,7 @@ function walk(dirTree) {
     return {
       type: 'file',
       name: dirTree.name,
-      anchors: Array.prototype.map.call(vm.$el.getElementsByTagName('h2'), (node) => node.textContent),
+      anchors: Array.prototype.map.call(vm.$el.getElementsByTagName('h2'), (node) => getTopLevelText(node)),
       title
     }
   } else {
