@@ -56,7 +56,7 @@ function walk(dirTree) {
     return {
       type: 'folder',
       name: dirTree.name,
-      default: fs.existsSync(__dirname + '/' + dirTree.path + '/overview.tmd') ? 'overview' : null,
+      default: fs.existsSync(__dirname + '/../' + dirTree.path + '/overview.tmd') ? 'overview' : null,
       content: dirTree.children.map(walk)
     }
   }

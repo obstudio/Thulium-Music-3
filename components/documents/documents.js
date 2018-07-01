@@ -31,8 +31,7 @@ module.exports = {
       name: 'TmDocVariant',
       computed: {
         index() {
-          return this.base + '/' + 
-            (this.item instanceof Array ? this.item : this.item.name)[0]
+          return this.base + '/' + this.item.name
         }
       },
       props: ['item', 'base'],
@@ -87,7 +86,7 @@ module.exports = {
   methods: {
     async setContent() {
       try {
-        const doc = await fetch(`./documents${this.current.path}.tmd`)
+        const doc = await fetch(`./documents${this.current.path}`)
         const text = await doc.text()
         this.root = this.$markdown(text)
       } catch (e) {

@@ -36,12 +36,12 @@
       left: catalog ? '0px' : - catalogWidth + 'px',
       width: catalogWidth + 'px'
     }" ref="menu" @mousewheel.prevent.stop="menuScroll($event.deltaY)">
-    <el-menu @select="switchDoc" :unique-opened="true" ref="elMenu"
+    <el-menu @select="switchDoc" @open="switchDoc" :unique-opened="true" ref="elMenu"
       :background-color="styles.documents.navBackground"
       :text-color="styles.documents.navForeground"
       :active-text-color="styles.documents.navActive"
       :default-active="activeIndex">
-      <tm-doc-variant v-for="item in tree.source" :item="item" base=""/>
+      <tm-doc-variant v-for="item in tree.source.content" :item="item" base=""/>
     </el-menu>
   </div>
   <div class="content" :style="{

@@ -336,3 +336,7 @@
     border-radius: 3px;
     vertical-align: 0.1em;
 }
+
+.mock-item .el-submenu__icon-arrow {
+    display: none;
+}

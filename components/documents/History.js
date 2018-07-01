@@ -1,33 +1,49 @@
 const fs = require('fs')
-const yaml = require('js-yaml')
 
 class TmDocTree {
   constructor() {
-    this.source = yaml.safeLoad(fs.readFileSync(TmDocTree.sourcePath, { encoding: 'utf8' }))
-    if (fs.existsSync(TmDocTree.indexPath)) {
-      this.index = require(TmDocTree.indexPath)
-    } else {
-      this.index = this.source
-      fs.writeFileSync(TmDocTree.indexPath, JSON.stringify(this.index), { encoding: 'utf8' })
-    }
-
-    const dictionary = {}
-    const defaultDoc = {}
-    function walk(index, base = '') {
-      for (const item of index) {
-        if (item instanceof Array) {
-          dictionary[base + '/' + item[0]] = item[1]
-        } else {
-          const path = base + '/' + item.name[0]
-          walk(item.content, path)
-          dictionary[path] = item.name[1]
-          defaultDoc[path] = path + '/' + item.default
+    const self = this
+    function processStructure() {
+      const dictionary = {}
+      const defaultDoc = {}
+      function walk(index, base = '') {
+        if (base.startsWith('/documents')) base = base.slice(10)
+        if (index.type === 'folder') {
+          const path = base + '/' + index.name
+          dictionary[path] = index.name
+          if (index.default !== null) {
+            defaultDoc[path] = path + '/' + index.default + '.tmd'
+          }
+          for (const child of index.content) {
+            walk(child, path)
+          }
+        } else if (index.type === 'file') {
+          dictionary[base + '/' + index.name] = index.name
         }
       }
+      walk(self.source)
+      self.dictionary = dictionary
+      self.defaultDoc = defaultDoc
     }
-    walk(this.source)
-    this.dictionary = dictionary
-    this.defaultDoc = defaultDoc
+    if (global.env === 1) {
+      const structurePath = __dirname + '/../../build/structure.json'
+      function readStructure() {
+        try {
+          self.source = JSON.parse(fs.readFileSync(structurePath, 'utf8'))
+        } catch (e) {
+          if (!self.source) this.source = {}
+        }
+      }
+      fs.watch(structurePath, () => {
+        readStructure()
+        processStructure()
+      })
+      readStructure()
+    } else {
+      this.source = require('../../build/structure.json')
+    }
+
+    processStructure()
   }
 
   getPath(route) {
@@ -57,7 +73,7 @@ TmDocTree.sourcePath = __dirname + '/../../documents/index.yaml'
 TmDocTree.indexPath = __dirname + '/index.json'
 
 const defaultState = {
-  path: '/overview',
+  path: '/overview.tmd',
   anchor: null,
   scroll: 0
 }
