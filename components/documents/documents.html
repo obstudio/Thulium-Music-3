@@ -55,7 +55,8 @@
         'padding-left': Math.max(24, contentWidth / 8) + 'px',
         'padding-right': Math.max(24, contentWidth / 8) + 'px'
       }">
-      <component v-for="(comp, index) in root" :is="comp.type" :node="comp" :key="index"/>
+      <component v-for="(item, index) in root" :key="index"
+        :is="'tm-doc-' + item.type" :node="item"/>
     </div>
   </div>
   <tm-menus ref="menus" :keys="menuKeys" :data="menuData" :lists="[{

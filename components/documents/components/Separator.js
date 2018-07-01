@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'Split',
+  name: 'TmDocSeparator',
   props: {
     node: {
       type: Object,

@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'Table',
+  name: 'TmDocTable',
   props: {
     node: {
       type: Object,

@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'Code',
+  name: 'TmDocCode',
   data() {
     return {
       res: ''
