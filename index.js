@@ -43,6 +43,11 @@ global.getRender = function(filepath) {
   }
 }
 
+if (global.env === 1) {
+  const {exec} = require('child_process')
+  exec('npm run build-doc')
+}
+
 global.VueCompile = (template) => {
   return VueCompiler.compileToFunctions(template).render
 }

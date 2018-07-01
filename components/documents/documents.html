@@ -41,7 +41,7 @@
       :text-color="styles.documents.navForeground"
       :active-text-color="styles.documents.navActive"
       :default-active="activeIndex">
-      <tm-doc-variant v-for="item in tree.source" :item="item" base=""/>
+      <tm-doc-variant v-for="item in tree.source.content" :item="item" base=""/>
     </el-menu>
   </div>
   <div class="content" :style="{
@@ -61,7 +61,7 @@
   <tm-menus ref="menus" :keys="menuKeys" :data="menuData" :lists="[{
     name: 'recent',
     data: getRecent(10),
-    switch: 'switchTo',
+    switch: 'viewRecent',
     close: 'deleteAt'
   }]"/>
 </div>
