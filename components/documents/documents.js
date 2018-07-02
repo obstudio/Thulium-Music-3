@@ -118,6 +118,9 @@ module.exports = {
         const docParts = this.current.path.split('/')
         const back = /^(?:\.\.\/)*/.exec(url)[0].length
         docParts.splice(-1 - back / 3, Infinity, url.slice(back))
+        if (!docParts[docParts.length - 1].endsWith('.tmd')) {
+          docParts[docParts.length - 1] += '.tmd'
+        }
         this.switchDoc(docParts.join('/'))
       }
     },
