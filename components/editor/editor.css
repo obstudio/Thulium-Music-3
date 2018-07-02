@@ -84,7 +84,7 @@
     height: 30px;
     top: 0;
     padding: 0;
-    margin: 0 -4px;
+    margin: 0 -6px;
     float: left;
     transition: all 1s;
     position: relative;
@@ -99,7 +99,8 @@ button:last-child .tm-tab { margin-right: 0
 .drag-ghost { visibility: hidden }
 
 .tm-tab > div.title {
-    padding: 6px 32px 6px 32px;
+    float: left;
+    padding: 6px 17px 6px 17px;
     font-size: 12px;
     text-align: center;
     transition: 0.3s;
@@ -110,13 +111,14 @@ button:last-child .tm-tab { margin-right: 0
 .tm-tab.changed > div.title,
 .tm-tab.active > div.title,
 .tm-tab:hover > div.title {
-    padding-left: 22px;
-    padding-right: 42px;
+    padding-left: 7px;
+    padding-right: 27px;
 }
 
 .tm-tab > i {
     display: none;
-    float: right;
+    position: absolute;
+    right: 0;
     padding: 11px 22px 11px 0;
     text-align: center;
     font-size: 8px;
@@ -130,10 +132,7 @@ button:last-child .tm-tab { margin-right: 0
 }
 
 .tm-tab > div[class$=-border] {
-    position: absolute;
-    bottom: 0;
-    height: 0;
-    width: 0;
+    float: left;
     transition: 0.3s;
     border-style: solid;
     border-width: 30px 0 0 0;
