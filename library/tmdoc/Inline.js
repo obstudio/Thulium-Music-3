@@ -40,33 +40,28 @@ const rules = new TmLexer.Rules({
   },
   strong: {
     regex: /^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)|^\*\*([^\s])\*\*(?!\*)/,
-    token(cap) {
-      return `<strong>${cap.match}</strong>`
-    }
+    token: (cap) => `<strong>${cap.match}</strong>`,
+    getter: true
   },
   underline: {
     regex: /^_([^\s][\s\S]*?[^\s_])_(?!_)|^_([^\s*])_(?!_)/,
-    token(cap) {
-      return `<u>${cap.match}</u>`
-    }
+    token: (cap) => `<u>${cap.match}</u>`,
+    getter: true
   },
   comment: {
     regex: /^\(\(([^\s][\s\S]*?[^\s])\)\)(?!\))|^\(\(([^\s])\)\)(?!\))/,
-    token(cap) {
-      return `<span class="comment">${cap.match}</span>`
-    }
+    token: (cap) => `<span class="comment">${cap.match}</span>`,
+    getter: true
   },
   package: {
     regex: /^\{\{([^\s][\s\S]*?[^\s])\}\}(?!\})|^\{\{([^\s])\}\}(?!\})/,
-    token(cap) {
-      return `<code class="package">${cap.match}</code>`
-    }
+    token: (cap) => `<code class="package">${cap.match}</code>`,
+    getter: true
   },
   em: {
     regex: /^\*([^\s][\s\S]*?[^\s*])\*(?!\*)|^\*([^\s*][\s\S]*?[^\s])\*(?!\*)|^\*([^\s*])\*(?!\*)/,
-    token(cap) {
-      return `<em>${cap.match}</em>`
-    }
+    token: (cap) => `<em>${cap.match}</em>`,
+    getter: true
   },
   code: {
     regex: /^(`+)\s*([\s\S]*?[^`]?)\s*\1(?!`)/,
@@ -78,9 +73,8 @@ const rules = new TmLexer.Rules({
   },
   del: {
     regex: /^-(?=\S)([\s\S]*?\S)-/,
-    token(cap) {
-      return `<del>${cap.match}</del>`
-    }
+    token: (cap) => `<del>${cap.match}</del>`,
+    getter: true
   },
   text: {
     regex: /^[\s\S]+?(?=[\\<!\[`*({]|\b_|\n|$)/,
@@ -96,10 +90,7 @@ class InlineLexer extends TmLexer {
   constructor(options) {
     super({
       rules,
-      initial: () => '',
-      onToken(prev, curr) {
-        return prev + curr
-      },
+      mode: 1,
       getters: {
         match(capture) {
           let match = capture[0]

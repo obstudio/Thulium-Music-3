@@ -166,20 +166,7 @@ class DocumentLexer extends TmLexer {
     dictionary = {},
     directory = '/'
   } = {}) {
-    super({
-      rules,
-      initial: () => [],
-      onToken(prev, curr, type) {
-        if (curr instanceof Array) {
-          curr = { content: curr }
-        } else if (typeof curr === 'string') {
-          curr = { text: curr }
-        }
-        curr.type = curr.type || type
-        prev.push(curr)
-        return prev
-      }
-    })
+    super({ rules, mode: 2 })
     this.options = {
       dictionary,
       directory,

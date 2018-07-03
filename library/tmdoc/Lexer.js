@@ -1,12 +1,11 @@
 class TmLexer {
-  constructor({rules, onToken, initial, getters}) {
+  constructor({rules, mode, getters}) {
+    this.mode = mode
     this.rules = rules.src
-    this.onToken = onToken
-    this.initial = initial
     this.getters = getters
   }
 
-  provideGetters(capture) {
+  provide(capture) {
     if (!this.getters) return
     for (const key in this.getters) {
       Object.defineProperty(capture, key, {
@@ -27,8 +26,19 @@ class TmLexer {
     }
   }
 
+  token(rule, capture) {
+    if (rule.token) {
+      if (typeof rule.token === 'string') {
+        return rule.token
+      } else {
+        if (rule.getter) this.provide(capture)
+        return rule.token.call(this, capture)
+      }
+    }
+  }
+
   parse(source, options = {}) {
-    let result = this.initial()
+    let result = this.mode === 1 ? '' : []
     const _options = this.options
     Object.assign(this.options, options)
     while (source) {
@@ -39,15 +49,19 @@ class TmLexer {
         const capture = rule.regex.exec(source)
         if (capture) {
           source = source.substring(capture[0].length)
-          if (rule.token) {
-            let token
-            if (typeof rule.token === 'string') {
-              token = rule.token
+          let data = this.token(rule, capture)
+          if (data) {
+            if (this.mode === 1) {
+              result += data
             } else {
-              this.provideGetters(capture)
-              token = rule.token.call(this, capture)
+              if (data instanceof Array) {
+                data = { content: data }
+              } else if (typeof data === 'string') {
+                data = { text: data }
+              }
+              data.type = data.type || key
+              result.push(data)
             }
-            if (token) result = this.onToken(result, token, key)
           }
           matched = true
           break
