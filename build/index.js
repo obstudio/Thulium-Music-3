@@ -23,12 +23,10 @@ function read() {
   return structure
 }
 let structure = read()
-fs.watch('documents', {recursive: true}, () => {
-  // write(structure = dirTree('documents', structure))
-  generate(structure)
-})
-fs.watch(indexPath, () => {
-  structure = read()
+fs.watch('documents', {recursive: true}, (event, filename) => {
+  if (filename === 'structure.yml') {
+    structure = read()
+  }
   generate(structure)
 })
 
