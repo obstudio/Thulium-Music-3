@@ -15,7 +15,7 @@ class TmDocTree {
           if (index.default !== null) {
             defaultDoc[path] = path + '/' + index.default + '.tmd'
           }
-          for (const child of index.content) {
+          for (const child of index.children) {
             walk(child, path)
           }
         } else if (index.type === 'file') {

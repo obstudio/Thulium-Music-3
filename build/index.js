@@ -10,7 +10,7 @@ global.VueCompile = (template) => {
 }
 
 const Lexer = require('../library/tmdoc/Lexer')
-const StructurePath = __dirname + '/structure.yml'
+const StructurePath = __dirname + '/../documents/structure.yml'
 function read() {
   let structure
   if (fs.existsSync(StructurePath)) {
