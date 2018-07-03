@@ -1,3 +1,16 @@
+function copy(source) {
+  if (source instanceof Array) {
+    return source.map(copy)
+  } else if (source instanceof Object) {
+    const result = {}
+    for (const key of source) {
+      result[key] = copy(source[key])
+    }
+  } else {
+    return source
+  }
+}
+
 class TmLexer {
   constructor({rules, onToken, initial, capture}) {
     this.rules = rules.src
@@ -6,30 +19,48 @@ class TmLexer {
     this.capture = capture
   }
 
-  pack(capture) {
+  provideGetters(capture) {
     if (!this.capture) return
     for (const key in this.capture) {
       Object.defineProperty(capture, key, {
-        get: () => this.capture[key](capture)
+        get: () => this.capture[key].call(this, capture)
       })
     }
   }
 
+  test(test) {
+    if (typeof test === 'boolean') {
+      return test
+    } else if (typeof test === 'string') {
+      return this.options[test]
+    } else if (test instanceof Function) {
+      return test.call(this)
+    } else {
+      return true
+    }
+  }
+
   parse(source, options = {}) {
-    let result = this.initial
+    let result = copy(this.initial)
+    console.log(result)
     const _options = this.options
     Object.assign(this.options, options)
     while (source) {
       let matched = false
       for (const key in this.rules) {
         const rule = this.rules[key]
-        if (rule.test && !rule.test.call(this)) continue
+        if (!this.test(rule.test)) continue
         const capture = rule.regex.exec(source)
         if (capture) {
           source = source.substring(capture[0].length)
           if (rule.token) {
-            this.pack(capture)
-            let token = rule.token.call(this, capture)
+            let token
+            if (typeof rule.token === 'string') {
+              token = rule.token
+            } else {
+              this.provideGetters(capture)
+              token = rule.token.call(this, capture)
+            }
             if (token) result = this.onToken(result, token, key)
           }
           matched = true

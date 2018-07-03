@@ -1,5 +1,5 @@
 const TmLexer = require('./Lexer')
-const InlineLexer = require('./InlineLexer')
+const InlineLexer = require('./Inline')
 
 function align(col) {
   return col.includes('<') ? 1 : col.includes('=') ? 2 : col.includes('>') ? 3 : 0
@@ -56,12 +56,12 @@ const rules = new TmLexer.Rules({
   },
   bullet: {
     regex: /(?:-|\d+\.)/,
-    test: () => false
+    test: false
   },
   item: {
     attrs: 'gm',
     regex: /^( *)(bullet) [^\n]*(?:\n(?!\1bullet )[^\n]*)*/,
-    test: () => false
+    test: false
   },
   list: {
     regex: /^( *)(bullet) [\s\S]+?(?:\n+(?=separator|definition)|\n+(?! )(?!\1bullet )\n*|\s*$)/,
@@ -77,7 +77,8 @@ const rules = new TmLexer.Rules({
             space -= item.length
             item = item.replace(new RegExp(`^ {1,${space}}`, 'gm'), '')
           }
-          return this.parse(item, { topLevel: false })
+          const d = this.parse(item, { topLevel: false })
+          return d 
         })
       }
     }
@@ -95,9 +96,7 @@ const rules = new TmLexer.Rules({
   },
   definition: {
     regex: /^ *\[\w+\]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)((?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))))? *(?:\n+|$)/,
-    test() {
-      return this.options.topLevel
-    },
+    test: 'topLevel',
     token(cap) {
       if (cap[3]) cap[3] = cap[3].substring(1, cap[3].length - 1)
       const tag = cap[1].toLowerCase().replace(/\s+/g, ' ')
@@ -109,9 +108,7 @@ const rules = new TmLexer.Rules({
   },
   table: {
     regex: /^([=<>*\t]+)\n((?:.+\n)*.*)(?:\n{2,}|$)/,
-    test() {
-      return this.options.topLevel
-    },
+    test: 'topLevel',
     token(cap) {
       const headers = cap[1].split(/\t+/).map((col) => ({
         em: col.includes('*'),
@@ -207,6 +204,7 @@ class DocumentLexer extends TmLexer {
       if (node instanceof Array) {
         node.forEach(walk)
       } else if (node.text) {
+        console.log(node.text)
         node.text = lexer.parse(node.text)
       } else if (node.content) {
         node.content.forEach(walk)
