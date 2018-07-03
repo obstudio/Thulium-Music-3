@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 const url = require('url')
-const DEBUG = false
+const DEBUG = true
 
 let window
 
@@ -25,5 +25,5 @@ app.on('window-all-closed', function () {
 })
 
 ipcMain.on('build-done', () => {
-  app.quit()
+  if (!DEBUG) app.quit()
 })

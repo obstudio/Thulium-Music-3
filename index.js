@@ -1,3 +1,4 @@
+const electron = require('electron')
 const ElementUI = require('element-ui/lib')
 const VueI18n = require('vue-i18n')
 const Router = require('vue-router')
@@ -7,10 +8,6 @@ const fs = require('fs')
 const VueCompiler = require('vue-template-compiler/browser')
 
 const Lexer = require('./library/tmdoc/Lexer')
-// Vue files can not be used
-// const Icon = require('vue-awesome/components/Icon')
-// require('node_modules/vue-awesome/dist/vue-awesome.js')
-// Vue.component('icon', Icon)
 
 Vue.use(Vuex)
 Vue.use(Router)
@@ -24,9 +21,10 @@ Vue.prototype.$markdown = (content, options = {}) => {
 
 // Global Environment
 //   0: production mode
-//   1: development mode
+//   1: developing mode
+//   2: debugging mode
 global.env = 1
-global.remote = require('electron').remote
+global.remote = electron.remote
 global.user = new Vuex.Store(require('./user'))
 
 global.getRender = function(filepath) {
@@ -43,12 +41,8 @@ global.getRender = function(filepath) {
   }
 }
 
-if (global.env === 1) {
-  const {exec} = require('child_process')
-  const buildProcess = exec('npm run build-doc')
-  addEventListener('beforeunload', () => {
-    buildProcess.kill() // currently useless seeking reason
-  })
+if (global.env) {
+  electron.ipcRenderer.send('build', global.env === 1 ? false : true)
 }
 
 global.VueCompile = (template) => {

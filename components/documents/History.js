@@ -25,7 +25,7 @@ class TmDocTree {
       self.dictionary = dictionary
       self.defaultDoc = defaultDoc
     }
-    if (global.env === 1) {
+    if (global.env) {
       const structurePath = __dirname + '/../../build/structure.json'
       function readStructure() {
         try {

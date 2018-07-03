@@ -1,7 +1,8 @@
 const {
   app, Menu, Tray,
   BrowserWindow,
-  nativeImage
+  nativeImage,
+  ipcMain
 } = require('electron')
 
 const path = require('path')
@@ -11,8 +12,7 @@ const icon = nativeImage.createFromPath(path.resolve(__dirname, './assets/icon.i
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
-let trayIcon
+let trayIcon, mainWindow, loadingWindow, buildingWindow
 
 async function initialization() {
   trayIcon = new Tray(icon)
@@ -81,7 +81,7 @@ function createMainWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async function() {
-  const loadingWindow = new BrowserWindow({
+  loadingWindow = new BrowserWindow({
     width: 400,
     height: 300,
     transparent: true,
@@ -124,4 +124,20 @@ app.on('activate', function () {
   }
 })
 
+// This method will be called when global environment
+// is set to developing mode (1) or debugging mode (2).
+// build/structure.json will be automatically generated.
+ipcMain.on('build', (event, debug) => {
+  buildingWindow = new BrowserWindow({
+    webPreferences: {
+      offscreen: !debug
+    },
+    show: debug
+  })
 
+  buildingWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'build/index.html'),
+    protocol: 'file:',
+    slashes: true
+  }))
+})
