@@ -1,29 +1,16 @@
-function copy(source) {
-  if (source instanceof Array) {
-    return source.map(copy)
-  } else if (source instanceof Object) {
-    const result = {}
-    for (const key of source) {
-      result[key] = copy(source[key])
-    }
-  } else {
-    return source
-  }
-}
-
 class TmLexer {
-  constructor({rules, onToken, initial, capture}) {
+  constructor({rules, onToken, initial, getters}) {
     this.rules = rules.src
     this.onToken = onToken
     this.initial = initial
-    this.capture = capture
+    this.getters = getters
   }
 
   provideGetters(capture) {
-    if (!this.capture) return
-    for (const key in this.capture) {
+    if (!this.getters) return
+    for (const key in this.getters) {
       Object.defineProperty(capture, key, {
-        get: () => this.capture[key].call(this, capture)
+        get: () => this.getters[key].call(this, capture)
       })
     }
   }
@@ -41,8 +28,7 @@ class TmLexer {
   }
 
   parse(source, options = {}) {
-    let result = copy(this.initial)
-    console.log(result)
+    let result = this.initial()
     const _options = this.options
     Object.assign(this.options, options)
     while (source) {

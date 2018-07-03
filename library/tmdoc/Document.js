@@ -64,7 +64,7 @@ const rules = new TmLexer.Rules({
     test: false
   },
   list: {
-    regex: /^( *)(bullet) [\s\S]+?(?:\n+(?=separator|definition)|\n+(?! )(?!\1bullet )\n*|\s*$)/,
+    regex: /^( *)(bullet) [\s\S]+?(?:separator|definition|\n{2,}(?! )(?!\1bullet )\n*|\s*$)/,
     token(cap) {
       return {
         ordered: cap[2].length > 1,
@@ -168,7 +168,7 @@ class DocumentLexer extends TmLexer {
   } = {}) {
     super({
       rules,
-      initial: [],
+      initial: () => [],
       onToken(prev, curr, type) {
         if (curr instanceof Array) {
           curr = { content: curr }
@@ -204,7 +204,6 @@ class DocumentLexer extends TmLexer {
       if (node instanceof Array) {
         node.forEach(walk)
       } else if (node.text) {
-        console.log(node.text)
         node.text = lexer.parse(node.text)
       } else if (node.content) {
         node.content.forEach(walk)

@@ -96,11 +96,11 @@ class InlineLexer extends TmLexer {
   constructor(options) {
     super({
       rules,
-      initial: '',
+      initial: () => '',
       onToken(prev, curr) {
         return prev + curr
       },
-      capture: {
+      getters: {
         match(capture) {
           let match = capture[0]
           capture.slice(1).forEach(item => {
