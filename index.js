@@ -45,7 +45,10 @@ global.getRender = function(filepath) {
 
 if (global.env === 1) {
   const {exec} = require('child_process')
-  exec('npm run build-doc')
+  const buildProcess = exec('npm run build-doc')
+  addEventListener('beforeunload', () => {
+    buildProcess.kill() // currently useless seeking reason
+  })
 }
 
 global.VueCompile = (template) => {
