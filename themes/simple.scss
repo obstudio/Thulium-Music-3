@@ -32,8 +32,8 @@
         .tm-tab {
           $bg: #f0f1f2;
           > .title { background-color: $bg; color: #606060 }
-          > .left-border { border-right-color: $bg }
-          > .right-border { border-left-color: $bg }
+          > .left-border { border-right-color: $bg; color: transparent }
+          > .right-border { border-left-color: $bg; color: transparent }
           > i { color: #707070 !important }
           > i:hover { color: #24292e !important }
 
@@ -142,6 +142,11 @@
         background-color: #e0e0e0;
         &:not(:last-child) { border-bottom-color: #e0e0e0 }
         &:not(:first-child) { border-top-color: #e0e0e0 }
+
+        > span:first-child {
+          color: #24292e;
+          em { color: #808080 }
+        }
       }
 
       pre { background-color: #d0d0d0 }

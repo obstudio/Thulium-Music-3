@@ -32,8 +32,8 @@
         .tm-tab {
           $bg: #181915;
           > .title { background-color: $bg; color: #bbbbb7 }
-          > .left-border { border-right-color: $bg }
-          > .right-border { border-left-color: $bg }
+          > .left-border { border-right-color: $bg; color: transparent }
+          > .right-border { border-left-color: $bg; color: transparent }
           > i { color: #a5a6a4 !important }
           > i:hover { color: #fafaf5 !important }
 

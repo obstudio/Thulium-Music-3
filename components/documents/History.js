@@ -3,31 +3,48 @@ const yaml = require('js-yaml')
 
 class TmDocTree {
   constructor() {
-    this.source = yaml.safeLoad(fs.readFileSync(TmDocTree.sourcePath, { encoding: 'utf8' }))
-    if (fs.existsSync(TmDocTree.indexPath)) {
-      this.index = require(TmDocTree.indexPath)
-    } else {
-      this.index = this.source
-      fs.writeFileSync(TmDocTree.indexPath, JSON.stringify(this.index), { encoding: 'utf8' })
-    }
-
-    const dictionary = {}
-    const defaultDoc = {}
-    function walk(index, base = '') {
-      for (const item of index) {
-        if (item instanceof Array) {
-          dictionary[base + '/' + item[0]] = item[1]
-        } else {
-          const path = base + '/' + item.name[0]
-          walk(item.content, path)
-          dictionary[path] = item.name[1]
-          defaultDoc[path] = path + '/' + item.default
+    const self = this
+    function processStructure() {
+      const dictionary = {}
+      const defaultDoc = {}
+      function walk(index, base = '') {
+        if (base.startsWith('/documents')) base = base.slice(10)
+        if (index.type === 'folder') {
+          const path = base + '/' + index.name
+          dictionary[path] = index.name
+          if (index.default !== null) {
+            defaultDoc[path] = path + '/' + index.default + '.tmd'
+          }
+          for (const child of index.children) {
+            walk(child, path)
+          }
+        } else if (index.type === 'file') {
+          dictionary[base + '/' + index.name] = index.name
         }
       }
+      walk(self.source)
+      self.dictionary = dictionary
+      self.defaultDoc = defaultDoc
     }
-    walk(this.source)
-    this.dictionary = dictionary
-    this.defaultDoc = defaultDoc
+    if (global.env === 1) {
+      const structurePath = __dirname + '/../../build/structure.json'
+      function readStructure() {
+        try {
+          self.source = JSON.parse(fs.readFileSync(structurePath, 'utf8'))
+        } catch (e) {
+          if (!self.source) this.source = {}
+        }
+      }
+      fs.watch(structurePath, () => {
+        readStructure()
+        processStructure()
+      })
+      readStructure()
+    } else {
+      this.source = require('../../build/structure.json')
+    }
+
+    processStructure()
   }
 
   getPath(route) {
@@ -57,15 +74,15 @@ TmDocTree.sourcePath = __dirname + '/../../documents/index.yaml'
 TmDocTree.indexPath = __dirname + '/index.json'
 
 const defaultState = {
-  path: '/overview',
+  path: '/overview.tmd',
   anchor: null,
   scroll: 0
 }
 
 module.exports = {
   data() {
-    const source = localStorage.getItem('history')
-    let history = defaultState
+    const source = localStorage.getItem('recent')
+    let history = [defaultState]
     try {
       const data = JSON.parse(source)
       if (data instanceof Array) history = data
@@ -76,6 +93,7 @@ module.exports = {
     return {
       tree: new TmDocTree(),
       history: history,
+      recent: history.slice(),
       currentId: history.length - 1
     }
   },
@@ -89,7 +107,7 @@ module.exports = {
   mounted() {
     this.move()
     addEventListener('beforeunload', () => {
-      localStorage.setItem('history', JSON.stringify(this.history))
+      localStorage.setItem('recent', JSON.stringify(this.recent))
     })
   },
 
@@ -106,11 +124,16 @@ module.exports = {
         scroll: anchor ? anchor[1] : 0
       }
       if (this.current.path === state.path && this.current.anchor === state.anchor) {
+        this.current.scroll = this.current.anchor
         this.move()
       } else {
-        this.history.push(state)
-        this.move(1)
+        this.pushState(state)
+        this.recent.push(state)
       }
+    },
+    pushState(state) {
+      this.history.splice(this.currentId + 1, Infinity, state)
+      this.move(1)
     },
     switchTo(id) {
       if (id >= 0 && id < this.history.length) {
@@ -119,16 +142,16 @@ module.exports = {
       }
     },
     deleteAt(id) {
-      if (this.history.length === 1) {
-        this.history.splice(id, 1, defaultState)
-      } else {
-        this.history.splice(id, 1)
-        if (id === this.currentId) this.currentId -= 1
-      }
+      // if (this.history.length === 1) {
+      //   this.recent.splice(id, 1, defaultState)
+      // } else {
+      this.recent.splice(id, 1)
+      //   if (id === this.currentId) this.currentId -= 1
+      // }
     },
     getRecent(amount = Infinity) {
-      const start = amount > this.history.length ? 0 : this.history.length - amount
-      return this.history.slice(start).map((state, index) => {
+      const start = amount > this.recent.length ? 0 : this.history.length - amount
+      return this.recent.slice(start).map((state, index) => {
         const path = this.tree.getPath(state.path).map(node => node.title).join(' / ')
         const anchor = state.anchor ? ' # ' + state.anchor : ''
         return {

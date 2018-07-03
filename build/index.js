@@ -1,4 +1,5 @@
 const Vue = require('vue')
+const YAML = require('js-yaml')
 const ElementUI = require('element-ui/lib')
 const VueCompiler = require('vue-template-compiler/browser')
 // const YAML = require('js-yaml')
@@ -10,12 +11,24 @@ global.VueCompile = (template) => {
 
 const Lexer = require('../library/tmdoc/Document')
 
-const {dirTree, read, write, StructurePath} = require('./DirTree')
+const StructurePath = __dirname + '/../documents/structure.yml'
+function read() {
+  let structure
+  if (fs.existsSync(StructurePath)) {
+    structure = YAML.safeLoad(fs.readFileSync(StructurePath, 'utf8'))
+    // fs.copyFileSync(StructurePath, StructureBackupPath)
+  } else {
+    structure = {}
+  }
+  return structure
+}
 let structure = read()
 fs.watch('documents', {recursive: true}, () => {
-  write(structure = dirTree('documents', structure))
+  // write(structure = dirTree('documents', structure))
+  generate(structure)
 })
 fs.watch(StructurePath, () => {
+  structure = read()
   generate(structure)
 })
 
@@ -34,10 +47,25 @@ window.monaco = {
     }
   }
 }
-
-function walk(dirTree) {
-  if (dirTree.type === 'file') {
-    const content = fs.readFileSync(dirTree.path, 'utf8')
+function getTopLevelText(element) {
+  let result = '', child = element.firstChild
+  while (child) {
+    if (child.nodeType === 3) result += child.data
+    child = child.nextSibling
+  }
+  return result.trim()
+}
+function walk(dirTree, base = '') {
+  if (dirTree.type === 'folder' || dirTree.children || dirTree.default) {
+    return {
+      type: 'folder',
+      name: dirTree.name,
+      default: dirTree.default || null,
+      children: dirTree.children ? dirTree.children.map((sub) => walk(sub, base + dirTree.name + '/')) : []
+    }
+  } else {
+    const name = dirTree.name.endsWith('.tmd') ? dirTree.name : dirTree.name + '.tmd'
+    const content = fs.readFileSync(base + name, 'utf8')
     const root = new Lexer().lex(content)
     const vm = new Vue({
       data() {return {root}},
@@ -48,16 +76,9 @@ function walk(dirTree) {
 
     return {
       type: 'file',
-      name: dirTree.name,
-      anchors: Array.prototype.map.call(vm.$el.getElementsByTagName('h2'), (node) => node.textContent),
+      name: dirTree.name.endsWith('.tmd') ? dirTree.name : dirTree.name + '.tmd',
+      anchors: Array.prototype.map.call(vm.$el.getElementsByTagName('h2'), (node) => getTopLevelText(node)),
       title
-    }
-  } else {
-    return {
-      type: 'folder',
-      name: dirTree.name,
-      default: fs.existsSync(__dirname + '/' + dirTree.path + '/overview.tmd') ? 'overview' : null,
-      content: dirTree.children.map(walk)
     }
   }
 }

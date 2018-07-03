@@ -11,19 +11,16 @@
     </div>
     <div class="tm-tabs">
       <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
-        <transition-group ref="tabs" name="tm-tabs" class="tm-scroll-tabs"
-          :style="{width: tabsWidth}" :move-class="draggingTab ? 'no-transition' : ''"
-          @wheel.prevent.stop.native="scrollTab" @beforeLeave="appendTabLeaveStyle">
-          <button v-for="tab in tabs" :key="tab.id" :identifier="'tab-'+tab.id" class="tm-scroll-tab"
-            @click.middle.prevent.stop="closeTab(tab.id)" @mousedown.left="switchTabById(tab.id)">
-            <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
-              <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
-              <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
-              <div class="title" @contextmenu.stop="toggleTabMenu(tab.id, $event)">{{ tab.title }}</div>
-              <div class="left-border"/>
-              <div class="right-border"/>
-            </div>
-          </button>
+        <transition-group ref="tabs" name="tm-tabs" class="tm-scroll-tabs" :style="{width: tabsWidth}" :move-class="draggingTab ? 'no-transition' : ''" @wheel.prevent.stop.native="scrollTab" @beforeLeave="appendTabLeaveStyle">
+        <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id" :identifier="'tab-'+tab.id" class="tm-scroll-tab">
+          <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
+            <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
+            <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
+            <div class="left-border"/>
+            <div class="title" @contextmenu.stop="toggleTabMenu(tab.id, $event)">{{ tab.title }}</div>
+            <div class="right-border"/>
+          </div>
+        </button>
         </transition-group>
       </draggable>
       <button class="add-tag" @click="addTab(false)" :style="{ left: addTagLeft + 'px' }">
