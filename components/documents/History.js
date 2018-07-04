@@ -27,7 +27,7 @@ class TmDocTree {
     }
     if (global.env) {
       const structurePath = __dirname + '/../../build/structure.json'
-      function readStructure() {
+      const readStructure = () => {
         try {
           self.source = JSON.parse(fs.readFileSync(structurePath, 'utf8'))
         } catch (e) {
