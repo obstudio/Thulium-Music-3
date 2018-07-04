@@ -340,3 +340,7 @@
 .mock-item .el-submenu__icon-arrow {
     display: none;
 }
+
+.mock-item-active .el-submenu__title {
+    color: #409eff !important;
+}

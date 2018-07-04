@@ -2,10 +2,7 @@
   <template slot="title">{{ item.title }}</template>
   <tm-doc-variant v-for="sub in item.children" :item="sub" :base="index"/>
 </el-submenu>
-<el-submenu v-else-if="item.type === 'file' && item.anchors.length > 0" :index="index" class="mock-item">
+<el-submenu v-else-if="item.type === 'file'" :index="index" class="mock-item" :class="{'mock-item-active': active}" ref="sub">
   <span slot="title">{{ item.title }}</span>
   <el-menu-item v-for="anchor in item.anchors" :index="index + '#' + anchor"> <span slot="title">{{ anchor }}</span></el-menu-item>
 </el-submenu>
-<el-menu-item v-else-if="item.type === 'file'" :index="index">
-  <span slot="title">{{ item.title }}</span>
-</el-menu-item>
