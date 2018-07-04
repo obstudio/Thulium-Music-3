@@ -71,22 +71,22 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'HomePage',
+      name: 'homepage',
       component: require('./components/homepage/entry')
     },
     {
       path: '/editor',
-      name: 'TmEditor',
+      name: 'editor',
       component: require('./components/Editor/editor')
     },
     {
       path: '/docs',
-      name: 'TmDocument',
+      name: 'documents',
       component: require('./components/documents/documents')
     },
     {
       path: '/settings',
-      name: 'Settings',
+      name: 'settings',
       component: require('./components/Settings/settings')
     }
   ]
@@ -124,8 +124,8 @@ new Vue({
     settings: () => global.user.state.Settings,
     styles: () => global.user.state.Styles,
     title() {
-      return global.user.state.Prefix[global.user.state.Route]
-        + this.$t(`${global.user.state.Route}.title`)
+      return global.user.state.Prefix[this.$route.name]
+        + this.$t(`${this.$route.name}.title`)
     }
   },
 
@@ -136,9 +136,6 @@ new Vue({
       } else {
         this.browser.maximize()
       }
-    },
-    switchRoute(route) {
-      global.user.state.Route = route
     }
   },
 

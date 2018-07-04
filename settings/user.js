@@ -40,7 +40,6 @@ if (!fs.existsSync(SettingsPath)) {
   user.Settings = require(SettingsPath)
 }
 user.Styles = global.themes[user.Settings.theme]
-user.Route = 'homepage'
 user.Prefix = { homepage: '', editor: '', settings: '', documents: '' }
 
 module.exports = {

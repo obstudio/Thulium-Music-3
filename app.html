@@ -20,19 +20,19 @@
     <div class="sidebar">
       <el-menu default-active="/" :collapse="true" :router="true"
         :backgroundColor="styles.sidebar.background">
-        <el-menu-item index="/" @click="switchRoute('homepage')">
+        <el-menu-item index="/">
           <i class="icon-home"></i>
           <span slot="title">{{ $t('window.homepage') }}</span>
         </el-menu-item>
-        <el-menu-item index="/editor" @click="switchRoute('editor')">
+        <el-menu-item index="/editor">
           <i class="icon-editor"></i>
           <span slot="title">{{ $t('window.editor') }}</span>
         </el-menu-item>
-        <el-menu-item index="/docs" @click="switchRoute('documents')">
+        <el-menu-item index="/docs">
           <i class="icon-document"></i>
           <span slot="title">{{ $t('window.documents') }}</span>
         </el-menu-item>
-        <el-menu-item index="/settings" @click="switchRoute('settings')">
+        <el-menu-item index="/settings">
           <i class="icon-settings"></i>
           <span slot="title">{{ $t('window.settings') }}</span>
         </el-menu-item>
