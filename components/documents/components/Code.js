@@ -14,6 +14,9 @@ module.exports = {
   watch: {
     node(newNode) {
       this.render(newNode)
+    },
+    'global.user.state.Settings.theme'() {
+      this.$nextTick(() => this.render(this.node))
     }
   },
   mounted() {
