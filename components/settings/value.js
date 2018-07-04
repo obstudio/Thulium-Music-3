@@ -14,7 +14,7 @@ const value = {
         return prev[curr]
       }
     }, this.$parent)
-    global.saveSettings()
+    this.$store.commit('saveSettings')
   }
 }
 

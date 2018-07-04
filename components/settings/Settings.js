@@ -7,13 +7,11 @@ module.exports = {
 
   data() {
     return {
-      library: global.library,
-      active: ['1', '2']
+      library: global.library
     }
   },
 
   computed: {
-    captions: () => global.user.state.Captions.settings,
     settings: () => global.user.state.Settings,
     language: {
       get: () => {

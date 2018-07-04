@@ -25,7 +25,7 @@ Vue.prototype.$markdown = (content, options = {}) => {
 //   2: debugging mode
 global.env = 1
 global.remote = electron.remote
-global.user = new Vuex.Store(require('./user'))
+global.user = new Vuex.Store(require('./settings/user'))
 
 global.getRender = function(filepath) {
   if (global.env === 0 && fs.existsSync(filepath + '.js')) {
