@@ -29,7 +29,7 @@ global.user = new Vuex.Store(require('./user'))
 
 global.getRender = function(filepath) {
   if (global.env === 0 && fs.existsSync(filepath + '.js')) {
-    return require(filepath)
+    return require(filepath + '.js')
   } else {
     const html = fs.readFileSync(filepath, { encoding: 'utf8' })
     const result = VueCompiler.compileToFunctions(html).render
@@ -41,9 +41,7 @@ global.getRender = function(filepath) {
   }
 }
 
-if (global.env) {
-  electron.ipcRenderer.send('build', global.env === 1 ? false : true)
-}
+electron.ipcRenderer.send('start', global.env)
 
 addEventListener('beforeunload', () => {
   electron.ipcRenderer.send('close')
