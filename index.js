@@ -98,6 +98,7 @@ new Vue({
   el: '#app',
   router,
   i18n,
+  store: global.user,
 
   watch: {
     sidebar(value) {

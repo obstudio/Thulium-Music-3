@@ -11,21 +11,31 @@ module.exports = {
       required: true
     }
   },
-  watch: {
-    node(newNode) {
-      this.render(newNode)
-    },
-    'global.user.state.Settings.theme'() {
-      this.$nextTick(() => this.render(this.node))
+  computed: {
+    theme() {
+      return this.$store.state.Settings.theme
     }
+  },
+  watch: {
+    node: 'render',
+    theme: 'render'
   },
   mounted() {
-    this.render(this.node)
+    this.render()
   },
   methods: {
-    render(node) {
-      window.monaco.editor.colorize(node.code, node.lang).then(res => this.res = res)
+    render() {
+      window.monaco.editor
+        .colorize(this.node.code, this.node.lang)
+        .then(result => this.content = result)
     }
   },
-  render: VueCompile(`<div class="codeblock" v-html="res"/>`)
+  render() {
+    return this._c('div', {
+      staticClass: "codeblock",
+      domProps: {
+        innerHTML: this._s(this.content)
+      }
+    })
+  }
 }
