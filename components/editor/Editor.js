@@ -71,7 +71,9 @@ module.exports = {
     remainHeight() {
       return this.height - StatusHeight - (this.menubar ? FullTitleHeight : HalfTitleHeight)
     },
-    settings: () => global.user.state.Settings,
+    settings() {
+      return this.$store.state.Settings
+    },
     tabsWidth() {
       return `${this.width - 34}px`
     }
@@ -96,7 +98,7 @@ module.exports = {
         })
       }
     },
-    'settings.lineEnding'() {
+    'settings.line-ending'() {
       this.tabs.map(tab => this.refresh(tab))
     },
     current(newTab) {
@@ -121,7 +123,7 @@ module.exports = {
     this.adjustTabsScroll()
     this.showEditor()
     this.registerGlobalEvents()
-    window.monaco.editor.setTheme(global.user.state.Settings.theme)
+    window.monaco.editor.setTheme(this.$store.state.Settings.theme)
     this.activate()
     this.$nextTick(()=> {
       this.tabs.forEach(tab => {
@@ -139,7 +141,7 @@ module.exports = {
       const position = this.editor.getPosition()
       this.row = position.lineNumber
       this.column = position.column
-      global.user.state.Prefix.editor = this.current.title + ' - '
+      this.$store.state.Prefix.editor = this.current.title + ' - '
       this.layout()
     },
     refresh(tab, event) {
@@ -280,8 +282,8 @@ module.exports = {
       this.extUnderlineWidth = current.offsetWidth - 16 + 'px'
     },
     getExtensionName(ext) {
-      if (global.user.state.Settings.language in ext.i18n) {
-        return ext.i18n[global.user.state.Settings.language]
+      if (this.$store.state.Settings.language in ext.i18n) {
+        return ext.i18n[this.$store.state.Settings.language]
       } else {
         return ext.i18n.default
       }

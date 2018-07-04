@@ -46,7 +46,9 @@ module.exports = class TmTab {
   get value() {
     if (this.currentVersionId === this.latestVersionId) return this._value
     this.currentVersionId = this.latestVersionId
-    return this._value = this.model.getValue(global.user.state.Settings.lineEnding === 'LF' ? 1 : 2)
+    return this._value = this.model.getValue(
+      this.$store.state.Settings['line-ending'] === 'LF' ? 1 : 2
+    )
   }
 
   onModelChange(listener) {

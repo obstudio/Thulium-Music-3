@@ -12,40 +12,42 @@ module.exports = {
   },
 
   computed: {
-    settings: () => global.user.state.Settings,
+    settings() {
+      return this.$store.state.Settings
+    },
     language: {
-      get: () => {
+      get() {
         return global.library.Languages.find(lang => {
-          return lang.key === global.user.state.Settings.language
+          return lang.key === this.$store.state.Settings.language
         }).description
       },
       set(label) {
         const key = global.library.Languages.find(lang => lang.description === label).key
-        global.user.state.Settings.language = key
+        this.$store.state.Settings.language = key
         this.$i18n.locale = key
       }
     },
     theme: {
-      get: () => {
+      get() {
         const description = global.library.Themes.find(theme => {
-          return theme.key === global.user.state.Settings.theme
+          return theme.key === this.$store.state.Settings.theme
         }).description
-        if (description[global.user.state.Settings.language]) {
-          return description[global.user.state.Settings.language]
+        if (description[this.$store.state.Settings.language]) {
+          return description[this.$store.state.Settings.language]
         } else {
           return description.default
         }
       },
-      set: label => {
+      set(label) {
         const key = global.library.Themes.find(theme => {
-          if (theme.description[global.user.state.Settings.language]) {
-            return theme.description[global.user.state.Settings.language] === label
+          if (theme.description[this.$store.state.Settings.language]) {
+            return theme.description[this.$store.state.Settings.language] === label
           } else {
             return theme.description.default === label
           }
         }).key
-        global.user.state.Styles = global.themes[key]
-        global.user.state.Settings.theme = key
+        this.$store.state.Styles = global.themes[key]
+        this.$store.state.Settings.theme = key
         global.editors.forEach((editor) => editor.updateOptions({
           theme: key
         }))
@@ -60,7 +62,7 @@ module.exports = {
     <tm-radio model="language" :caption="$t('settings.language')" :library="library.Languages"/>
     <tm-radio model="theme" :caption="$t('settings.theme')" :library="library.Themes"/>
     <h2>{{ $t('settings.editor') }}</h2>
-    <tm-radio model=".lineEnding" :caption="$t('settings.line-ending')" :library="library.LineEndings"/>
+    <tm-radio model=".line-ending" :caption="$t('settings.line-ending')" :library="library.LineEndings"/>
     <tm-switch model=".minimap" :caption="$t('settings.minimap')"/>
   </div>`)
 }
