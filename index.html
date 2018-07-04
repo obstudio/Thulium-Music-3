@@ -36,6 +36,13 @@
       global.themes = require('./themes/theme')
       amdRequire(['vs/editor/editor.main'], () => {
         defineLanguage()
+        const rawMonacoCreate = window.monaco.editor.create
+        global.editors = []
+        window.monaco.editor.create = function() {
+          const editor = rawMonacoCreate.apply(this, arguments)
+          global.editors.push(editor)
+          return editor
+        }
         global.library.Themes.forEach(theme => {
           window.monaco.editor.defineTheme(theme.key, {
             base: global.themes[theme.key].basetheme,

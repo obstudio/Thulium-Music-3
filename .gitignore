@@ -5,3 +5,4 @@ test*.*
 dist
 package-lock.json
 *.html.js
+build/structure.json

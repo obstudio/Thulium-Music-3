@@ -64,7 +64,9 @@ global.saveSettings = function() {
     JSON.stringify(global.user.state.Settings),
     { encoding: 'utf8' },
     (err) => {
-      console.error(err)
+      if (err) {
+        console.error(err)
+      }
     }
   )
 }

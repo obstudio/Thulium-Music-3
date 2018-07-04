@@ -1,5 +1,4 @@
 const fs = require('fs')
-const yaml = require('js-yaml')
 
 class TmDocTree {
   constructor() {
@@ -11,7 +10,7 @@ class TmDocTree {
         if (base.startsWith('/documents')) base = base.slice(10)
         if (index.type === 'folder') {
           const path = base + '/' + index.name
-          dictionary[path] = index.name
+          dictionary[path] = index.title
           if (index.default !== null) {
             defaultDoc[path] = path + '/' + index.default + '.tmd'
           }
@@ -19,16 +18,16 @@ class TmDocTree {
             walk(child, path)
           }
         } else if (index.type === 'file') {
-          dictionary[base + '/' + index.name] = index.name
+          dictionary[base + '/' + index.name] = index.title
         }
       }
       walk(self.source)
       self.dictionary = dictionary
       self.defaultDoc = defaultDoc
     }
-    if (global.env === 1) {
+    if (global.env) {
       const structurePath = __dirname + '/../../build/structure.json'
-      function readStructure() {
+      const readStructure = () => {
         try {
           self.source = JSON.parse(fs.readFileSync(structurePath, 'utf8'))
         } catch (e) {
@@ -64,14 +63,7 @@ class TmDocTree {
     })
     return result
   }
-
-  update() {
-    if (global.env === 0) return
-  }
 }
-
-TmDocTree.sourcePath = __dirname + '/../../documents/index.yaml'
-TmDocTree.indexPath = __dirname + '/index.json'
 
 const defaultState = {
   path: '/overview.tmd',
@@ -142,12 +134,7 @@ module.exports = {
       }
     },
     deleteAt(id) {
-      // if (this.history.length === 1) {
-      //   this.recent.splice(id, 1, defaultState)
-      // } else {
       this.recent.splice(id, 1)
-      //   if (id === this.currentId) this.currentId -= 1
-      // }
     },
     getRecent(amount = Infinity) {
       const start = amount > this.recent.length ? 0 : this.history.length - amount
