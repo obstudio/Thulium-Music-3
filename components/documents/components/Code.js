@@ -2,7 +2,7 @@ module.exports = {
   name: 'Code',
   data() {
     return {
-      content: ''
+      res: ''
     }
   },
   props: {

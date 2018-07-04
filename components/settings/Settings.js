@@ -48,6 +48,9 @@ module.exports = {
         }).key
         global.user.state.Styles = global.themes[key]
         global.user.state.Settings.theme = key
+        global.editors.forEach((editor) => editor.updateOptions({
+          theme: key
+        }))
         if (window.monaco.editor) window.monaco.editor.setTheme(key)
       }
     }
