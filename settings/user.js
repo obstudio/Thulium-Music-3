@@ -32,18 +32,26 @@ function saveSettings(settings) {
   })
 }
 
-const user = {}
+let Settings
 if (!fs.existsSync(SettingsPath)) {
-  user.Settings = defaultSettings
+  Settings = defaultSettings
   saveSettings(defaultSettings)
 } else {
-  user.Settings = require(SettingsPath)
+  Settings = require(SettingsPath)
 }
-user.Styles = global.themes[user.Settings.theme]
-user.Prefix = { homepage: '', editor: '', settings: '', documents: '' }
 
 module.exports = {
-  state: user,
+  state: {
+    Settings,
+    Styles: global.themes[Settings.theme],
+    Prefix: {
+      homepage: '',
+      editor: '',
+      settings: '',
+      documents: ''
+    }
+  },
+
   mutations: {
     saveSettings(state) {
       saveSettings(state.Settings)

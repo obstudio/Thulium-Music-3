@@ -8,8 +8,6 @@ const SmoothScroll = require('../SmoothScroll')
 const extensions = require('../../extensions/extension')
 const { registerPlayCommand } = require('../../library/editor/Editor')
 
-const storage = require('./storage')
-
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
 const StatusHeight = 28
@@ -31,11 +29,11 @@ module.exports = {
   },
 
   mixins: [
-    require('../command')('editor')
+    require('../command')('editor'),
+    require('./storage')
   ],
 
   data() {
-    const storageState = storage.load()
     const editorState = {
       row: 1,
       column: 1
@@ -57,7 +55,6 @@ module.exports = {
       extensionMoveToRight: false
     }
     return {
-      ...storageState,
       ...editorState,
       ...tabState,
       ...extensionState
@@ -66,7 +63,7 @@ module.exports = {
 
   computed: {
     contentHeight() {
-      return String(this.remainHeight - (this.extensionShowed ? this.extensionHeight : 0)) + 'px'
+      return this.remainHeight - (this.extensionShowed ? this.extensionHeight : 0) + 'px'
     },
     remainHeight() {
       return this.height - StatusHeight - (this.menubar ? FullTitleHeight : HalfTitleHeight)
@@ -91,16 +88,6 @@ module.exports = {
     extensionShowed() {
       this.layout(500)
     },
-    'settings.minimap'() {
-      if (this.editor) {
-        this.editor.updateOptions({
-          minimap: { enabled: this.settings.minimap }
-        })
-      }
-    },
-    'settings.line-ending'() {
-      this.tabs.map(tab => this.refresh(tab))
-    },
     current(newTab) {
       this.adjustTabsScroll()
     }
@@ -108,12 +95,9 @@ module.exports = {
 
   mounted() {
     // properties added in mounted hook to prevent unnecessary reactivity
-
     this.player = undefined
     this.tabs.forEach(tab => {
-      tab.onModelChange((e) => {
-        this.refresh(tab, e)
-      })
+      tab.onModelChange(event => this.refresh(tab, event))
       tab.checkChange()
     })
     this.doScroll = SmoothScroll(this.$refs.tabs.$el, { vertical: false })
@@ -123,7 +107,6 @@ module.exports = {
     this.adjustTabsScroll()
     this.showEditor()
     this.registerGlobalEvents()
-    window.monaco.editor.setTheme(this.$store.state.Settings.theme)
     this.activate()
     this.$nextTick(()=> {
       this.tabs.forEach(tab => {
@@ -136,6 +119,7 @@ module.exports = {
     // commands
     ...require('./method'),
     activate() {
+      window.monaco.editor.setTheme(this.$store.state.Settings.theme)
       this.editor.setModel(this.current.model)
       if (this.current.viewState) this.editor.restoreViewState(this.current.viewState)
       const position = this.editor.getPosition()
@@ -145,7 +129,7 @@ module.exports = {
       this.layout()
     },
     refresh(tab, event) {
-      tab.latestVersionId = event.versionId
+      if (event) tab.latestVersionId = event.versionId
       tab.checkChange()
     },
     layout(time = 0) {
@@ -186,6 +170,11 @@ module.exports = {
       editor.onDidChangeModel(() => {
         this.$nextTick(() => editor.focus())
       })
+      this.$watch('settings.minimap', function() {
+        this.editor.updateOptions({
+          minimap: { enabled: this.settings.minimap }
+        })
+      })
     },
     registerGlobalEvents() {
       addEventListener('resize', () => {
@@ -211,9 +200,6 @@ module.exports = {
             this.draggingLastY = event.clientY
           }
         }
-      })
-      addEventListener('beforeunload', () => {
-        storage.save(this)
       })
       addEventListener('dragend', (e) => {
         this.layout()

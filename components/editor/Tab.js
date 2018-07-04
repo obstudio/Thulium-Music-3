@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 let count = 0
 
-module.exports = class TmTab {
+class TmTab {
   constructor({
     title,
     type = 'tm',
@@ -47,7 +47,7 @@ module.exports = class TmTab {
     if (this.currentVersionId === this.latestVersionId) return this._value
     this.currentVersionId = this.latestVersionId
     return this._value = this.model.getValue(
-      this.$store.state.Settings['line-ending'] === 'LF' ? 1 : 2
+      TmTab.config['line-ending'] === 'LF' ? 1 : 2
     )
   }
 
@@ -94,3 +94,7 @@ module.exports = class TmTab {
     }
   }
 }
+
+TmTab.config = {}
+
+module.exports = TmTab
