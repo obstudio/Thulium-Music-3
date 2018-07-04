@@ -5,39 +5,45 @@ function align(col) {
   return col.includes('<') ? 1 : col.includes('=') ? 2 : col.includes('>') ? 3 : 0
 }
 
-const rules = new TmLexer.Rules({
-  newline: {
+const rules = new TmLexer.Rules([
+  {
+    name: 'newline',
     regex: /^\n+/
   },
-  code: {
+  {
+    name: 'code',
     regex: /^ *(`{3,})[ .]*(\S+)? *\n([\s\S]*?)\n? *\1 *(?:\n+|$)/,
     token: (cap) => ({
       lang: cap[2] || 'tm',
       code: cap[3] || ''
     })
   },
-  heading: {
+  {
+    name: 'heading',
     regex: /^ *(#{1,4}) +([^\n]+?) *(#*) *(?:\n+|$)/,
     token: (cap) => ({
       level: cap[1].length,
       text: cap[2]
     })
   },
-  section: {
+  {
+    name: 'section',
     regex: /^ *(\^{1,3}) *([^\n]+?) *(?:\^+ *)?(?:\n+|$)/,
     token: (cap) => ({
       level: cap[1].length,
       text: cap[2]
     })
   },
-  separator: {
+  {
+    name: 'separator',
     regex: /^ {0,3}([-=])(\1|\.\1| \1)\2+ *(?:\n+|$)/,
     token: (cap) => ({
       double: cap[1] === '=',
       style: cap[2].length === 1 ? 0 : cap[2][0] === ' ' ? 1 : 2
     })
   },
-  blockquote: {
+  {
+    name: 'blockquote',
     regex: /^( *>\w* (paragraph|[^\n]*)(?:\n|$))+/,
     token(cap) {
       return {
@@ -46,7 +52,8 @@ const rules = new TmLexer.Rules({
       }
     }
   },
-  usage: {
+  {
+    name: 'usage',
     regex: /^( *\? +(paragraph|[^\n]*)(?:\n|$))+/,
     token(cap) {
       return cap[0].split(/^ *\? +/gm).slice(1).map((source) => {
@@ -54,16 +61,19 @@ const rules = new TmLexer.Rules({
       })
     }
   },
-  bullet: {
+  {
+    name: 'bullet',
     regex: /(?:-|\d+\.)/,
     test: false
   },
-  item: {
+  {
+    name: 'item',
     attrs: 'gm',
     regex: /^( *)(bullet) [^\n]*(?:\n(?!\1bullet )[^\n]*)*/,
     test: false
   },
-  list: {
+  {
+    name: 'list',
     regex: /^( *)(bullet) [\s\S]+?(?:separator|definition|\n{2,}(?! )(?!\1bullet )\n*|\s*$)/,
     token(cap) {
       return {
@@ -83,7 +93,8 @@ const rules = new TmLexer.Rules({
       }
     }
   },
-  inlinelist: {
+  {
+    name: 'inlinelist',
     regex: /^(?: *\+[^\n]*[^+\n]\n(?= *\+))*(?: *\+[^\n]+\+?(?:\n+|$))/,
     token(cap) {
       const source = cap[0].trim().replace(/\n/g, '').slice(1)
@@ -94,7 +105,8 @@ const rules = new TmLexer.Rules({
       return inner
     }
   },
-  definition: {
+  {
+    name: 'definition',
     regex: /^ *\[\w+\]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)((?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))))? *(?:\n+|$)/,
     test: 'topLevel',
     token(cap) {
@@ -106,7 +118,8 @@ const rules = new TmLexer.Rules({
       }
     }
   },
-  table: {
+  {
+    name: 'table',
     regex: /^([=<>*\t]+)\n((?:.+\n)*.*)(?:\n{2,}|$)/,
     test: 'topLevel',
     token(cap) {
@@ -132,15 +145,17 @@ const rules = new TmLexer.Rules({
       })
     }
   },
-  paragraph: {
+  {
+    name: 'paragraph',
     regex: /^([^\n]+(?:\n(?!separator|heading| {0,3}>)[^\n]+)*)/,
     token: (cap) => cap[1].endsWith('\n') ? cap[1].slice(0, -1) : cap[1]
   },
-  text: {
+  {
+    name: 'text',
     regex: /^[^\n]+/,
     token: (cap) => cap[0]
   }
-}, [
+], [
   'item',
   'list',
   'paragraph',

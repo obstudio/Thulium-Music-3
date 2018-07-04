@@ -1,10 +1,21 @@
 class TmLexer {
+  /**
+   * Lexer Constructor
+   * @param {TmLexer.LexerRules} rules rules
+   * @param {Number} mode mode
+   * &nbsp; 0: array
+   * &nbsp; 1: string
+   * @param {Object} getters getters
+   */
   constructor({rules, mode, getters}) {
     this.mode = mode
-    this.rules = rules.src
+    this.rules = rules.data
     this.getters = getters
   }
 
+  /**
+   * Provide attribute for capture
+   */
   provide(capture) {
     if (!this.getters) return
     for (const key in this.getters) {
@@ -81,13 +92,26 @@ class TmLexer {
 TmLexer.Rules = class LexerRules {
   /**
    * Generating lexing rules.
-   * @param {Object} rules
-   * @param {(String|Object)[]} [edits]
+   * @param {Object[]} rules
+   * @param {RegExp} rules[].regex regular expression for the rule
+   * @param {String} [rules[].attrs] options for regexp (default value is '')
+   * @param {String|Function|Boolean} [rules[].test]
+   * whether this rule should be executed in lexing
+   *   Function: (TmLexer) => Boolean
+   *   String: test for key in TmLexer.options
+   * (default value is true)
+   * @param {Boolean} [rules[].getter] provide getters for capture (default value is false)
+   * @param {String|Function} rules[].token
+   *   Function: (capture) => token
+   *   String: token itself
+   * 
+   * @param {Object[]} [edits]
    * @param {String} edits[].key
    * @param {Function} edits[].edit
    */
   constructor(rules, edits = []) {
-    this.src = rules
+    this.data = {}
+    rules.forEach((rule) => this.data[rule.name] = rule)
     edits.forEach((item) => {
       if (typeof item === 'string') {
         this.edit(item)
@@ -103,15 +127,15 @@ TmLexer.Rules = class LexerRules {
    * @param {Function} [callback]
    */
   edit(key, edit) {
-    let source = this.src[key].regex.source
-    for (const key in this.src) {
+    let source = this.data[key].regex.source
+    for (const key in this.data) {
       source = source.replace(
         new RegExp(key, 'g'),
-        this.src[key].regex.source.replace(/(^|[^\[])\^/g, '$1')
+        this.data[key].regex.source.replace(/(^|[^\[])\^/g, '$1')
       )
     }
-    if (edit) source = edit.call(this.src, source)
-    this.src[key].regex = new RegExp(source, this.src[key].attrs || '')
+    if (edit) source = edit.call(this.data, source)
+    this.data[key].regex = new RegExp(source, this.data[key].attrs || '')
   }
 }
 

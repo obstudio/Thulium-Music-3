@@ -14,12 +14,14 @@ function resolve(base, url) {
   return base.split('/').slice(0, -1 - back / 3).join('/') + '/' + url.slice(back)
 }
 
-const rules = new TmLexer.Rules({
-  escape: {
+const rules = new TmLexer.Rules([
+  {
+    name: 'escape',
     regex: /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,
     token: (cap) => cap[1]
   },
-  link: {
+  {
+    name: 'link',
     regex: /^\[(?:([^\]|]+)\|)?([^\]]+)\]/,
     token(cap) {
       let text, match, index
@@ -38,49 +40,58 @@ const rules = new TmLexer.Rules({
       return `<a href="#" data-raw-url="${cap[2]}" onclick="event.preventDefault()"'>${text}</a>`
     }
   },
-  strong: {
+  {
+    name: 'strong',
     regex: /^\*\*([^\s][\s\S]*?[^\s])\*\*(?!\*)|^\*\*([^\s])\*\*(?!\*)/,
     token: (cap) => `<strong>${cap.match}</strong>`,
     getter: true
   },
-  underline: {
+  {
+    name: 'underline',
     regex: /^_([^\s][\s\S]*?[^\s_])_(?!_)|^_([^\s*])_(?!_)/,
     token: (cap) => `<u>${cap.match}</u>`,
     getter: true
   },
-  comment: {
+  {
+    name: 'comment',
     regex: /^\(\(([^\s][\s\S]*?[^\s])\)\)(?!\))|^\(\(([^\s])\)\)(?!\))/,
     token: (cap) => `<span class="comment">${cap.match}</span>`,
     getter: true
   },
-  package: {
+  {
+    name: 'package',
     regex: /^\{\{([^\s][\s\S]*?[^\s])\}\}(?!\})|^\{\{([^\s])\}\}(?!\})/,
     token: (cap) => `<code class="package">${cap.match}</code>`,
     getter: true
   },
-  em: {
+  {
+    name: 'em',
     regex: /^\*([^\s][\s\S]*?[^\s*])\*(?!\*)|^\*([^\s*][\s\S]*?[^\s])\*(?!\*)|^\*([^\s*])\*(?!\*)/,
     token: (cap) => `<em>${cap.match}</em>`,
     getter: true
   },
-  code: {
+  {
+    name: 'code',
     regex: /^(`+)\s*([\s\S]*?[^`]?)\s*\1(?!`)/,
     token: (cap) => `<code>${escape(cap[2].trim(), true)}</code>`
   },
-  br: {
+  {
+    name: 'br',
     regex: /^\n(?!\s*$)/,
     token: '<br/>'
   },
-  del: {
+  {
+    name: 'del',
     regex: /^-(?=\S)([\s\S]*?\S)-/,
     token: (cap) => `<del>${cap.match}</del>`,
     getter: true
   },
-  text: {
+  {
+    name: 'text',
     regex: /^[\s\S]+?(?=[\\<!\[`*({]|\b_|\n|$)/,
     token: (cap) => escape(cap[0])
   }
-})
+])
 
 
 class InlineLexer extends TmLexer {
