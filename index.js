@@ -45,6 +45,10 @@ if (global.env) {
   electron.ipcRenderer.send('build', global.env === 1 ? false : true)
 }
 
+addEventListener('beforeunload', () => {
+  electron.ipcRenderer.send('close')
+})
+
 global.VueCompile = (template) => {
   return VueCompiler.compileToFunctions(template).render
 }

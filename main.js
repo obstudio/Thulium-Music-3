@@ -124,6 +124,12 @@ app.on('activate', function () {
   }
 })
 
+ipcMain.on('close', () => {
+  if (buildingWindow) {
+    buildingWindow.destroy()
+  }
+})
+
 // This method will be called when global environment
 // is set to developing mode (1) or debugging mode (2).
 // build/structure.json will be automatically generated.
