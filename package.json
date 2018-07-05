@@ -1,12 +1,12 @@
 {
   "name": "thulium-music-3",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Thulium Music 3",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "build-doc": "electron ./build/main.js",
-    "pack-win-x64": "electron-packager . \"Thulium Music 3\" --win --arch=x64 --out=./dist --app-version=3.0.0 --overwrite --icon=./assets/icon.ico",
+    "pack-win-x64": "electron-packager . \"Thulium Music 3\" --win --arch=x64 --out=./dist --app-version=3.1 --overwrite --icon=./assets/icon.ico",
     "publish": "electron-builder --publish onTagOrDraft"
   },
   "build": {
@@ -30,6 +30,7 @@
     "@vue/devtools": "^1.1.0",
     "electron": "^2.0.0",
     "electron-builder": "^20.16.1",
+    "electron-packager": "^12.1.0",
     "eslint": "^4.19.1"
   },
   "dependencies": {

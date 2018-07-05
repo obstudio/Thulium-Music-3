@@ -11,5 +11,6 @@ Thulium Music 3 是一个音乐编辑器和播放器。使用原创的 Thulium �
 1. 克隆我们的项目
 2. `git submodule init`初始化子模块
 3. `git submodule update`更新子模块
-2. `npm i`更新依赖
-3. `npm run start`运行
+4. `npm i`更新依赖
+5. `npm run build-doc`生成索引
+6. `npm run start`运行
