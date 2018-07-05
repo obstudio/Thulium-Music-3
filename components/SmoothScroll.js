@@ -24,13 +24,15 @@ module.exports = function SmoothScroll(target, {
     clientLength = 'clientWidth'
   }
   // variable initialization
-  let moving, pos, scrollTimes, smoothTimes
+  let moving, pos, scrollTimes, smoothTimes, lastDelta
   function setValues() {
     moving = false
     pos = target[scrollPosition]
     scrollTimes = 0
     smoothTimes = 0
+    lastDelta = 0
   }
+  target[scrollPosition] = Math.floor(target[scrollPosition])
   setValues()
 
   target.addEventListener('scroll', (e) => {
@@ -42,12 +44,30 @@ module.exports = function SmoothScroll(target, {
 
   function update() {
     moving = true
+    // const currentPos = target[scrollPosition]
+    // const decimalDelta = (pos - currentPos) / smooth
+    // const direction = Math.sign(decimalDelta)
+    // let round
+    // if (direction === 1) {
+    //   round = Math.ceil(currentPos) - currentPos
+    // } else {
+    //   round = Math.floor(currentPos) - currentPos
+    // }
+    // const delta = direction * Math.ceil(Math.abs(decimalDelta)) + round
     const decimalDelta = (pos - target[scrollPosition]) / smooth
+    console.log(decimalDelta)
     const delta = Math.sign(decimalDelta) * Math.ceil(Math.abs(decimalDelta))
     ++smoothTimes
     if (Math.abs(decimalDelta) > 0) {
       target[scrollPosition] += delta
-      requestAnimationFrame(update)
+      if (lastDelta * decimalDelta < 0) {
+        pos = target[scrollPosition]
+        moving = false
+        lastDelta = 0
+      } else {
+        lastDelta = decimalDelta
+        requestAnimationFrame(update)
+      }
     } else {
       target[scrollPosition] = pos
       moving = false
@@ -60,7 +80,7 @@ module.exports = function SmoothScroll(target, {
       this.scrollByPos(pos + delta / 100 * speed, smooth)
     },
     scrollByPos(position, smooth = true) {
-      pos = Math.max(0, Math.min(position, target[scrollLength] - target[clientLength])) // limit scrolling
+      pos = Math.max(0, Math.min(Math.round(position), target[scrollLength] - target[clientLength])) // limit scrolling
       if (smooth) {
         if (!moving) update()
       } else {
