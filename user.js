@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const process = require('process')
 const defaultSettings = require('./default.json')
 
 class TmUser {
@@ -65,7 +64,9 @@ global.saveSettings = function() {
     JSON.stringify(global.user.state.Settings),
     { encoding: 'utf8' },
     (err) => {
-      console.error(err)
+      if (err) {
+        console.error(err)
+      }
     }
   )
 }

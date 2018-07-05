@@ -1,0 +1,49 @@
+<div :class="settings.theme">
+  <div :class="{'show-sidebar': sidebar}">
+  <div class="navbar">
+    <button class="sidebar-toggler" @click="sidebar = !sidebar">
+      <i v-if="sidebar" class="icon-arrow-left"/>
+      <i v-else class="icon-arrow-right"/>
+    </button>
+    <div class="title" v-html="title"></div>
+    <div class="top-right">
+      <button @click="browser.minimize()" class="minimize"><i class="icon-window-minimize"/></button>
+      <button @click="toggleMaximize()" class="maximize">
+        <i v-if="browser.isMaximized()" class="icon-window-restore"/>
+        <i v-else class="icon-window-maximize"/>
+      </button>
+      <button @click="browser.close()" class="close"><i class="icon-window-close"/></button>
+    </div>
+    <div class="top-border"/>
+  </div>
+  <div class="window">
+    <div class="sidebar">
+      <el-menu default-active="/" :collapse="true" :router="true"
+        :backgroundColor="styles.sidebar.background">
+        <el-menu-item index="/" @click="switchRoute('homepage')">
+          <i class="icon-home"></i>
+          <span slot="title">{{ $t('window.homepage') }}</span>
+        </el-menu-item>
+        <el-menu-item index="/editor" @click="switchRoute('editor')">
+          <i class="icon-editor"></i>
+          <span slot="title">{{ $t('window.editor') }}</span>
+        </el-menu-item>
+        <el-menu-item index="/docs" @click="switchRoute('documents')">
+          <i class="icon-document"></i>
+          <span slot="title">{{ $t('window.documents') }}</span>
+        </el-menu-item>
+        <el-menu-item index="/settings" @click="switchRoute('settings')">
+          <i class="icon-settings"></i>
+          <span slot="title">{{ $t('window.settings') }}</span>
+        </el-menu-item>
+      </el-menu>
+      <div class="left-border"/>
+    </div>
+    <div class="main">
+      <keep-alive>
+        <router-view :height="height" :top="48" :width="width" :left="this.sidebar ? 64 : 0"/>
+      </keep-alive>
+    </div>
+  </div>
+  </div>
+</div>

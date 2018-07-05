@@ -10,11 +10,14 @@ parserOptions:
   sourceType: module
   ecmaFeatures:
     jsx: true
+globals:
+  VueCompile: true
+  getRender: true
 rules:
   indent:
     - warn
     - 2
-    - switch-case: 2
+    - SwitchCase: 1
   linebreak-style:
     - error
     - windows
@@ -26,3 +29,5 @@ rules:
     - off
   no-console:
     - warn
+  no-cond-assign:
+    - off

@@ -45,19 +45,21 @@ module.exports = {
   // 4 - suspended - to 1, 3, 5
   // 5 - closed - to 1
   status: null,
+  tabId: null,
 
   /**
    * @param source {string} tm source
    * @param [spec] {Array<{}|string>}
    * @param offline {boolean}
    */
-  update(source, {spec, offline = false} = {}) {
+  update(source, {spec, tabId = null, offline = false} = {}) {
     this.close()
 
     const result = new Thulium(source, {useFile: false}).adapt(spec, 'MIDI')
     this.tracks = result.tracks
     this.time = result.time
     this.dueTime = undefined
+    this.tabId = tabId
     this.ctx = offline ? new OfflineAudioContext(numOfchannels, sampleRate * numOfchannels * this.time, sampleRate) : new AudioContext()
     this.player = new WafPlayer()
 

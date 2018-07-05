@@ -1,7 +1,8 @@
 const {
   app, Menu, Tray,
   BrowserWindow,
-  nativeImage
+  nativeImage,
+  ipcMain
 } = require('electron')
 
 const path = require('path')
@@ -11,13 +12,14 @@ const icon = nativeImage.createFromPath(path.resolve(__dirname, './assets/icon.i
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
-let trayIcon
+let tray, menu
+let mainWindow, loadingWindow, buildingWindow
 
 async function initialization() {
-  trayIcon = new Tray(icon)
-  trayIcon.setToolTip('Thulium Music')
-  trayIcon.setContextMenu(Menu.buildFromTemplate([
+  tray = new Tray(icon)
+  tray.setToolTip('Thulium Music')
+
+  menu = Menu.buildFromTemplate([
     {
       label: 'Thulium'
     },
@@ -38,9 +40,10 @@ async function initialization() {
       label: '退出',
       role: 'quit'
     }
-  ]))
-  
-  trayIcon.on('click', () => {
+  ])
+
+  tray.setContextMenu(menu)
+  tray.on('click', () => {
     mainWindow.show()
   })
 
@@ -57,7 +60,6 @@ function createMainWindow() {
     center: true,
     minWidth: 480,
     minHeight: 320,
-    transparent: true,
     icon: icon,
     show: false,
     frame: false
@@ -82,7 +84,7 @@ function createMainWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async function() {
-  const loadingWindow = new BrowserWindow({
+  loadingWindow = new BrowserWindow({
     width: 400,
     height: 300,
     transparent: true,
@@ -125,4 +127,35 @@ app.on('activate', function () {
   }
 })
 
+// This method will be called when render process is started.
+// Whem global environment is set to 1 or 2,
+// `build/structure.json` will be automatically generated.
+ipcMain.on('start', (_, env) => {
+  if (env) {
+    buildingWindow = new BrowserWindow({
+      webPreferences: {
+        offscreen: env === 1
+      },
+      show: env === 2
+    })
+    buildingWindow.loadURL(url.format({
+      pathname: path.join(__dirname, 'build/index.html'),
+      protocol: 'file:',
+      slashes: true
+    }))
+  } else {
+    // Hide dev tools, no use, seek reason.
+    menu.items[2].visible === false
 
+    // Call this again for Linux because we modified the context menu
+    if (process.platform !== 'linux') {
+      tray.setContextMenu(menu)
+    }
+  }
+})
+
+ipcMain.on('close', () => {
+  if (buildingWindow) {
+    buildingWindow.destroy()
+  }
+})

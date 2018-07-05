@@ -1,0 +1,11 @@
+<transition-group name="tm-menu-list">
+  <li v-for="(item, index) in list.data" :key="index">
+    <div class="menu-item" @click="execute(list.switch, item.id)">
+      <a class="label" :class="{ active: item.id === list.current }">{{ item.title }}</a>
+      <span class="binding">
+        <i v-if="item.changed" class="icon-circle" @click.stop="execute(list.close, item.id)"/>
+        <i v-else class="icon-close" @click.stop="execute(list.close, item.id)"/>
+      </span>
+    </div>
+  </li>
+</transition-group>

@@ -4,7 +4,7 @@
         "community": "Community",
         "documents": "Documents",
         "editor": "Editor",
-        "homepage": "Homepage",
+        "homepage": "Home Page",
         "player": "Player",
         "settings": "Settings",
         "title": "Thulium Music"
@@ -24,7 +24,7 @@
             "file": "File",
             "edit": "Edit",
             "view": "View",
-            "play": "play",
+            "play": "Play",
             "add-tab": "New Tab",
             "open-file": "Open ...",
             "save": "Save",
@@ -47,8 +47,8 @@
             "toggle-full-ext": [ "Hide Full Extension", "Show Full Extension" ],
             "command-palette": "Command Palette ...",
             "start-play": "Start Playing",
-            "stop-play": "Stop playing",
-            "toggle-play": "Toggle playing",
+            "stop-play": "Stop Playing",
+            "toggle-play": "Toggle Playing",
             "output": "Output to wav"
         }
     },

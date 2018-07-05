@@ -1,0 +1,9 @@
+<el-submenu v-if="item.type === 'folder'" :index="index">
+  <template slot="title">{{ item.title }}</template>
+  <tm-doc-variant v-for="sub in item.children" :item="sub" :base="index"/>
+</el-submenu>
+<el-submenu v-else-if="item.type === 'file'" :index="index" class="mock-item" :class="{'mock-item-active': active}" ref="sub">
+  <span slot="title">{{ item.title }}</span>
+  <el-menu-item :index="index" style="display: none"></el-menu-item>
+  <el-menu-item v-for="anchor in item.anchors" :index="index + '#' + anchor"> <span slot="title">{{ anchor }}</span></el-menu-item>
+</el-submenu>

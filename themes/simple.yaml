@@ -1,130 +1,185 @@
-
 sidebar:
-  background: 2f353a
+  background: '#2f353a'
+
+documents:
+  navBackground: '#e6e6e6'
+  navForeground: '#646464'
+  navActive: '#409EFF'
 
 basetheme: vs
 
 editor:
-  focusBorder: '#fafbfc'
+  dropdown.background: '#ffffff'
+  list.activeSelectionBackground: '#75715E'
+  list.focusBackground: '#ffffff'
+  dropdown.listBackground: '#efeff2'
+  list.inactiveSelectionBackground: '#E5EBF1'
+  list.hoverBackground: '#E8E8E8'
+  list.dropBackground: '#ffffff'
+  list.highlightForeground: '#007acc'
+  button.background: '#75715E'
   editor.background: '#ffffff'
   editor.foreground: '#24292e'
+  selection.background: '#ccccc7'
+  editor.selectionHighlightBackground: '#ADD6FF4D'
+  editor.selectionBackground: '#5badff80'
+  editor.wordHighlightBackground: '#4a4a7680'
+  editor.wordHighlightStrongBackground: '#6a6a9680'
   editor.lineHighlightBackground: '#fffbdd'
+  editorLineNumber.activeForeground: '#0b0b59'
+  editorCursor.foreground: '#000000'
+  editorWhitespace.foreground: '#464741'
   editorIndentGuide.background: '#eeeeee'
+  editorIndentGuide.activeBackground: '#939393'
+  editorGroupHeader.tabsBackground: '#efeff2'
+  editorGroup.dropBackground: '#41433980'
+  tab.inactiveBackground: '#fafbfc'
+  tab.border: '#efeff2'
+  tab.inactiveForeground: '#ccccc7'
+  widget.shadow: '#808080'
+  progressBar.background: '#75715E'
+  badge.background: '#75715E'
+  badge.foreground: '#f8f8f2'
   editorLineNumber.foreground: '#cccccc'
-  editorBracketMatch.background: '#f1f8ff'
-  editorBracketMatch.border: '#c8e1ff'
+  panelTitle.activeForeground: '#f8f8f2'
+  panelTitle.activeBorder: '#75715E'
+  panelTitle.inactiveForeground: '#75715E'
+  panel.border: '#ffffff'
   titleBar.activeBackground: '#fafbfc'
-  titleBar.border: '#e1e4e8'
-  statusBar.foreground: '#24292e'
-  statusBar.noFolderForeground: '#24292e'
   statusBar.background: '#fafbfc'
   statusBar.noFolderBackground: '#fafbfc'
-  statusBar.border: '#e1e4e8'
   statusBar.debuggingBackground: '#fafbfc'
-  statusBar.debuggingForeground: '#24292e'
   activityBar.background: '#24292e'
   activityBar.foreground: '#fafbfc'
-  activityBarBadge.background: '#54a3ff'
+  activityBar.dropBackground: '#ffffff'
   sideBar.background: '#fafbfc'
-  sideBar.foreground: '#586069'
-  sideBar.border: '#e1e4e8'
-  sideBarTitle.foreground: '#24292e'
   sideBarSectionHeader.background: '#F1F2F3'
-  sideBarSectionHeader.foreground: '#24292e'
-  notification.background: '#54a3ff'
-  editorGroupHeader.tabsBackground: '#fafbfc'
-  editorGroupHeader.tabsBorder: '#e1e4e8'
-  tab.activeBackground: '#ffffff'
-  tab.activeBorder: '#e36209'
-  tab.inactiveBackground: '#fafbfc'
-  tab.border: '#e1e4e8'
-  tab.inactiveForeground: '#586069'
-  scrollbar.shadow: '#00000000'
+  pickerGroup.foreground: '#75715E'
+  input.background: '#ffffff'
+  inputOption.activeBorder: '#75715E'
+  focusBorder: '#fafbfc'
+  editorWidget.background: '#efeff2'
+  debugToolBar.background: '#efeff2'
+  diffEditor.insertedTextBackground: '#66852880'
+  diffEditor.removedTextBackground: '#90274A80'
+  inputValidation.errorBackground: '#90274A'
+  inputValidation.errorBorder: '#f92672'
+  inputValidation.warningBackground: '#848528'
+  inputValidation.warningBorder: '#e2e22e'
+  inputValidation.infoBackground: '#546190'
+  inputValidation.infoBorder: '#819aff'
+  editorHoverWidget.background: '#ffffff'
+  editorHoverWidget.border: '#75715E'
+  editorSuggestWidget.background: '#F3F3F3'
+  editorSuggestWidget.border: '#75715E'
+  editorGroup.border: '#ffffff'
+  peekView.border: '#75715E'
+  peekViewEditor.background: '#272822'
+  peekViewResult.background: '#efeff2'
+  peekViewTitle.background: '#efeff2'
+  peekViewResult.selectionBackground: '#ffffff'
+  peekViewResult.matchHighlightBackground: '#75715E'
+  peekViewEditor.matchHighlightBackground: '#75715E'
+  terminal.ansiBlack: '#333333'
+  terminal.ansiRed: '#C4265E'
+  terminal.ansiGreen: '#86B42B'
+  terminal.ansiYellow: '#B3B42B'
+  terminal.ansiBlue: '#6A7EC8'
+  terminal.ansiMagenta: '#8C6BC8'
+  terminal.ansiCyan: '#56ADBC'
+  terminal.ansiWhite: '#e3e3dd'
+  terminal.ansiBrightBlack: '#666666'
+  terminal.ansiBrightRed: '#f92672'
+  terminal.ansiBrightGreen: '#A6E22E'
+  terminal.ansiBrightYellow: '#e2e22e'
+  terminal.ansiBrightBlue: '#819aff'
+  terminal.ansiBrightMagenta: '#AE81FF'
+  terminal.ansiBrightCyan: '#66D9EF'
+  terminal.ansiBrightWhite: '#f8f8f2'
 
 tokenizer:
   - token: default
-    foreground: FFFFFF
+    foreground: 24292e
 
   # comment
   - token: comment
-    foreground: 75715E
+    foreground: 6a737d
   - token: comment.marker
-    foreground: 75715E
+    foreground: 6a737d
 
   # command
   - token: command.marker
-    foreground: F92672
+    foreground: d73a49
   - token: command.keyword
-    foreground: F92672
+    foreground: d73a49
 
   # library
   - token: library.package
-    foreground: E6DB74
+    foreground: 032f62
 
   # section
   - token: section.name
-    foreground: A6E22E
+    foreground: '008000'
     fontStyle: italic
 
   # track
   - token: track.marker
-    foreground: A6E22E
+    foreground: '008000'
   - token: track.name
-    foreground: A6E22E
+    foreground: '008000'
     fontStyle: italic
   - token: track.instrument
-    foreground: E6DB74
+    foreground: 032f62
   - token: track.operator
-    foreground: F92672
+    foreground: d73a49
   - token: track.macro
-    foreground: A6E22E
+    foreground: '008000'
 
   # subtrack
   - token: subtrack.curly
-    foreground: F92672
+    foreground: d73a49
     fontStyle: bold
   - token: subtrack.repeat
-    foreground: AE81FF
+    foreground: 6f42c1
   - token: subtrack.repeat.marker
-    foreground: AE81FF
+    foreground: 6f42c1
   - token: subtrack.barline
-    foreground: F92672
+    foreground: d73a49
     fontStyle: bold
   - token: subtrack.barline.plain
-    foreground: F92672
+    foreground: d73a49
     fontStyle: normal
 
   # note
   - token: note.square
-    foreground: 66D9EF
+    foreground: 005cc5
   - token: note.degree
-    foreground: 66D9EF
+    foreground: 005cc5
   - token: note.pitop-chord
-    foreground: 66D9EF
+    foreground: 005cc5
   - token: note.durop-stac-volop
-    foreground: 66D9EF
+    foreground: 005cc5
   - token: note.declaration
-    foreground: F92672
+    foreground: d73a49
 
   # function
   - token: function.name
-    foreground: FD971F
+    foreground: e36209
   - token: function.marker
-    foreground: FD971F
+    foreground: e36209
   - token: function.alias
-    foreground: FD971F
+    foreground: e36209
 
   # string
   - token: string
-    foreground: E6DB74
+    foreground: 032f62
   - token: string.marker
-    foreground: E6DB74
+    foreground: 032f62
   - token: string.escape
-    foreground: E6DB74
+    foreground: 032f62
 
   # number
   - token: number.operator
-    foreground: F92672
+    foreground: d73a49
   - token: number.constant
-    foreground: AE81FF
-
+    foreground: 6f42c1

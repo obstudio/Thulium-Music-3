@@ -1,48 +1,26 @@
-const {registerPlayCommand} = require('../../library/editor/Editor')
 // annoying bypass
 const tempAmd = global.define.amd
 global.define.amd = null
 const draggable = require('vuedraggable')
 global.define.amd = tempAmd
 
+const SmoothScroll = require('../SmoothScroll')
 const extensions = require('../../extensions/extension')
-const TmCommand = require('./command')
-const TmMenu = require('./menu')
+const { registerPlayCommand } = require('../../library/editor/Editor')
+
 const storage = require('./storage')
 
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
 const StatusHeight = 28
-function SmoothScroll(target, speed, smooth) {
-  let moving = false
-  let pos = target.scrollLeft
 
-  function scrolled(deltaY) {
-    const delta = deltaY / 100
-
-    pos += delta * speed
-    pos = Math.max(-10, Math.min(pos, target.scrollWidth - target.clientWidth + 10)) // limit scrolling
-
-    if (!moving) update()
-  }
-
-  function update() {
-    moving = true
-    const delta = (pos - target.scrollLeft) / smooth
-    target.scrollLeft += delta
-    if (Math.abs(delta) > 0.5)
-      requestAnimationFrame(update)
-    else
-      moving = false
-  }
-  return scrolled
-}
 module.exports = {
   name: 'TmEditor',
 
   components: {
     draggable
   },
+
   provide() {
     return {
       tabs: this.tabs,
@@ -51,6 +29,11 @@ module.exports = {
       execute: this.executeMethod
     }
   },
+
+  mixins: [
+    require('../command')('editor')
+  ],
+
   data() {
     const storageState = storage.load()
     const editorState = {
@@ -73,20 +56,11 @@ module.exports = {
       extUnderlineWidth: '0px',
       extensionMoveToRight: false
     }
-    const menuState = {
-      menubarMove: 0,
-      menubarActive: false,
-      menuData: TmMenu.menuData,
-      menuKeys: TmMenu.menuKeys,
-      altKey: false,
-      contextId: null
-    }
     return {
       ...storageState,
       ...editorState,
       ...tabState,
-      ...extensionState,
-      ...menuState
+      ...extensionState
     }
   },
 
@@ -106,6 +80,8 @@ module.exports = {
   watch: {
     width() {
       this.layout(500)
+      this.refreshAddTagLeft()
+      this.adjustTabsScroll()
     },
     menubar() {
       this.layout(500)
@@ -130,8 +106,6 @@ module.exports = {
 
   mounted() {
     // properties added in mounted hook to prevent unnecessary reactivity
-    TmCommand.onMount.call(this)
-    TmMenu.onMount.call(this)
 
     this.player = undefined
     this.tabs.forEach(tab => {
@@ -140,7 +114,7 @@ module.exports = {
       })
       tab.checkChange()
     })
-    this.doScroll = SmoothScroll(this.$refs.tabs.$el, 100, 10)
+    this.doScroll = SmoothScroll(this.$refs.tabs.$el, { vertical: false })
 
     this.refreshExtUnderline()
     this.refreshAddTagLeft()
@@ -174,6 +148,8 @@ module.exports = {
     },
     layout(time = 0) {
       const now = performance.now(), self = this
+      self.editor._configuration.observeReferenceElement()
+      self.editor._view._actualRender()
       window.requestAnimationFrame(function layout(newTime) {
         self.editor._configuration.observeReferenceElement()
         self.editor._view._actualRender()
@@ -188,12 +164,6 @@ module.exports = {
     },
     executeTrigger(id) {
       this.editor.trigger(id, id)
-    },
-    executeCommand(key) {
-      TmCommand.executeCommand.call(this, key)
-    },
-    executeMethod(method, ...args) {
-      if (method in this) this[method](...args)
     },
     showEditor() {
       const editor = window.monaco.editor.create(this.$refs.content, {
@@ -220,7 +190,9 @@ module.exports = {
         if (this.extensionShowed && this.extensionHeight > this.remainHeight) {
           this.extensionHeight = this.remainHeight
         }
+        this.$refs.content.classList.add('no-transition')
         this.layout(500)
+        this.$refs.content.classList.remove('no-transition')
       }, {passive: true})
       addEventListener('mouseup', (e) => {
         this.layout()
@@ -261,9 +233,9 @@ module.exports = {
         const width = this.current.node.clientWidth
         const scroll = tabsNode.scrollLeft
         if (scroll < left + width - tabsNode.clientWidth) {
-          this.doScroll(left + width - tabsNode.clientWidth - scroll + 20)
+          this.doScroll.scrollByDelta(left + width - tabsNode.clientWidth - scroll + 20)
         } else if (scroll > left) {
-          this.doScroll(left - scroll - 20)
+          this.doScroll.scrollByDelta(left - scroll - 20)
         }
       })
     },
@@ -294,7 +266,7 @@ module.exports = {
       this.draggingExtension = false
     },
     scrollTab(e) {
-      this.doScroll(e.deltaY)
+      this.doScroll.scrollByDelta(e.deltaY)
     },
     changeExtension(id) {
       if (this.activeExtension === id) return
@@ -313,86 +285,9 @@ module.exports = {
       } else {
         return ext.i18n.default
       }
-    },
-    ...TmMenu.methods
+    }
   },
 
   props: ['width', 'height', 'left', 'top'],
-  render: VueCompile(`<div class="tm-editor" :class="{'show-menubar': menubar}"
-    @dragover.stop.prevent @drop.stop.prevent="loadFileDropped"
-    @click="hideContextMenus" @contextmenu="hideContextMenus">
-  <div class="header" @contextmenu.stop="showContextMenu('header', $event)">
-    <div class="menubar">
-      <div v-for="(menu, index) in menuData.menubar.content" class="tm-top-menu"
-        @click.stop="showMenu(index, $event)" @mouseover.stop="hoverMenu(index, $event)"
-        :class="{ active: menuData.menubar.embed[index] }" @contextmenu.stop>
-        {{ $t('editor.menu.' + menu.key) }} (<span>{{ menu.bind }}</span>)
-      </div>
-    </div>
-    <div class="tm-tabs">
-      <draggable :list="tabs" :options="dragOptions" @start="draggingTab = true" @end="draggingTab = false">
-        <transition-group ref="tabs" name="tm-tabs" class="tm-scroll-tabs" :style="{width: tabsWidth}" :move-class="draggingTab ? 'dragged' : ''" @wheel.prevent.stop.native="scrollTab" @beforeLeave="appendTabLeaveStyle">
-        <button v-for="tab in tabs" @mousedown.left="switchTabById(tab.id)" @click.middle.prevent.stop="closeTab(tab.id)" :key="tab.id" :identifier="'tab-'+tab.id" class="tm-scroll-tab">
-          <div class="tm-tab" :class="{ active: tab.id === current.id, changed: tab.changed }">
-            <i v-if="tab.changed" class="icon-circle" @mousedown.stop @click.stop="closeTab(tab.id)"/>
-            <i v-else class="icon-close" @mousedown.stop @click.stop="closeTab(tab.id)"/>
-            <div class="title" @contextmenu.stop="toggleTabMenu(tab.id, $event)">{{ tab.title }}</div>
-            <div class="left-border"/>
-            <div class="right-border"/>
-          </div>
-        </button>
-        </transition-group>
-      </draggable>
-      <button class="add-tag" @click="addTab(false)" :style="{ left: addTagLeft + 'px' }">
-        <i class="icon-add"/>
-      </button>
-    </div>
-  </div>
-  <div class="content" ref="content"
-    :class="{ dragged: draggingExtension }" :style="{ height: contentHeight }"/>
-  <div class="extension" :class="{ dragged: draggingExtension }" :style="{
-      height: (extensionShowed && extensionFull ? '100%' : extensionHeight + 'px'),
-      bottom: (extensionShowed ? extensionFull ? 0 : 28 : 28 - extensionHeight) + 'px'
-    }">
-    <div class="top-border" v-show="!extensionFull" @mousedown="startDrag"/>
-    <div class="nav-left" ref="exts" @contextmenu.stop="showContextMenu('extension', $event)">
-      <button v-for="(ext, index) in extensions" @click="changeExtension(index)"
-        :key="ext.name" :class="{ active: activeExtension === index }">
-        {{ getExtensionName(ext) }}
-      </button>
-    </div>
-    <div class="underline" :style="{ left: extUnderlineLeft, width: extUnderlineWidth }"/>
-    <div class="nav-right">
-      <button @click="toggleFullExt()">
-        <i :class="extensionFull ? 'icon-down' : 'icon-up'"/>
-      </button>
-      <button @click="extensionShowed = false">
-        <i class="icon-close"/>
-      </button>
-    </div>
-    <keep-alive>
-      <transition name="tm-ext"
-        :leave-to-class="'transform-to-' + (extensionMoveToRight ? 'left' : 'right')"
-        :enter-class="'transform-to-' + (extensionMoveToRight ? 'right' : 'left')">
-        <component :is="'tm-ext-' + extensions[activeExtension].name" class="tm-ext"
-          :width="width" :height="extensionHeight - 36" :isFull="extensionFull"/>
-      </transition>
-    </keep-alive>
-  </div>
-  <div class="status" :style="{ bottom: extensionShowed && extensionFull ? '-28px' : '0px' }">
-    <div class="left">
-      <div class="text">{{ $t('editor.line-col', { line: row, col: column }) }}</div>
-    </div>
-    <div class="right">
-      <button @click="toggleExtension()"><i class="icon-control"/></button>
-    </div>
-  </div>
-  <div class="menus" ref="menus">
-    <transition name="el-zoom-in-top" v-for="key in menuKeys" :key="key">
-      <ul v-show="menuData[key].show" class="tm-menu">
-        <tm-menu :data="menuData[key].content" :embed="menuData[key].embed" :move="menubarMove" :current="current"/>
-      </ul>
-    </transition>
-  </div>
-</div>`)
+  render: getRender(__dirname + '/editor.html')
 }
