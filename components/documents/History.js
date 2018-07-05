@@ -133,6 +133,9 @@ module.exports = {
         this.setContent()
       }
     },
+    viewRecent(id) {
+      this.pushState(Object.assign({recent: true}, this.recent[id]))
+    },
     deleteAt(id) {
       this.recent.splice(id, 1)
     },

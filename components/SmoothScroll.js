@@ -55,7 +55,6 @@ module.exports = function SmoothScroll(target, {
     // }
     // const delta = direction * Math.ceil(Math.abs(decimalDelta)) + round
     const decimalDelta = (pos - target[scrollPosition]) / smooth
-    console.log(decimalDelta)
     const delta = Math.sign(decimalDelta) * Math.ceil(Math.abs(decimalDelta))
     ++smoothTimes
     if (Math.abs(decimalDelta) > 0) {

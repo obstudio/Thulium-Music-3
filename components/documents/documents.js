@@ -106,15 +106,24 @@ module.exports = {
         this.move(-1)
         return
       }
-      this.h2nodes = Array.from(this.$refs.doc.getElementsByTagName('h2'))
       this.$nextTick(() => {
+        this.h2nodes = Array.from(this.$refs.doc.getElementsByTagName('h2'))
         global.user.state.Prefix.documents = getTopLevelText(this.$refs.doc.children[0]) + ' - '
-        if (typeof this.current.scroll === 'string') {
-          this.switchToAnchor(this.current.anchor)
+        if (this.current.recent) {
+          delete this.current.recent
+          if (this.current.anchor !== null) {
+            this.switchToAnchor(this.current.anchor)
+          } else {
+            this.docScroll.scrollByPos(0)
+          }
         } else {
-          this.docScroll.scrollByPos(this.current.scroll)
+          if (typeof this.current.scroll === 'string') {
+            this.switchToAnchor(this.current.anchor)
+          } else {
+            this.docScroll.scrollByPos(this.current.scroll)
+          }
         }
-        this.current.scroll = this.$refs.doc.scrollTop // save scroll info, better way?
+        // this.current.scroll = this.$refs.doc.scrollTop // save scroll info, better way?
       })
     },
     navigate(event) {
