@@ -37,13 +37,6 @@ module.exports = {
           return this.rootMenu.$parent.current.path === this.index
         }
       },
-      watch: {
-        active() {
-          if (this.active && !this.$refs.sub.opened) {
-            this.$refs.sub.$el.children[0].click()
-          }
-        }
-      },
       props: ['item', 'base'],
       inject: ['switchDoc', 'rootMenu'],
       render: getRender(__dirname + '/doc-variant.html')
