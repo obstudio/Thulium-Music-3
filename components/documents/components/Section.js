@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'Section',
+  name: 'TmDocSection',
   props: {
     node: {
       type: Object,

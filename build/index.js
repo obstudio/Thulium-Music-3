@@ -9,7 +9,7 @@ global.VueCompile = (template) => {
   return VueCompiler.compileToFunctions(template).render
 }
 
-const Lexer = require('../library/tmdoc/Lexer')
+const Lexer = require('../library/tmdoc/Document')
 const basePath = path.join(__dirname, '/../')
 const indexPath = __dirname + '/../documents/index.yml'
 

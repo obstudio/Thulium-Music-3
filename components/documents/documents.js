@@ -3,9 +3,9 @@ const open = require('opn')
 const SmoothScroll = require('../SmoothScroll')
 
 ;[
-  'Code', 'List', 'Split', 'Table', 'Textblock',
+  'Code', 'List', 'Separator', 'Table', 'Text',
   'Paragraph', 'Heading', 'Section', 'Blockquote', 'Usage'
-].forEach(name => Vue.component(name, require('./components/' + name)))
+].forEach(name => Vue.component('TmDoc' + name, require('./components/' + name)))
 
 function getTopLevelText(element) {
   let result = '', child = element.firstChild
@@ -96,6 +96,7 @@ module.exports = {
           dictionary: this.tree.dictionary
         })
       } catch (e) {
+        console.error(e)
         this.move(-1)
         return
       }

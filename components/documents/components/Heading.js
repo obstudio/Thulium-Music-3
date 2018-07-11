@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'Heading',
+  name: 'TmDocHeading',
   props: {
     node: {
       type: Object,

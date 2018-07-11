@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'Blockquote',
+  name: 'TmDocBlockquote',
   props: {
     node: {
       type: Object,
@@ -7,6 +7,6 @@ module.exports = {
     }
   },
   render: VueCompile(`<blockquote :class="node.mode">
-    <component v-for="(comp, index) in node.content" :is="comp.type" :node="comp" :key="index"/>
+    <component v-for="(item, index) in node.content" :is="'tm-doc-' + item.type" :node="item" :key="index"/>
   </blockquote>`)
 }

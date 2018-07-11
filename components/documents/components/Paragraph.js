@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'Paragraph',
+  name: 'TmDocParagraph',
   props: {
     node: {
       type: Object,

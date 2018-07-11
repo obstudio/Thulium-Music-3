@@ -7,7 +7,7 @@ const Vue = require('vue')
 const fs = require('fs')
 const VueCompiler = require('vue-template-compiler/browser')
 
-const Lexer = require('./library/tmdoc/Lexer')
+const Lexer = require('./library/tmdoc/Document')
 
 Vue.use(Vuex)
 Vue.use(Router)

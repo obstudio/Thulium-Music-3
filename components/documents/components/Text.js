@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'Textblock',
+  name: 'TmDocText',
   props: {
     node: {
       type: Object,
