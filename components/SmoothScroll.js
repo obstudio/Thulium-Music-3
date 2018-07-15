@@ -32,7 +32,7 @@ module.exports = function SmoothScroll(target, {
     smoothTimes = 0
     lastDelta = 0
   }
-  target[scrollPosition] = Math.floor(target[scrollPosition])
+  // target[scrollPosition] = Math.floor(target[scrollPosition])
   setValues()
 
   target.addEventListener('scroll', (e) => {
@@ -79,7 +79,7 @@ module.exports = function SmoothScroll(target, {
       this.scrollByPos(pos + delta / 100 * speed, smooth)
     },
     scrollByPos(position, smooth = true) {
-      pos = Math.max(0, Math.min(Math.round(position), target[scrollLength] - target[clientLength])) // limit scrolling
+      pos = Math.max(0, Math.min(position, target[scrollLength] - target[clientLength] + 1)) // limit scrolling
       if (smooth) {
         if (!moving) update()
       } else {
