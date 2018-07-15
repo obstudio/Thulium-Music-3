@@ -57,19 +57,20 @@ module.exports = function SmoothScroll(target, {
     const decimalDelta = (pos - target[scrollPosition]) / smooth
     const delta = Math.sign(decimalDelta) * Math.ceil(Math.abs(decimalDelta))
     ++smoothTimes
-    if (Math.abs(decimalDelta) > 0) {
-      target[scrollPosition] += delta
-      if (lastDelta * decimalDelta < 0) {
-        pos = target[scrollPosition]
-        moving = false
-        lastDelta = 0
-      } else {
-        lastDelta = decimalDelta
-        requestAnimationFrame(update)
-      }
-    } else {
+    if (Math.abs(decimalDelta) <= 0.1) {
       target[scrollPosition] = pos
+      pos = target[scrollPosition]
       moving = false
+    } else {
+      target[scrollPosition] += delta
+      // if (lastDelta * decimalDelta < 0) {
+      //   pos = target[scrollPosition]
+      //   moving = false
+      //   lastDelta = 0
+      // } else {
+      lastDelta = decimalDelta
+      requestAnimationFrame(update)
+      // }
     }
     callback(target)
   }
@@ -81,6 +82,7 @@ module.exports = function SmoothScroll(target, {
     scrollByPos(position, smooth = true) {
       pos = Math.max(0, Math.min(position, target[scrollLength] - target[clientLength] + 1)) // limit scrolling
       if (smooth) {
+        if (lastDelta * (pos - target[scrollPosition]) < 0) lastDelta = 0
         if (!moving) update()
       } else {
         target[scrollPosition] = pos
