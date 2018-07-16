@@ -86,18 +86,35 @@ module.exports = {
       tree: new TmDocTree(),
       history: history,
       recent: history.slice(),
-      currentId: history.length - 1
+      actualId: history.length - 1
     }
   },
 
   computed: {
     current() {
-      return this.history[this.currentId]
+      return this.history[this.actualId]
+    },
+    currentId: {
+      get() {
+        return this.actualId
+      },
+      set(newValue) {
+        const oldState = this.current
+        if (newValue >= 0 && newValue < this.history.length) {
+          this.actualId = newValue
+          const newState = this.current
+          if (oldState && oldState.path === newState.path) {
+            this.setPosition()
+          } else {
+            this.loadContent()
+          }
+        }
+      }
     }
   },
 
   mounted() {
-    this.move()
+    this.loadContent()
     addEventListener('beforeunload', () => {
       localStorage.setItem('recent', JSON.stringify(this.recent))
     })
@@ -105,7 +122,7 @@ module.exports = {
 
   methods: {
     move(delta = 0) {
-      this.switchTo(this.currentId + delta)
+      this.currentId += delta
     },
     switchDoc(index) {
       const anchor = index.match(/#(.+)$/)
@@ -126,12 +143,6 @@ module.exports = {
     pushState(state) {
       this.history.splice(this.currentId + 1, Infinity, state)
       this.move(1)
-    },
-    switchTo(id) {
-      if (id >= 0 && id < this.history.length) {
-        this.currentId = id
-        this.setContent()
-      }
     },
     viewRecent(id) {
       this.pushState(Object.assign({recent: true}, this.recent[id]))
