@@ -37,13 +37,6 @@ module.exports = {
           return this.rootMenu.$parent.current.path === this.index
         }
       },
-      watch: {
-        active() {
-          if (this.active && !this.$refs.sub.opened) {
-            this.$refs.sub.$el.children[0].click()
-          }
-        }
-      },
       props: ['item', 'base'],
       inject: ['switchDoc', 'rootMenu'],
       render: getRender(__dirname + '/doc-variant.html')
@@ -97,28 +90,59 @@ module.exports = {
 
   methods: {
     async setContent() {
-      try {
-        const doc = await fetch(`./documents${this.current.path}`)
-        const text = await doc.text()
-        this.root = this.$markdown(text, {
-          directory: this.current.path,
-          dictionary: this.tree.dictionary
-        })
-      } catch (e) {
-        this.move(-1)
-        return
-      }
-      this.h2nodes = Array.from(this.$refs.doc.getElementsByTagName('h2'))
+      // try {
+      const doc = await fetch(`./documents${this.current.path}`)
+      const text = await doc.text()
+      this.root = this.$markdown(text, {
+        directory: this.current.path,
+        dictionary: this.tree.dictionary
+      })
+      // } catch (e) {
+      //   this.move(-1)
+      //   return
+      // }
       this.$nextTick(() => {
-        this.$store.state.Prefix.documents = getTopLevelText(this.$refs.doc.children[0]) + ' - '
-        if (typeof this.current.scroll === 'string') {
-          this.switchToAnchor(this.current.anchor)
-        } else {
-          this.docScroll.scrollByPos(this.current.scroll)
+        const anchorMap = {}
+        for (const node of this.$refs.doc.getElementsByTagName('h2')) {
+          anchorMap[getTopLevelText(node)] = node
         }
-        this.current.scroll = this.$refs.doc.scrollTop // save scroll info, better way?
+        this.h2nodes = anchorMap
+        this.$store.state.Prefix.documents = getTopLevelText(this.$refs.doc.children[0]) + ' - '
       })
     },
+    setPosition(smooth = true) {
+      if (this.current.recent) {
+        delete this.current.recent
+        if (this.current.anchor !== null) {
+          this.switchToAnchor(this.current.anchor, smooth)
+        } else {
+          this.docScroll.scrollByPos(0, smooth)
+        }
+      } else {
+        if (typeof this.current.scroll === 'string') {
+          this.switchToAnchor(this.current.anchor, smooth)
+        } else {
+          this.docScroll.scrollByPos(this.current.scroll, smooth)
+        }
+      }
+    },
+    loadContent() {
+      this.setContent().then(() => this.$nextTick(() => {
+        this.setPosition(false)
+      })).catch(() => this.$nextTick(() => {
+        this.move(-1)
+      }))
+    },
+
+    resolvePath(url) {
+      if (!url.endsWith('.tmd')) url += '.tmd'
+      const docParts = this.current.path.split('/')
+      const back = /^(?:\.\.\/)*/.exec(url)[0].length
+      docParts.splice(-1 - back / 3, Infinity, url.slice(back))
+      return docParts.join('/')
+    },
+
+    // only invoked when a link in the document is clicked
     navigate(event) {
       let url = event.srcElement.dataset.rawUrl
       if (!url) return
@@ -127,24 +151,19 @@ module.exports = {
       } else if (url.startsWith('#')) {
         this.switchDoc(this.current.path + url)
       } else {
-        const docParts = this.current.path.split('/')
-        const back = /^(?:\.\.\/)*/.exec(url)[0].length
-        docParts.splice(-1 - back / 3, Infinity, url.slice(back))
-        if (!docParts[docParts.length - 1].endsWith('.tmd')) {
-          docParts[docParts.length - 1] += '.tmd'
-        }
-        this.switchDoc(docParts.join('/'))
+        this.switchDoc(this.resolvePath(url))
       }
     },
-    switchToAnchor(text) {
+
+    switchToAnchor(text, smooth) {
       if (!text) {
         text = this.current.anchor
       } else {
         this.current.anchor = text
       }
-      const result = this.h2nodes.find(node => getTopLevelText(node) === text)
+      const result = this.h2nodes[text]
       if (result) {
-        this.docScroll.scrollByPos(result.offsetTop)
+        this.docScroll.scrollByPos(result.offsetTop, smooth)
       }
     }
   },

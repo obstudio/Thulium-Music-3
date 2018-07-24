@@ -107,6 +107,17 @@ app.on('ready', async function() {
   mainWindow.once('ready-to-show', () => {
     loadingWindow.destroy()
     mainWindow.show()
+    mainWindow.on("unmaximize", () => {
+      if (process.platform === "win32") {
+        setTimeout(() => {
+          const bounds = mainWindow.getBounds()
+          bounds.width += 1
+          mainWindow.setBounds(bounds)
+          bounds.width -= 1
+          mainWindow.setBounds(bounds)
+        }, 5)
+      }
+    })
   })
 })
 
