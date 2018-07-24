@@ -71,7 +71,7 @@ module.exports = {
     if (!id) id = this.current.id
     const index = this.tabs.findIndex(tab => tab.id === id)
     this.switchTabByIndex(index)
-    if (id != Player.tabId && this.tabs.some(tab => tab.id === Player.tabId)) {
+    if (id !== Player.tabId && this.tabs.some(tab => tab.id === Player.tabId)) {
       Player.close()
     }
     this.tabs.splice(index + 1, Infinity)

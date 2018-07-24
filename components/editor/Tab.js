@@ -17,7 +17,7 @@ class TmTab {
     changed = false
   } = {}) {
     this.type = type
-    this._value = value
+    this.value = value
     this.volume = volume
     this.start = start
     this.end = end
@@ -37,18 +37,8 @@ class TmTab {
       configurable: false,
       value: new Thulium(value, { useFile: false })
     })
-    this.currentVersionId = this.model.getVersionId()
-    this.latestVersionId = this.currentVersionId
     this.model.tab = this
     this.thulium.tab = this
-  }
-
-  get value() {
-    if (this.currentVersionId === this.latestVersionId) return this._value
-    this.currentVersionId = this.latestVersionId
-    return this._value = this.model.getValue(
-      TmTab.config['line-ending'] === 'LF' ? 1 : 2
-    )
   }
 
   onModelChange(listener) {
@@ -61,6 +51,9 @@ class TmTab {
 
   checkChange(data) {
     if (data !== undefined) this.origin = data
+    this.value = this.model.getValue(
+      TmTab.config['line-ending'] === 'LF' ? 1 : 2
+    )
     this.changed = this.origin !== this.value
   }
 

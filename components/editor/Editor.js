@@ -88,7 +88,7 @@ module.exports = {
     extensionShowed() {
       this.layout(500)
     },
-    current(newTab) {
+    current() {
       this.adjustTabsScroll()
     }
   },
@@ -97,8 +97,7 @@ module.exports = {
     // properties added in mounted hook to prevent unnecessary reactivity
     this.player = undefined
     this.tabs.forEach(tab => {
-      tab.onModelChange(event => this.refresh(tab, event))
-      tab.checkChange()
+      tab.onModelChange(() => this.refresh(tab))
     })
     this.doScroll = SmoothScroll(this.$refs.tabs.$el, { vertical: false })
 
@@ -128,8 +127,7 @@ module.exports = {
       this.$store.state.Prefix.editor = this.current.title + ' - '
       this.layout()
     },
-    refresh(tab, event) {
-      if (event) tab.latestVersionId = event.versionId
+    refresh(tab) {
       tab.checkChange()
     },
     layout(time = 0) {
