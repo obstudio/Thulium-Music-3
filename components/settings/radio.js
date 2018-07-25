@@ -5,11 +5,11 @@ module.exports = {
   computed: {
     value: require('./value'),
     options() {
-      return this.library.map(item => {
+      return global.library[this.library].map(item => {
         if (item.description) {
           if (item.description instanceof Object) {
-            if (item.description[global.user.state.Settings.language]) {
-              return item.description[global.user.state.Settings.language]
+            if (item.description[this.$store.state.Settings.language]) {
+              return item.description[this.$store.state.Settings.language]
             } else {
               return item.description.default
             }

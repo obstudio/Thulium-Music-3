@@ -1,16 +1,16 @@
 {
-  "version": 50,
+  "version": 190,
   "theme": "dark",
   "language": "zh-CN",
   "fallback": "zh-CN",
   "data-path": "C:\\Program Data\\Obstudtio\\Thulium 3\\",
-  
   "minimap": true,
   "gutter": true,
   "palette": true,
   "auto-indent": false,
   "auto-save": true,
   "scroll-speed": 1,
+  "line-ending": "CRLF",
   "syntax-enabled": [
     "ammonia",
     "benzene"

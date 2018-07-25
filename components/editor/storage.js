@@ -9,7 +9,7 @@ const defaultState = {
 }
 
 module.exports = {
-  load() {
+  data() {
     const tabString = localStorage.getItem('tabs')
     const stateString = localStorage.getItem('state')
     let state, tabs
@@ -39,14 +39,25 @@ module.exports = {
     })
   },
 
-  save(vm) {
-    localStorage.setItem('tabs', JSON.stringify(vm.tabs))
-    localStorage.setItem('state', JSON.stringify({
-      extensionHeight: vm.extensionHeight,
-      extensionShowed: vm.extensionShowed,
-      extensionFull: vm.extensionFull,
-      currentId: vm.current.id,
-      menubar: vm.menubar
-    }))
+  mounted() {
+    addEventListener('beforeunload', () => {
+      localStorage.setItem('tabs', JSON.stringify(this.tabs))
+      localStorage.setItem('state', JSON.stringify({
+        extensionHeight: this.extensionHeight,
+        extensionShowed: this.extensionShowed,
+        extensionFull: this.extensionFull,
+        currentId: this.current.id,
+        menubar: this.menubar
+      }))
+    })
+    this.$watch(
+      function() {
+        return this.settings['line-ending']
+      },
+      function() {
+        TmTab.config['line-ending'] = this.settings['line-ending']
+        this.tabs.map(tab => this.refresh(tab))
+      }
+    )
   }
 }

@@ -25,7 +25,6 @@ Vue.prototype.$markdown = (content, options = {}) => {
 //   2: debugging mode
 global.env = 1
 global.remote = electron.remote
-global.user = new Vuex.Store(require('./user'))
 
 global.getRender = function(filepath) {
   if (global.env === 0 && fs.existsSync(filepath + '.js')) {
@@ -51,9 +50,12 @@ global.VueCompile = (template) => {
   return VueCompiler.compileToFunctions(template).render
 }
 
+const user = require('./settings/user')
+const store = new Vuex.Store(user)
+
 const i18n = new VueI18n({
-  locale: global.user.state.Settings.language,
-  fallbackLocale: 'zh-CN',
+  locale: user.state.Settings.language,
+  fallbackLocale: user.state.Settings.fallback,
   messages: new Proxy({}, {
     get(target, key) {
       if (key in target || !global.library.LanguageSet.has(key)) {
@@ -71,22 +73,22 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'HomePage',
+      name: 'homepage',
       component: require('./components/homepage/entry')
     },
     {
       path: '/editor',
-      name: 'TmEditor',
+      name: 'editor',
       component: require('./components/Editor/editor')
     },
     {
       path: '/docs',
-      name: 'TmDocument',
+      name: 'documents',
       component: require('./components/documents/documents')
     },
     {
       path: '/settings',
-      name: 'Settings',
+      name: 'settings',
       component: require('./components/Settings/settings')
     }
   ]
@@ -96,7 +98,7 @@ new Vue({
   el: '#app',
   router,
   i18n,
-  store: global.user,
+  store,
 
   watch: {
     sidebar(value) {
@@ -121,11 +123,15 @@ new Vue({
   },
 
   computed: {
-    settings: () => global.user.state.Settings,
-    styles: () => global.user.state.Styles,
+    settings() {
+      return this.$store.state.Settings
+    },
+    styles() {
+      return this.$store.state.Styles
+    },
     title() {
-      return global.user.state.Prefix[global.user.state.Route]
-        + this.$t(`${global.user.state.Route}.title`)
+      return this.$store.state.Prefix[this.$route.name]
+        + this.$t(`${this.$route.name}.title`)
     }
   },
 
@@ -136,9 +142,6 @@ new Vue({
       } else {
         this.browser.maximize()
       }
-    },
-    switchRoute(route) {
-      global.user.state.Route = route
     }
   },
 

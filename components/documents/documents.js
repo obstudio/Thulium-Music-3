@@ -60,7 +60,9 @@ module.exports = {
   },
 
   computed: {
-    styles: () => global.user.state.Styles,
+    styles() {
+      return this.$store.state.Styles
+    },
     catalogWidth() {
       return Math.min(Math.max(this.width / 3, 160), 200)
     },
@@ -73,7 +75,7 @@ module.exports = {
   },
 
   mounted() {
-    window.monaco.editor.setTheme(global.user.state.Settings.theme)
+    window.monaco.editor.setTheme(this.$store.state.Settings.theme)
     this.docScroll = SmoothScroll(this.$refs.doc, {
       callback: (doc) => {
         this.docScrolled = doc.scrollTop > 0
@@ -105,7 +107,7 @@ module.exports = {
           anchorMap[getTopLevelText(node)] = node
         }
         this.h2nodes = anchorMap
-        global.user.state.Prefix.documents = getTopLevelText(this.$refs.doc.children[0]) + ' - '
+        this.$store.state.Prefix.documents = getTopLevelText(this.$refs.doc.children[0]) + ' - '
       })
     },
     setPosition(smooth = true) {

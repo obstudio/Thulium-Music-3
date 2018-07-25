@@ -8,8 +8,6 @@ const SmoothScroll = require('../SmoothScroll')
 const extensions = require('../../extensions/extension')
 const { registerPlayCommand } = require('../../library/editor/Editor')
 
-const storage = require('./storage')
-
 const HalfTitleHeight = 34
 const FullTitleHeight = 60
 const StatusHeight = 28
@@ -31,11 +29,11 @@ module.exports = {
   },
 
   mixins: [
-    require('../command')('editor')
+    require('../command')('editor'),
+    require('./storage')
   ],
 
   data() {
-    const storageState = storage.load()
     const editorState = {
       row: 1,
       column: 1
@@ -57,7 +55,6 @@ module.exports = {
       extensionMoveToRight: false
     }
     return {
-      ...storageState,
       ...editorState,
       ...tabState,
       ...extensionState
@@ -66,12 +63,14 @@ module.exports = {
 
   computed: {
     contentHeight() {
-      return String(this.remainHeight - (this.extensionShowed ? this.extensionHeight : 0)) + 'px'
+      return this.remainHeight - (this.extensionShowed ? this.extensionHeight : 0) + 'px'
     },
     remainHeight() {
       return this.height - StatusHeight - (this.menubar ? FullTitleHeight : HalfTitleHeight)
     },
-    settings: () => global.user.state.Settings,
+    settings() {
+      return this.$store.state.Settings
+    },
     tabsWidth() {
       return `${this.width - 34}px`
     }
@@ -89,30 +88,16 @@ module.exports = {
     extensionShowed() {
       this.layout(500)
     },
-    'settings.minimap'() {
-      if (this.editor) {
-        this.editor.updateOptions({
-          minimap: { enabled: this.settings.minimap }
-        })
-      }
-    },
-    'settings.lineEnding'() {
-      this.tabs.map(tab => this.refresh(tab))
-    },
-    current(newTab) {
+    current() {
       this.adjustTabsScroll()
     }
   },
 
   mounted() {
     // properties added in mounted hook to prevent unnecessary reactivity
-
     this.player = undefined
     this.tabs.forEach(tab => {
-      tab.onModelChange((e) => {
-        this.refresh(tab, e)
-      })
-      tab.checkChange()
+      tab.onModelChange(() => this.refresh(tab))
     })
     this.doScroll = SmoothScroll(this.$refs.tabs.$el, { vertical: false })
 
@@ -121,7 +106,6 @@ module.exports = {
     this.adjustTabsScroll()
     this.showEditor()
     this.registerGlobalEvents()
-    window.monaco.editor.setTheme(global.user.state.Settings.theme)
     this.activate()
     this.$nextTick(()=> {
       this.tabs.forEach(tab => {
@@ -134,16 +118,16 @@ module.exports = {
     // commands
     ...require('./method'),
     activate() {
+      window.monaco.editor.setTheme(this.$store.state.Settings.theme)
       this.editor.setModel(this.current.model)
       if (this.current.viewState) this.editor.restoreViewState(this.current.viewState)
       const position = this.editor.getPosition()
       this.row = position.lineNumber
       this.column = position.column
-      global.user.state.Prefix.editor = this.current.title + ' - '
+      this.$store.state.Prefix.editor = this.current.title + ' - '
       this.layout()
     },
-    refresh(tab, event) {
-      tab.latestVersionId = event.versionId
+    refresh(tab) {
       tab.checkChange()
     },
     layout(time = 0) {
@@ -184,6 +168,11 @@ module.exports = {
       editor.onDidChangeModel(() => {
         this.$nextTick(() => editor.focus())
       })
+      this.$watch('settings.minimap', function() {
+        this.editor.updateOptions({
+          minimap: { enabled: this.settings.minimap }
+        })
+      })
     },
     registerGlobalEvents() {
       addEventListener('resize', () => {
@@ -209,9 +198,6 @@ module.exports = {
             this.draggingLastY = event.clientY
           }
         }
-      })
-      addEventListener('beforeunload', () => {
-        storage.save(this)
       })
       addEventListener('dragend', (e) => {
         this.layout()
@@ -280,8 +266,8 @@ module.exports = {
       this.extUnderlineWidth = current.offsetWidth - 16 + 'px'
     },
     getExtensionName(ext) {
-      if (global.user.state.Settings.language in ext.i18n) {
-        return ext.i18n[global.user.state.Settings.language]
+      if (this.$store.state.Settings.language in ext.i18n) {
+        return ext.i18n[this.$store.state.Settings.language]
       } else {
         return ext.i18n.default
       }
