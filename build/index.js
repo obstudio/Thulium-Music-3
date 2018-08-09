@@ -45,6 +45,13 @@ window.monaco = {
     }
   }
 }
+Vue.prototype.$store = {
+  state: {
+    Settings: {
+      theme: null
+    }
+  }
+}
 
 function getTopLevelText(element) {
   let result = '', child = element.firstChild
