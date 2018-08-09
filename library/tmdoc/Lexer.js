@@ -267,7 +267,8 @@ class Lexer {
             row[0] = row[0].slice(1)
           }
           for (let i = 0; i < row.length; ++i) {
-            const cell = row[i], header = headers[i]
+            const cell = row[i] || '', header = headers[i]
+            if (!header) continue
             rowRes.push({
               em: header.em || em,
               al: align(cell[0]) || header.al,
