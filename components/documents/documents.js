@@ -135,7 +135,7 @@ module.exports = {
     },
 
     resolvePath(url) {
-      if (!url.endsWith('.tmd')) url += '.tmd'
+      if (!url.includes('.tmd')) url += '.tmd'
       const docParts = this.current.path.split('/')
       const back = /^(?:\.\.\/)*/.exec(url)[0].length
       docParts.splice(-1 - back / 3, Infinity, url.slice(back))
