@@ -254,12 +254,12 @@ class Lexer {
           content: []
         }
         const headers = cap[1]
-          .split(/\t+/)
+          .split(/\t+| {4,}/)
           .map((col) => ({
             em: col.includes('*'),
             al: align(col)
           }))
-        const cells = cap[2].split('\n').map((line) => line.split(/\t+/))
+        const cells = cap[2].split('\n').map((line) => line.split(/\t+| {4,}/))
         for (const row of cells) {
           const rowRes = []
           let em = false
@@ -355,7 +355,7 @@ const block = {
   list: /^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
   inlinelist: /^(?: *\+[^\n]*[^+\n]\n(?= *\+))*(?: *\+[^\n]+\+?(?:\n+|$))/,
   def: /^ {0,3}\[((?!\s*])(?:\\[\[\]]|[^\[\]])+)]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)((?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))))? *(?:\n+|$)/,
-  table: /^([=<>*\t]+)\n((?:.+\n)*.*)(?:\n{2,}|$)/,
+  table: /^([=<>* \t]+)\n((?:.+\n)*.*)(?:\n{2,}|$)/,
   paragraph: /^([^\n]+(?:\n(?!hr|heading| {0,3}>)[^\n]+)*)/,
   text: /^[^\n]+/
 }
