@@ -15,6 +15,7 @@ function edit(regex, opt) {
 }
 
 function align(col) {
+  if (!col) return 0
   return col.includes('<') ? 1 : col.includes('=') ? 2 : col.includes('>') ? 3 : 0
 }
 
