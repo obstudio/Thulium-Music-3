@@ -310,6 +310,8 @@
   border-style: none;
   max-width: 100%;
   box-sizing: content-box;
+  display: block;
+  margin: 0 auto;
 }
 .tm-doc img[align=right] {
   padding-left: 20px;
