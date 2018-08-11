@@ -48,6 +48,7 @@ class InlineLexer {
       if (cap = this.rules.link.exec(src)) {
         src = src.substring(cap[0].length)
         let text, match
+
         if (cap[1]) {
           text = cap[1]
         } else if (match = cap[2].match(/^\$\w+(#\w+)$/)) {
@@ -59,7 +60,11 @@ class InlineLexer {
         } else {
           text = cap[2]
         }
-        out += `<a href="#" data-raw-url="${cap[2]}" onclick="event.preventDefault()"'>${text}</a>`
+        if (cap[2][0] === '!') {
+          out += `<img src="${cap[2].slice(1)}" alt="${text}" title="${text}">`
+        } else {
+          out += `<a href="#" data-raw-url="${cap[2]}" onclick="event.preventDefault()"'>${text}</a>`
+        }
         continue
       }
 
